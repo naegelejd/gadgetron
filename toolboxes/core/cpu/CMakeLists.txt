@@ -73,7 +73,6 @@ set_target_properties(gadgetron_toolbox_cpucore  PROPERTIES VERSION ${GADGETRON_
 target_link_libraries(
   gadgetron_toolbox_cpucore
   gadgetron_toolbox_log
-  ISMRMRD::ISMRMRD
 	Boost::boost
     Boost::system
     Boost::filesystem

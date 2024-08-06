@@ -11,7 +11,6 @@ include_directories(
 	${CMAKE_SOURCE_DIR}/toolboxes/solvers
 	${CMAKE_SOURCE_DIR}/toolboxes/solvers/gpu
 	${Boost_INCLUDE_DIR}
-	${ISMRMRD_INCLUDE_DIR} 
 	)
 
 add_subdirectory(mri)

@@ -8,7 +8,6 @@ namespace Gadgetron::Server::Info {
 
 
     boost::asio::ip::tcp tcp_protocol();
-    std::string ismrmrd_version();
 
     std::string gadgetron_version();
     std::string gadgetron_build();

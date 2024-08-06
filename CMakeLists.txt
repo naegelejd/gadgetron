@@ -280,6 +280,7 @@ install(TARGETS armadillo EXPORT gadgetron-export)
 find_package(CURL REQUIRED)
 find_package(PugiXML REQUIRED)
 find_package(ISMRMRD CONFIG REQUIRED)
+find_package(MRD CONFIG REQUIRED)
 
 if (CUDA_FOUND AND USE_CUDA)
     # bart needs cuda

@@ -23,11 +23,11 @@ RUN groupadd --gid $USER_GID $USERNAME \
     && echo $USERNAME ALL=\(root\) NOPASSWD:ALL > /etc/sudoers.d/$USERNAME \
     && chmod 0440 /etc/sudoers.d/$USERNAME
 
-ARG MAMBAFORGE_VERSION=22.9.0-2
+ARG MINIFORGE_VERSION=24.3.0-0
 ARG CONDA_GID=900
 
 # Based on https://github.com/conda-forge/miniforge-images/blob/master/ubuntu/Dockerfile
-RUN wget --no-hsts --quiet https://github.com/conda-forge/miniforge/releases/download/${MAMBAFORGE_VERSION}/Mambaforge-${MAMBAFORGE_VERSION}-Linux-$(uname -m).sh -O /tmp/miniforge.sh \
+RUN wget --no-hsts --quiet https://github.com/conda-forge/miniforge/releases/download/${MINIFORGE_VERSION}/Miniforge3-${MINIFORGE_VERSION}-Linux-$(uname -m).sh -O /tmp/miniforge.sh \
     && /bin/bash /tmp/miniforge.sh -b -p /opt/conda \
     && rm /tmp/miniforge.sh \
     && /opt/conda/bin/mamba clean --tarballs --index-cache --packages --yes \
@@ -47,14 +47,16 @@ COPY --chown=$USER_UID:conda environment.yml /tmp/build/
 RUN mkdir -p /test && chown ${USER_UID}:${USER_GID} /test
 VOLUME /test
 
+# Copy bashrc used to activate conda environment
+COPY --chown=$USER_UID:conda .devcontainer/devcontainer.bashrc /opt/devcontainer/
+
 # Add a section to /etc/bash.bashrc that ensures that a section is present at the end of ~/.bashrc.
 # We can't just write to .bashrc from here because it will be overwritten if the vscode user has
 # opted to use their own dotfiles repo. The dotfiles repo is cloned after the postCreateCommand
 # in the devcontainer.json file is executed.
 RUN echo "\n\
-if ! grep -q \"^source /opt/conda/etc/profile.d/conda.sh\" ${HOME}/.bashrc; then\n\
-	echo \"source /opt/conda/etc/profile.d/conda.sh\" >> ${HOME}/.bashrc\n\
-	echo \"conda activate $(grep 'name:' /tmp/build/environment.yml | awk '{print $2}')\" >> ${HOME}/.bashrc\n\
+if ! grep -q \"^source /opt/devcontainer/devcontainer.bashrc\" \${HOME}/.bashrc; then\n\
+	echo \"source /opt/devcontainer/devcontainer.bashrc\" >> \${HOME}/.bashrc\n\
 fi\n" >> /etc/bash.bashrc
 
 ENV TINI_VERSION v0.19.0

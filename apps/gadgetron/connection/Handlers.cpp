@@ -41,7 +41,6 @@ namespace {
     }
 
     void initialize_with_default_queries(std::map<std::string, std::function<std::string()>> &answers) {
-        answers["ismrmrd::version"]              = Info::ismrmrd_version;
         answers["gadgetron::version"]            = Info::gadgetron_version;
         answers["gadgetron::build"]              = Info::gadgetron_build;
         answers["gadgetron::info"]               = gadgetron_info;

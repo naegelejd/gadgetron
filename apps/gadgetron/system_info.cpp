@@ -32,10 +32,6 @@
 
 namespace Gadgetron::Server::Info {
 
-    std::string ismrmrd_version() {
-        return "0.0.0-alpha";
-    }
-
     std::string gadgetron_version() {
         return GADGETRON_VERSION_STRING;
     }
