@@ -1,7 +1,8 @@
 #include "Configuration.h"
 
 #include <vector>
-#include <ismrmrd/ismrmrd.h>
+
+#include <mrd/binary/protocols.h>
 
 #include "io/primitives.h"
 #include "MessageID.h"
@@ -13,11 +14,13 @@ namespace Gadgetron::Server::Connection::Nodes {
     using Serializable = Core::variant<Config::External,Config>;
 
     static void send_header(std::iostream &stream, const Context::Header &header) {
-        std::stringstream strstream;
-        ISMRMRD::serialize(header, strstream);
+        // std::stringstream strstream;
+        // ISMRMRD::serialize(header, strstream);
 
-        IO::write(stream, HEADER);
-        IO::write_string_to_stream<uint32_t>(stream, strstream.str());
+        // IO::write(stream, HEADER);
+        // IO::write_string_to_stream<uint32_t>(stream, strstream.str());
+
+        /** TODO Joe: This is "disabled" in order to compile Gadgetron DURING the upgrade from ISMRMRD to MRDv2 */
     }
 
     static void send_config(std::iostream &stream, const Serializable &config) {

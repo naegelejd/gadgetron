@@ -336,11 +336,11 @@ void CmrKSpaceBinning<T>::perform_raw_data_recon()
         // estimate coil map
         // ------------------------------------------------
 
-        size_t start_RO = binning_obj_.sampling_.sampling_limits_[0].min_;
-        size_t end_RO = binning_obj_.sampling_.sampling_limits_[0].max_;
+        size_t start_RO = binning_obj_.sampling_.sampling_limits.ro.minimum;
+        size_t end_RO = binning_obj_.sampling_.sampling_limits.ro.maximum;
 
-        size_t start_E1 = binning_obj_.sampling_.sampling_limits_[1].min_;
-        size_t end_E1 = binning_obj_.sampling_.sampling_limits_[1].max_;
+        size_t start_E1 = binning_obj_.sampling_.sampling_limits.e1.minimum;
+        size_t end_E1 = binning_obj_.sampling_.sampling_limits.e1.maximum;
 
         size_t lenRO = RO;
         if ((start_RO<RO) && (end_RO<RO) && (end_RO - start_RO + 1 < RO))
@@ -473,8 +473,8 @@ void CmrKSpaceBinning<T>::estimate_time_stamps()
         size_t S = kspace.get_size(4);
 
         size_t startE1, endE1;
-        startE1 = this->binning_obj_.sampling_.sampling_limits_[1].min_;
-        endE1 = this->binning_obj_.sampling_.sampling_limits_[1].max_;
+        startE1 = this->binning_obj_.sampling_.sampling_limits.e1.minimum;
+        endE1 = this->binning_obj_.sampling_.sampling_limits.e1.maximum;
 
         size_t rE1 = endE1-startE1+1;
 
@@ -1125,8 +1125,8 @@ void CmrKSpaceBinning<T>::process_time_stamps(hoNDArray<float>& time_stamp, hoND
         size_t N = time_stamp.get_size(1);
 
         size_t startE1, endE1;
-        startE1 = this->binning_obj_.sampling_.sampling_limits_[1].min_;
-        endE1 = this->binning_obj_.sampling_.sampling_limits_[1].max_;
+        startE1 = this->binning_obj_.sampling_.sampling_limits.e1.minimum;
+        endE1 = this->binning_obj_.sampling_.sampling_limits.e1.maximum;
 
         size_t rE1 = endE1-startE1+1;
 
@@ -2491,8 +2491,8 @@ void CmrKSpaceBinning<T>::perform_linear_recon_on_kspace_binning(const ArrayType
         size_t N = kspace.get_size(3);
 
         size_t startE1, endE1;
-        startE1 = this->binning_obj_.sampling_.sampling_limits_[1].min_;
-        endE1 = this->binning_obj_.sampling_.sampling_limits_[1].max_;
+        startE1 = this->binning_obj_.sampling_.sampling_limits.e1.minimum;
+        endE1 = this->binning_obj_.sampling_.sampling_limits.e1.maximum;
 
         // average all N
         ArrayType acs;

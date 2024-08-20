@@ -132,31 +132,59 @@ int main(int argc, char *argv[]) {
 
         if(!args.count("from_stream"))
         {
-            GINFO("Running on port %d\n", args["port"].as<unsigned short>());
-            Server server(args, storage_address);
-            server.serve();
+            /** TODO Joe
+             * 
+             * This is going away. Gadgetron will become a streaming tool only, no longer a socket server.
+             */
+            // GINFO("Running on port %d\n", args["port"].as<unsigned short>());
+            // Server server(args, storage_address);
+            // server.serve();
+            GERROR_STREAM("Gadgetron only supports streaming mode. Use --from_stream/-s");
+            return 1;
         }
         else
         {
+            if (!args.count("config_name"))
+            {
+                GERROR_STREAM("No config file provided. Use --config_name/-c");
+                return 1;
+            }
+
             auto cfg = args["config_name"].as<std::string>();
             StreamConsumer consumer(args, storage_address);
 
             if(args.count("input_path") && args.count("output_path"))
             {
                 auto input_stream = std::ifstream(args["input_path"].as<std::string>());
+                if (!input_stream) {
+                    GERROR_STREAM("Could not open input file: " << args["input_path"].as<std::string>());
+                    return 1;
+                }
                 auto output_stream = std::ofstream(args["output_path"].as<std::string>());
+                if (!output_stream) {
+                    GERROR_STREAM("Could not open output file: " << args["output_path"].as<std::string>());
+                    return 1;
+                }
                 consumer.consume(input_stream, output_stream, cfg);
                 output_stream.close();
             }
             else if(args.count("input_path"))
             {
                 auto input_stream = std::ifstream(args["input_path"].as<std::string>());
+                if (!input_stream) {
+                    GERROR_STREAM("Could not open input file: " << args["input_path"].as<std::string>());
+                    return 1;
+                }
                 consumer.consume(input_stream, std::cout, cfg);
                 std::flush(std::cout);
             }
             else if(args.count("output_path"))
             {
                 auto output_stream = std::ofstream(args["output_path"].as<std::string>());
+                if (!output_stream) {
+                    GERROR_STREAM("Could not open output file: " << args["output_path"].as<std::string>());
+                    return 1;
+                }
                 consumer.consume(std::cin, output_stream, cfg);
                 output_stream.close();
             }

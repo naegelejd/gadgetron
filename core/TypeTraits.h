@@ -1,9 +1,11 @@
 //
 // Created by dchansen on 4/9/19.
 //
-
 #pragma once
 
+#include <type_traits>
+
+/** TODO Joe: Some of this is standardized in C++17 and can be removed */
 namespace Gadgetron { namespace Core {
 
     template <class T> constexpr bool is_trivially_copyable_v = std::is_trivially_copyable<T>::value;

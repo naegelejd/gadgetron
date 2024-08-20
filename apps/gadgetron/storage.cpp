@@ -1,4 +1,3 @@
-
 #include <optional>
 #include <regex>
 #include <string>
@@ -82,7 +81,7 @@ std::tuple<std::string, std::optional<boost::process::child>> ensure_storage_ser
     return {uri, std::move(process)};
 }
 
-StorageSpaces setup_storage_spaces(const std::string& address, const ISMRMRD::IsmrmrdHeader& header) {
+StorageSpaces setup_storage_spaces(const std::string& address, const mrd::Header& header) {
     auto client = std::make_shared<StorageClient>(address);
     IsmrmrdContextVariables variables(header);
     auto ttl = std::chrono::hours(48);

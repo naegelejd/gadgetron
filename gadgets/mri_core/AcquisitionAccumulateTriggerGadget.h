@@ -3,9 +3,8 @@
 #include "Node.h"
 #include "hoNDArray.h"
 
-#include "mri_core_acquisition_bucket.h"
+#include "mri_core_data.h"
 #include <complex>
-#include <ismrmrd/ismrmrd.h>
 #include <map>
 
 namespace Gadgetron {
@@ -47,7 +46,7 @@ namespace Gadgetron {
 
         size_t trigger_events = 0;
     private:
-        void send_data(Core::OutputChannel& out, std::map<unsigned short, AcquisitionBucket>& buckets,
+        void send_data(Core::OutputChannel& out, std::map<unsigned int, AcquisitionBucket>& buckets,
                        std::vector<Core::Waveform>& waveforms);
     };
 

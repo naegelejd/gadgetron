@@ -30,17 +30,18 @@ add_subdirectory(denoise)
 
 add_subdirectory(image_io)
 add_subdirectory(T1)
-# Should we compile the python toolbox
-if (BUILD_PYTHON_SUPPORT)
-    message("Find python; build gadgetron toolbox python")
-    add_subdirectory(python)
-else ()
-    message("Cannot find python; do not build gadgetron toolbox python")
-endif ()
 
-if (ARMADILLO_FOUND AND Boost_FOUND AND PLPLOT_FOUND)
-    add_subdirectory(plplot)
-endif ()
+# Should we compile the python toolbox
+# if (BUILD_PYTHON_SUPPORT)
+#     message("Find python; build gadgetron toolbox python")
+#     add_subdirectory(python)
+# else ()
+#     message("Cannot find python; do not build gadgetron toolbox python")
+# endif ()
+
+# if (ARMADILLO_FOUND AND Boost_FOUND AND PLPLOT_FOUND)
+#     add_subdirectory(plplot)
+# endif ()
 
 set(GADGETRON_BUILD_RPATH "${CMAKE_CURRENT_BINARY_DIR};${GADGETRON_BUILD_RPATH}" PARENT_SCOPE)
 

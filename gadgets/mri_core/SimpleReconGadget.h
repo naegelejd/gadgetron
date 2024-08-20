@@ -4,19 +4,16 @@
 */
 
 #pragma once
+
 #include "Node.h"
-#include "gadgetron_mricore_export.h"
 #include "hoNDArray.h"
 
-#include "mri_core_acquisition_bucket.h"
 #include "mri_core_data.h"
-#include <complex>
-#include <ismrmrd/ismrmrd.h>
-#include <ismrmrd/xml.h>
 #include "hoNDArray_math.h"
 #include "hoNDFFT.h"
+#include <complex>
 
-namespace Gadgetron{
+namespace Gadgetron {
 
     class SimpleReconGadget : public Core::ChannelGadget<IsmrmrdReconData> {
     public:
@@ -24,8 +21,7 @@ namespace Gadgetron{
         void process(Core::InputChannel<IsmrmrdReconData>& input, Core::OutputChannel& out) override;
 
     protected:
-        ISMRMRD::IsmrmrdHeader header;
+        mrd::Header header;
         long long image_counter_;      
-
     };
 }

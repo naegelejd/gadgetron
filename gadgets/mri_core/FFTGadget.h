@@ -8,7 +8,6 @@
 #include "gadgetron_mricore_export.h"
 #include "hoNDArray.h"
 
-#include "mri_core_acquisition_bucket.h"
 #include "mri_core_data.h"
 #include <complex>
 #include <ismrmrd/ismrmrd.h>

@@ -5,11 +5,9 @@
 
 #pragma once
 
-#include "Gadget.h"
-#include "hoNDArray.h"
-#include "GadgetMRIHeaders.h"
 #include "Node.h"
 #include "Types.h"
+#include "hoNDArray.h"
 #include <boost/algorithm/string.hpp>
 #include <boost/algorithm/string/split.hpp>
 

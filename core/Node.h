@@ -29,7 +29,7 @@ namespace Gadgetron::Core {
 //        [[deprecated("ChannelGadget should be called with both context and properties")]]
 //        GenericChannelGadget(const GadgetProperties& properties) : PropertyMixin(properties) {}
     protected:
-        const ISMRMRD::IsmrmrdHeader header ={};
+        const mrd::Header header ={};
     };
 
     /**

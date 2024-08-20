@@ -40,6 +40,7 @@ namespace {
 
 
     void send_close(std::iostream &stream) {
+        /** TODO Joe: WTF is this magic number? Shouldn't it be Gadgetron::Core::MessageID::CLOSE??  */
         uint16_t close = 4;
         stream.write(reinterpret_cast<char *>(&close), sizeof(close));
     }

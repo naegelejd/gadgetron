@@ -56,8 +56,9 @@ namespace Gadgetron
     // environmental variable GADGETRON_DEBUG_FOLDER is used 
     EXPORTMRICORE void get_debug_folder_path(const std::string& debugFolder, std::string& debugFolderPath);
 
+    /** TODO Joe: Remove this vvvvv */
     // find the calibration mode from protocol
-    void EXPORTMRICORE find_calib_mode(ISMRMRD::IsmrmrdHeader& h, Gadgetron::ismrmrdCALIBMODE& CalibMode, Gadgetron::IsmrmrdDIM& InterleaveDim, double& acceFactorE1, double& acceFactorE2, bool verbose = false);
+    // void EXPORTMRICORE find_calib_mode(ISMRMRD::IsmrmrdHeader& h, Gadgetron::ismrmrdCALIBMODE& CalibMode, Gadgetron::IsmrmrdDIM& InterleaveDim, double& acceFactorE1, double& acceFactorE2, bool verbose = false);
 
     // find the encoding limits from protocol
     void EXPORTMRICORE find_encoding_limits(ISMRMRD::IsmrmrdHeader& h, ISMRMRD::EncodingCounters& meas_max_idx, bool verbose = false);
@@ -92,10 +93,11 @@ namespace Gadgetron
     // if so, return true; otherwise, return false;
     bool EXPORTMRICORE check_idential_slice_prescription(ISMRMRD::ISMRMRD_ImageHeader a, ISMRMRD::ISMRMRD_ImageHeader b);
 
-    // get ismrmd dim name
-    std::string EXPORTMRICORE get_ismrmrd_dim_name(const IsmrmrdDIM& dim);
-    // given the name, get the ismrmrd dim
-    IsmrmrdDIM EXPORTMRICORE get_ismrmrd_dim_from_name(const std::string& name);
+    /** TODO Joe: Remove these vvvvv */
+    // // get ismrmd dim name
+    // std::string EXPORTMRICORE get_ismrmrd_dim_name(const IsmrmrdDIM& dim);
+    // // given the name, get the ismrmrd dim
+    // IsmrmrdDIM EXPORTMRICORE get_ismrmrd_dim_from_name(const std::string& name);
 
     EXPORTMRICORE std::map<std::string,std::int64_t> to_map(const std::vector<ISMRMRD::UserParameterLong>&);
     EXPORTMRICORE std::map<std::string,double> to_map(const std::vector<ISMRMRD::UserParameterDouble>&);

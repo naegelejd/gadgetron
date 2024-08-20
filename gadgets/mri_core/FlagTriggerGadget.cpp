@@ -9,7 +9,6 @@
 
 #include "ChannelAlgorithms.h"
 #include "io/from_string.h"
-#include "mri_core_acquisition_bucket.h"
 #include "mri_core_data.h"
 
 #include <boost/config/warning_disable.hpp>

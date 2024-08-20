@@ -76,7 +76,7 @@ namespace Gadgetron {
         /// S is the motion sharing dimension, e.g. contrast or set
         /// incoming image should already be in eigeh channel, with the high energy channel first
         hoNDArray< std::complex<T> > data_;
-        SamplingDescription sampling_;
+        mrd::SamplingDescription sampling_;
 
         /// [E1 N S]
         hoNDArray< ISMRMRD::AcquisitionHeader > headers_;

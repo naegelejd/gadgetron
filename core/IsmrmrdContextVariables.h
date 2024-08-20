@@ -2,18 +2,18 @@
 
 #include <string>
 
-#include <ismrmrd/xml.h>
+#include <mrd/types.h>
 
 namespace Gadgetron {
 
 /**
- * Used to extract subject, device, session, and measurement IDs from an ISMRMRD
- * XML header, falling back to extracting values from the measurement ID element if
+ * Used to extract subject, device, session, and measurement IDs from an MRD
+ * Header, falling back to extracting values from the measurement ID element if
  * it is formatted as DEVICE_SUBJECT_SESSION_MEASUREMENT.
  */
 class IsmrmrdContextVariables {
   public:
-    IsmrmrdContextVariables(ISMRMRD::IsmrmrdHeader const& head);
+    IsmrmrdContextVariables(mrd::Header const& head);
 
     IsmrmrdContextVariables(std::string measurement_id);
 

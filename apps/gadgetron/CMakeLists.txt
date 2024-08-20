@@ -1,32 +1,32 @@
 configure_file(gadgetron_config.in gadgetron_config.h)
 
-if (BUILD_TESTING)
-  add_subdirectory(test)
-endif()
+# if (BUILD_TESTING)
+#   add_subdirectory(test)
+# endif()
 
 add_executable(gadgetron
         main.cpp
-        Server.cpp
-        Server.h
-        Connection.cpp
-        Connection.h
+        # Server.cpp
+        # Server.h
+        # Connection.cpp
+        # Connection.h
         initialization.cpp
         initialization.h
         system_info.cpp
         connection/config/Config.cpp
         connection/config/Config.h
-        connection/ConfigConnection.cpp
-        connection/ConfigConnection.h
-        connection/StreamConnection.cpp
-        connection/StreamConnection.h
-        connection/Handlers.cpp
-        connection/Handlers.h
-        connection/Writers.cpp
-        connection/Writers.h
-        connection/VoidConnection.cpp
-        connection/VoidConnection.h
-        connection/HeaderConnection.cpp
-        connection/HeaderConnection.h
+        # connection/ConfigConnection.cpp
+        # connection/ConfigConnection.h
+        # connection/StreamConnection.cpp
+        # connection/StreamConnection.h
+        # connection/Handlers.cpp
+        # connection/Handlers.h
+        # connection/Writers.cpp
+        # connection/Writers.h
+        # connection/VoidConnection.cpp
+        # connection/VoidConnection.h
+        # connection/HeaderConnection.cpp
+        # connection/HeaderConnection.h
         connection/Loader.cpp
         connection/Loader.h
         connection/Core.cpp
@@ -74,9 +74,10 @@ add_executable(gadgetron
 
 target_link_libraries(gadgetron
         gadgetron_core
-        gadgetron_core_writers
-        gadgetron_core_readers
+        # gadgetron_core_writers
+        # gadgetron_core_readers
         gadgetron_toolbox_log
+        gadgetron_toolbox_mri_core
         Boost::system
         Boost::filesystem
         Boost::program_options

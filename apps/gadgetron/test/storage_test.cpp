@@ -39,9 +39,9 @@ class StorageTest : public ::testing::Test {
 
         auto [address, process] = Server::ensure_storage_server(args);
 
-        ISMRMRD::IsmrmrdHeader header;
-        header.subjectInformation = ISMRMRD::SubjectInformation{{}, {}, {}, std::string("mypatient"), {}, {}};
-        header.studyInformation = ISMRMRD::StudyInformation{{}, {}, std::string("mystudy")};
+        mrd::Header header;
+        header.subject_information = mrd::SubjectInformationType{.patient_id="mypatient"};
+        header.study_information = mrd::StudyInformationType{.study_id="mystudy"};
 
         storage_address = address;
         server = std::move(*process);
@@ -289,14 +289,11 @@ TEST_F(StorageTest, storage_spaces_larger_data) {
 TEST_F(StorageTest, storage_spaces_image_data) {
     Core::Image<float> image;
 
-    auto& [header, data, meta] = image;
-
-    data = hoNDArray<float>(2, 2, 1, 4);
-    std::fill(data.begin(), data.end(), 3);
+    image.data.resize({4, 1, 2, 2});
+    std::fill(image.data.begin(), image.data.end(), 3);
     storage.session->store("image", image);
 
     auto item = storage.session->get_latest<Core::Image<float>>("image");
 
-    auto [stored_header, stored_data, stored_meta] = *item;
-    ASSERT_EQ(data, stored_data);
+    ASSERT_EQ(image.data, item->data);
 }

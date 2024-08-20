@@ -4,10 +4,10 @@
 
 #include "SocketStreamBuf.h"
 
-#include <thread>
-
+#include "log.h"
 #include "Types.h"
 
+#include <thread>
 #include <boost/asio.hpp>
 namespace {
     using boost::asio::ip::tcp;

@@ -1,15 +1,16 @@
 #include "CoilReductionGadget.h"
 
+#include <xtensor/xview.hpp>
+
 namespace Gadgetron {
 
 CoilReductionGadget::CoilReductionGadget(const Core::Context& context, const Core::GadgetProperties& props)
-    : Core::ChannelGadget<Core::Acquisition>(context, props) {
-    auto h = (context.header);
-    coils_in_ = h.acquisitionSystemInformation->receiverChannels ? *h.acquisitionSystemInformation->receiverChannels : 128;
+    : Core::ChannelGadget<Core::Acquisition>(context, props)
+{
+    auto h = context.header;
+    coils_in_ = h.acquisition_system_information->receiver_channels.value_or(128);
 
-    std::string coil_mask_int = coil_mask;
-
-    if (coil_mask_int.compare(std::string("")) == 0) {
+    if (coil_mask.empty()) {
         if (coils_out <= 0) {
             GERROR("Invalid number of output coils %d\n", coils_out);
         }
@@ -17,7 +18,7 @@ CoilReductionGadget::CoilReductionGadget(const Core::Context& context, const Cor
     } 
     else {
         std::vector<std::string> chm;
-        boost::split(chm, coil_mask_int, boost::is_any_of(" "));
+        boost::split(chm, coil_mask, boost::is_any_of(" "));
         for (size_t i = 0; i < chm.size(); i++) {
             std::string ch = boost::algorithm::trim_copy(chm[i]);
             if (ch.size() > 0) {
@@ -51,34 +52,40 @@ CoilReductionGadget::CoilReductionGadget(const Core::Context& context, const Cor
 }
 
 void CoilReductionGadget::process(Core::InputChannel<Core::Acquisition>& in, Core::OutputChannel& out) {
-    for (auto [header, acq, traj] : in) {
-        std::vector<size_t> dims_out(2);
-        dims_out[0] = header.number_of_samples;
-        dims_out[1] = coils_out_;
+    for (auto acq : in) {
 
-        hoNDArray<std::complex<float>> reducedAcq = hoNDArray<std::complex<float>>();
-        try {
-            reducedAcq.create(dims_out);
-        } catch (std::runtime_error& err) {
-            GEXCEPTION(err, "Unable to create storage for reduced dataset size\n");
+        if (acq.Coils() == coils_out_) {
+            // No need to do anything
+            out.push(std::move(acq));
+            continue;
         }
 
-        std::complex<float>* s = acq.get_data_ptr();
-        std::complex<float>* d = reducedAcq.get_data_ptr();
-        size_t samples = header.number_of_samples;
+        if (acq.Coils() > coil_mask_.size()) {
+            GERROR("Fatal error, too many coils for coil mask\n");
+            continue;
+        }
+
+        auto old_channels = acq.Coils();
+        auto old_data = acq.data;
+
+        /** TODO Joe: Remove this vvvvv */
+        if (acq.data.data() == old_data.data()) {
+            GERROR("ALERT - JOE - Expected to have copied data\n");
+            continue;
+        }
+
+        acq.data.resize({coils_out_, acq.Samples()});
+
         size_t coils_copied = 0;
-        for (int c = 0; c < header.active_channels; c++) {
-            if (c > coil_mask_.size()) {
-                GERROR("Fatal error, too many coils for coil mask\n");
-            }
+        for (size_t c = 0; c < old_channels; c++) {
             if (coil_mask_[c]) {
-                memcpy(d + coils_copied * samples, s + c * samples, sizeof(std::complex<float>) * samples);
+                xt::view(acq.data, coils_copied, xt::all()) = xt::view(old_data, c, xt::all());
                 coils_copied++;
             }
         }
-        header.active_channels = coils_out_;
+        acq.head.channel_order = std::vector<uint32_t>(coils_out, 1);
         
-        out.push(Core::Acquisition{std::move(header), std::move(reducedAcq), std::move(traj)});
+        out.push(std::move(acq));
     }
 }
 GADGETRON_GADGET_EXPORT(CoilReductionGadget)

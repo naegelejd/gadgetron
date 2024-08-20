@@ -8,20 +8,12 @@
 #include <boost/filesystem/path.hpp>
 #include <boost/program_options/variables_map.hpp>
 
+#include <mrd/binary/protocols.h>
+#include <mri_core_data.h>
+
 #include "Channel.h"
 #include "connection/Core.h"
 #include "connection/Loader.h"
-
-#include "MessageID.h"
-#include "Reader.h"
-#include "readers/AcquisitionBucketReader.h"
-#include "readers/AcquisitionReader.h"
-#include "readers/ImageReader.h"
-#include "readers/IsmrmrdImageArrayReader.h"
-#include "readers/WaveformReader.h"
-#include "writers/AcquisitionBucketWriter.h"
-#include "writers/ImageWriter.h"
-#include "writers/IsmrmrdImageArrayWriter.h"
 
 using namespace Gadgetron::Core;
 using namespace Gadgetron::Server;
@@ -65,13 +57,17 @@ public:
             args_["home"].as<boost::filesystem::path>().string(),
             args_["dir"].as<boost::filesystem::path>().string()};
 
-        ISMRMRD::IsmrmrdHeader hdr = consume_ismrmrd_header(input_stream, output_stream);
+        mrd::binary::MrdReader mrd_reader(input_stream);
+        mrd::binary::MrdWriter mrd_writer(output_stream);
+
+        mrd::Header hdr = consume_mrd_header(mrd_reader, mrd_writer);
         auto storage_spaces = setup_storage_spaces(storage_address_, hdr);
 
         auto context = StreamContext(hdr, paths, args_, storage_address_, storage_spaces);
         auto loader = Connection::Loader(context);
         auto config_path = find_config_path(args_["home"].as<boost::filesystem::path>().string(), config_xml_name);
 
+        GINFO_STREAM("Loading configuration from: " << config_path.string());
         std::ifstream file(config_path, std::ios::in | std::ios::binary);
         if (!file.is_open()) {
             throw std::runtime_error("Failed to open file at path: " + config_path.string());
@@ -107,7 +103,7 @@ public:
         auto input_future = std::async(std::launch::async, [&]() {
             try
             {
-                consume_input_messages(input_stream, input_channel);
+                consume_input_stream(mrd_reader, input_channel);
             }
             catch(std::ios_base::failure& exc)
             {
@@ -118,7 +114,7 @@ public:
 
         auto output_future = std::async(std::launch::async, [&]()
         {
-            process_output_messages(output_channel, output_stream);
+            process_output_stream(output_channel, mrd_writer);
         });
 
         // Clean up and propagate exceptions if they occurred
@@ -129,139 +125,79 @@ public:
 
   private:
 
-    ISMRMRD::IsmrmrdHeader consume_ismrmrd_header(std::istream& input_stream, std::ostream& output_stream)
+    mrd::Header consume_mrd_header(mrd::binary::MrdReader& mrd_reader, mrd::binary::MrdWriter& mrd_writer)
     {
-        ISMRMRD::IsmrmrdHeader hdr;
-        MessageID id = MessageID::CLOSE;
-        input_stream.read(reinterpret_cast<char*>(&id), sizeof(MessageID));
-        output_stream.write(reinterpret_cast<char*>(&id), sizeof(MessageID));
+        std::optional<mrd::Header> hdr;
 
-        switch(id)
-        {
-            case MessageID::HEADER:
-            {
-                uint32_t hdr_size = 0;
-                input_stream.read(reinterpret_cast<char*>(&hdr_size), sizeof(uint32_t));
-                output_stream.write(reinterpret_cast<char*>(&hdr_size), sizeof(uint32_t));
+        mrd_reader.ReadHeader(hdr);
+        mrd_writer.WriteHeader(hdr);
 
-                if(hdr_size > 0)
-                {
-                    std::vector<char> data(hdr_size);
-
-                    input_stream.read(data.data(), hdr_size);
-                    output_stream.write(data.data(), hdr_size);
-                    ISMRMRD::deserialize(std::string(data.data(), data.size()).c_str(), hdr);
-                }
-                else
-                {
-                    throw std::runtime_error("Expected size > 0, got: " + std::to_string(hdr_size));
-                }
-
-                break;
-            }
-            default:
-            {
-                throw std::runtime_error("Expected HEADER enumeration, got: " + std::to_string(id));
-            }
+        if (!hdr.has_value()) {
+            throw std::runtime_error("Failed to read ISMRMRD header");
         }
-
-        return hdr;
+        return hdr.value();
     }
 
-    void consume_input_messages(std::istream& input_stream, ChannelPair& input_channel)
+    void consume_input_stream(mrd::binary::MrdReader& mrd_reader, ChannelPair& input_channel)
     {
-        input_stream.exceptions(std::istream::failbit | std::istream::badbit | std::istream::eofbit);
+        mrd::StreamItem stream_item;
+        while (mrd_reader.ReadData(stream_item)) {
+            std::visit([&](auto&& arg) {
+                Message msg(std::move(arg));
+                input_channel.output.push_message(std::move(msg));
+            }, stream_item);
 
-        auto acq_reader = Readers::AcquisitionReader();
-        auto wav_reader = Readers::WaveformReader();
-        auto img_reader = Readers::ImageReader();
-        auto img_array_reader = Readers::IsmrmrdImageArrayReader();
-        auto acq_bucket_reader = Readers::AcquisitionBucketReader();
-        bool closed = false;
-
-        while (!input_stream.eof() && !closed)
-        {
-            MessageID id = MessageID::ERROR;
-            input_stream.read(reinterpret_cast<char*>(&id), sizeof(MessageID));
-
-            switch(id)
-            {
-                case MessageID::GADGET_MESSAGE_ISMRMRD_ACQUISITION:
-                {
-                    input_channel.output.push_message(acq_reader.read(input_stream));
-                    break;
-                }
-                case MessageID::GADGET_MESSAGE_ISMRMRD_WAVEFORM:
-                {
-                    input_channel.output.push_message(wav_reader.read(input_stream));
-                    break;
-                }
-                case MessageID::GADGET_MESSAGE_ISMRMRD_IMAGE:
-                {
-                    input_channel.output.push_message(img_reader.read(input_stream));
-                    break;
-                }
-                case MessageID::GADGET_MESSAGE_ISMRMRD_IMAGE_ARRAY:
-                {
-                    input_channel.output.push_message(img_array_reader.read(input_stream));
-                    break;
-                }
-                case MessageID::GADGET_MESSAGE_BUCKET:
-                {
-                    input_channel.output.push_message(acq_bucket_reader.read(input_stream));
-                    break;
-                }
-                case MessageID::ERROR:
-                {
-                    throw std::runtime_error("Got error while processing input stream");
-                }
-                case MessageID::CLOSE:
-                {
-                    auto destruct_me = std::move(input_channel.output);
-                    closed = true;
-                    break;
-                }
-                default:
-                {
-                    throw std::runtime_error("Unsupported message ID: " + std::to_string(id));
-                }
-            }
+            /** TODO Joe: If we want to "check" that we're sending valid data types, we might need
+             *  to exhaust the variants of mrd::StreamItem... e.g.
+             * 
+            if (auto* v = std::get_if<mrd::Acquisition>(&stream_item)) {
+                Message msg(std::move(*v));
+                input_channel.output.push_message(std::move(msg));
+            } else if (...) {}
+             * 
+             */
         }
+
+        mrd_reader.Close();
+        auto destruct_me = std::move(input_channel.output);
     }
 
-    void process_output_messages(ChannelPair& output_channel, std::ostream& output_stream)
+    void process_output_stream(ChannelPair& output_channel, mrd::binary::MrdWriter& mrd_writer)
     {
-        auto writer = Writers::ImageWriter();
-        auto img_array_writer = Writers::IsmrmrdImageArrayWriter();
-        auto acq_bucket_writer = Writers::AcquisitionBucketWriter();
-
-        while (true)
-        {
-            try
-            {
+        while (true) {
+            try {
                 auto message = output_channel.input.pop();
 
-                if (convertible_to<Gadgetron::AcquisitionBucket>(message) )
-                {
-                    acq_bucket_writer.write(output_stream, std::move(message));
+                if (convertible_to<Gadgetron::AcquisitionBucket>(message) ) {
+                    GERROR_STREAM("AcquisitionBucket not yet supported by MrdWriter");
+                } else if (convertible_to<Gadgetron::IsmrmrdImageArray>(message) ) {
+                    GERROR_STREAM("ImageArray not yet supported by MrdWriter");
+                } else if (convertible_to<mrd::ImageUint16>(message) ) {
+                    mrd_writer.WriteData(force_unpack<mrd::ImageUint16>(std::move(message)));
+                } else if (convertible_to<mrd::ImageInt16>(message) ) {
+                    mrd_writer.WriteData(force_unpack<mrd::ImageInt16>(std::move(message)));
+                } else if (convertible_to<mrd::ImageUint>(message) ) {
+                    mrd_writer.WriteData(force_unpack<mrd::ImageUint>(std::move(message)));
+                } else if (convertible_to<mrd::ImageInt>(message) ) {
+                    mrd_writer.WriteData(force_unpack<mrd::ImageInt>(std::move(message)));
+                } else if (convertible_to<mrd::ImageFloat>(message) ) {
+                    mrd_writer.WriteData(force_unpack<mrd::ImageFloat>(std::move(message)));
+                } else if (convertible_to<mrd::ImageDouble>(message) ) {
+                    mrd_writer.WriteData(force_unpack<mrd::ImageDouble>(std::move(message)));
+                } else if (convertible_to<mrd::ImageComplexFloat>(message) ) {
+                    mrd_writer.WriteData(force_unpack<mrd::ImageComplexFloat>(std::move(message)));
+                } else if (convertible_to<mrd::ImageComplexDouble>(message) ) {
+                    mrd_writer.WriteData(force_unpack<mrd::ImageComplexDouble>(std::move(message)));
+                } else {
+                    GERROR_STREAM("Unsupported Message type for MrdWriter");
                 }
-                else if (convertible_to<Gadgetron::IsmrmrdImageArray>(message) )
-                {
-                    img_array_writer.write(output_stream, std::move(message));
-                }
-                else
-                {
-                    writer.write(output_stream, std::move(message));
-                }
-            }
-            catch (const ChannelClosed& exc)
-            {
+            } catch (const ChannelClosed& exc) {
                 break;
             }
         }
 
-        MessageID close_id = MessageID::CLOSE;
-        output_stream.write(reinterpret_cast<char*>(&close_id), sizeof(MessageID));
+        mrd_writer.EndData();
+        mrd_writer.Close();
     }
 
     boost::program_options::variables_map args_;

@@ -1,5 +1,6 @@
 #include "RemoveROOversamplingGadget.h"
 
+#include <xtensor/xadapt.hpp>
 namespace Gadgetron {
 
 RemoveROOversamplingGadget::RemoveROOversamplingGadget(const Core::Context& context,
@@ -13,13 +14,13 @@ RemoveROOversamplingGadget::RemoveROOversamplingGadget(const Core::Context& cont
         return;
     }
 
-    ISMRMRD::EncodingSpace e_space = h.encoding[0].encodedSpace;
-    ISMRMRD::EncodingSpace r_space = h.encoding[0].reconSpace;
+    mrd::EncodingSpaceType e_space = h.encoding[0].encoded_space;
+    mrd::EncodingSpaceType r_space = h.encoding[0].recon_space;
 
-    encodeNx_ = e_space.matrixSize.x;
-    encodeFOV_ = e_space.fieldOfView_mm.x;
-    reconNx_ = r_space.matrixSize.x;
-    reconFOV_ = r_space.fieldOfView_mm.x;
+    encodeNx_ = e_space.matrix_size.x;
+    encodeFOV_ = e_space.field_of_view_mm.x;
+    reconNx_ = r_space.matrix_size.x;
+    reconFOV_ = r_space.field_of_view_mm.x;
 
 #ifdef USE_OMP  // TODO: Should this be removed? Its from the old version
     omp_set_num_threads(1);
@@ -37,65 +38,59 @@ RemoveROOversamplingGadget::RemoveROOversamplingGadget(const Core::Context& cont
 }
 
 void RemoveROOversamplingGadget::process(Core::InputChannel<Core::Acquisition>& in, Core::OutputChannel& out) {
-  for (auto [header, acq, traj] : in) {
-    if(dowork_){
-      hoNDArray<std::complex<float>>* temp = new hoNDArray<std::complex<float>>();
-      if (!temp)
-      {
-        GERROR("Error creating new temp  array");
-        return;
-      }
-      std::vector<size_t> data_out_dims = acq.get_dimensions();
-      if (!ifft_buf_.dimensions_equal(data_out_dims) )
-      {
-          ifft_buf_.create(data_out_dims);
-          ifft_res_.create(data_out_dims);
-      }
-      float ratioFOV = encodeFOV_/reconFOV_;
-      data_out_dims[0] = (size_t)(data_out_dims[0]/ratioFOV);
-      if ( !fft_buf_.dimensions_equal(data_out_dims) )
-      {
-          fft_buf_.create(data_out_dims);
-          fft_res_.create(data_out_dims);
-      }
-      try{ temp->create(data_out_dims);}
-      catch (std::runtime_error &err)
-      {
-          GEXCEPTION(err,"Unable to create new data array for downsampled data\n");
-          return;
-      }
-      size_t sRO = acq.get_size(0);
-      size_t start = (size_t)((acq.get_size(0)-data_out_dims[0]) / 2);
+    for (auto acq : in) {
+        if (dowork_) {
+            auto shape = acq.data.shape();
 
-      size_t dRO = temp->get_size(0);
-      size_t numOfBytes = data_out_dims[0]*sizeof(std::complex<float>);
+            // We'll use hoNDFFT for the FFTs, so we need to "adapt" the MRD arrays (pointers) to hoNDArrays
 
-      int c;   
-      int CHA = (int)(data_out_dims[1]);
+            // Reverse the dimensions from MRD -> hoNDArray
+            std::vector<size_t> data_in_dims(std::rbegin(shape), std::rend(shape));
+            if (!ifft_buf_.dimensions_equal(data_in_dims)) {
+                ifft_buf_.create(data_in_dims);
+                ifft_res_.create(data_in_dims);
+            }
 
-      std::complex<float>* data_in, *data_out;
-      hoNDFFT<float>::instance()->ifft1c(acq, ifft_res_, ifft_buf_);
-      data_in  = ifft_res_.get_data_ptr();
-      data_out = temp->get_data_ptr();
+            float ratioFOV = encodeFOV_ / reconFOV_;
+            std::vector<size_t> data_out_dims = data_in_dims;
+            data_out_dims[0] = (size_t)(data_out_dims[0] / ratioFOV);
+            if (!fft_buf_.dimensions_equal(data_out_dims)) {
+                fft_buf_.create(data_out_dims);
+                fft_res_.create(data_out_dims);
+            }
 
-      for (c=0; c<CHA; c++)
-      {
-          memcpy( data_out+c*dRO, data_in+c*sRO+start, numOfBytes );
-      }
+            hoNDArray<std::complex<float>> adapted(data_in_dims, acq.data.data());
+            hoNDFFT<float>::instance()->ifft1c(adapted, ifft_res_, ifft_buf_);
 
-      hoNDFFT<float>::instance()->fft1c(*temp, fft_res_, fft_buf_);
+            hoNDArray<std::complex<float>> temp(data_out_dims);
 
-      memcpy(temp->begin(), fft_res_.begin(), fft_res_.get_number_of_bytes());
+            size_t sRO = acq.Samples();
+            size_t start = (size_t)((sRO - data_out_dims[0]) / 2);
 
-      header.number_of_samples = data_out_dims[0];
-      header.center_sample = (uint16_t)(header.center_sample/ratioFOV);
-      header.discard_pre = (uint16_t)(header.discard_pre / ratioFOV);
-      header.discard_post = (uint16_t)(header.discard_post / ratioFOV);
+            size_t dRO = temp.get_size(0);
+            size_t numOfBytes = data_out_dims[0] * sizeof(std::complex<float>);
 
-      acq = *temp;
+            int CHA = (int)(data_out_dims[1]);
+            for (size_t c = 0; c < CHA; c++) {
+                memcpy(temp.get_data_ptr() + c * dRO, ifft_res_.get_data_ptr() + c * sRO + start, numOfBytes);
+            }
+
+            hoNDFFT<float>::instance()->fft1c(temp, fft_res_, fft_buf_);
+
+            // Reverse the dimensions for mrd::Acquisition::data
+            std::vector<size_t> shape_out(std::rbegin(data_out_dims), std::rend(data_out_dims));
+            acq.data.resize(shape_out);
+            memcpy(acq.data.data(), fft_res_.get_data_ptr(), fft_res_.get_number_of_bytes());
+
+            acq.head.center_sample = (uint32_t)(acq.head.center_sample.value_or(0) / ratioFOV);
+            acq.head.discard_pre = (uint32_t)(acq.head.discard_pre.value_or(0) / ratioFOV);
+            acq.head.discard_post = (uint32_t)(acq.head.discard_post.value_or(0) / ratioFOV);
+        }
+
+        out.push(acq);
     }
-    out.push(Core::Acquisition{header, std::move(acq), std::move(traj)});
-  }
 }
+
 GADGETRON_GADGET_EXPORT(RemoveROOversamplingGadget)
+
 } // namespace Gadgetron

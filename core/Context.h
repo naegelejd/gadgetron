@@ -2,14 +2,13 @@
 #include <boost/filesystem.hpp>
 #include <boost/program_options.hpp>
 
-#include <ismrmrd/ismrmrd.h>
-#include <ismrmrd/xml.h>
+#include <mrd/types.h>
 #include "StorageSetup.h"
 
 namespace Gadgetron::Core {
 
     struct Context {
-        using Header = ISMRMRD::IsmrmrdHeader;
+        using Header = mrd::Header;
 
         struct Paths {
             boost::filesystem::path gadgetron_home;
@@ -27,7 +26,7 @@ namespace Gadgetron::Core {
         using StorageAddress = std::string;
 
         StreamContext(
-            ISMRMRD::IsmrmrdHeader header,
+            mrd::Header header,
             const Paths paths,
             const Args args,
             const StorageAddress storage_address,

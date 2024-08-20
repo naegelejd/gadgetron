@@ -7,33 +7,21 @@
 
 namespace Gadgetron {
 
-IsmrmrdContextVariables::IsmrmrdContextVariables(ISMRMRD::IsmrmrdHeader const& head) {
-    if (head.acquisitionSystemInformation.is_present()) {
-        auto acq_system = head.acquisitionSystemInformation.get();
-        if (acq_system.deviceID.has_value()) {
-            device_id_ = acq_system.deviceID.get();
-        }
+IsmrmrdContextVariables::IsmrmrdContextVariables(mrd::Header const& head) {
+    if (head.acquisition_system_information && head.acquisition_system_information->device_id) {
+        device_id_ = head.acquisition_system_information->device_id.value();
     }
 
-    if (head.measurementInformation.is_present()) {
-        auto meas_info = head.measurementInformation.get();
-        if (meas_info.measurementID.is_present()) {
-            measurement_id_ = meas_info.measurementID.get();
-        }
+    if (head.measurement_information && head.measurement_information->measurement_id) {
+        measurement_id_ = head.measurement_information->measurement_id.value();
     }
 
-    if (head.subjectInformation.is_present()) {
-        auto subject_info = head.subjectInformation.get();
-        if (subject_info.patientID.is_present()) {
-            subject_id_ = subject_info.patientID.get();
-        }
+    if (head.subject_information && head.subject_information->patient_id) {
+        subject_id_ = head.subject_information->patient_id.value();
     }
 
-    if (head.studyInformation.is_present()) {
-        auto study_info = head.studyInformation.get();
-        if (study_info.studyID.is_present()) {
-            session_id_ = study_info.studyID.get();
-        }
+    if (head.study_information && head.study_information->study_id) {
+        session_id_ = head.study_information->study_id.value();
     }
 
     if (measurement_id_.empty() || (!session_id_.empty() && !device_id_.empty() && !subject_id_.empty())) {

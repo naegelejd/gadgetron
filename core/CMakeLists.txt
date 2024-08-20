@@ -3,10 +3,10 @@ if (WIN32)
 endif ()
 
 add_compile_options(-Wall -Werror)
-add_subdirectory(readers)
-add_subdirectory(writers)
+# add_subdirectory(readers)
+# add_subdirectory(writers)
 add_subdirectory(parallel)
-add_subdirectory(distributed)
+# add_subdirectory(distributed)
 
 add_library(gadgetron_core SHARED
         Channel.cpp
@@ -26,6 +26,7 @@ set_target_properties(gadgetron_core PROPERTIES
 
 target_link_libraries(gadgetron_core
         ISMRMRD::ISMRMRD
+        MRD::MRD
         gadgetron_toolbox_cpucore
         Boost::boost
         Boost::filesystem

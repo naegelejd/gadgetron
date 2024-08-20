@@ -23,14 +23,12 @@ TEST(AcquisitionAccumulateTriggerTest, slice_trigger) {
 
         for (size_t i = 0; i < 11; i++) {
             auto acq                      = generate_acquisition(192, 16);
-            auto& head                    = std::get<ISMRMRD::AcquisitionHeader>(acq);
-            head.idx.kspace_encode_step_1 = i;
+            acq.head.idx.kspace_encode_step_1 = i;
             channels.input.push(acq);
         }
 
         auto acq   = generate_acquisition(192, 162);
-        auto& head = std::get<ISMRMRD::AcquisitionHeader>(acq);
-        head.idx.slice++;
+        acq.head.idx.slice = acq.head.idx.slice.value_or(0) + 1;
         channels.input.push(acq);
 
         auto message_future = std::async([&]() { return channels.output.pop(); });
@@ -41,7 +39,7 @@ TEST(AcquisitionAccumulateTriggerTest, slice_trigger) {
 
         ASSERT_TRUE(Core::convertible_to<AcquisitionBucket>(message));
         auto bucket = Core::force_unpack<AcquisitionBucket>(std::move(message));
-        ASSERT_EQ(bucket.data_.size(), 11);
+        ASSERT_EQ(bucket.data.size(), 11);
     } catch (const Core::ChannelClosed&){}
 
 }

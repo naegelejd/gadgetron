@@ -10,47 +10,38 @@ void splitInputData(AnyImage image, Core::OutputChannel& out) {
 }
 
 void splitInputData(IsmrmrdImageArray imagearr, Core::OutputChannel& out) {
-    // 7D, fixed order [X, Y, Z, CHA, N, S, LOC]
-    uint16_t X = imagearr.data_.get_size(0);
-    uint16_t Y = imagearr.data_.get_size(1);
-    uint16_t Z = imagearr.data_.get_size(2);
-    uint16_t CHA = imagearr.data_.get_size(3);
-    uint16_t N = imagearr.data_.get_size(4);
-    uint16_t S = imagearr.data_.get_size(5);
-    uint16_t LOC = imagearr.data_.get_size(6);
+    auto LOC = imagearr.data.shape(0);
+    auto S = imagearr.data.shape(1);
+    auto N = imagearr.data.shape(2);
+    auto CHA = imagearr.data.shape(3);
+    auto Z = imagearr.data.shape(4);
+    auto Y = imagearr.data.shape(5);
+    auto X = imagearr.data.shape(6);
 
-    // Each image will be [X,Y,Z,CHA] big
-    std::vector<size_t> img_dims(4);
-    img_dims[0] = X;
-    img_dims[1] = Y;
-    img_dims[2] = Z;
-    img_dims[3] = CHA;
+    // Each image will be [CHA,Z,Y,X] big
+    std::vector<size_t> img_dims{CHA, Z, Y, X};
 
-    // Loop over N, S and LOC
-    for (uint16_t loc = 0; loc < LOC; loc++) {
-        for (uint16_t s = 0; s < S; s++) {
-            for (uint16_t n = 0; n < N; n++) {
-                // Create a new image header and copy the header for this n, s and loc
-                auto imageHeader = ISMRMRD::ImageHeader();
-                memcpy(&imageHeader, &imagearr.headers_(n, s, loc), sizeof(ISMRMRD::ImageHeader));
-
-                // Create a new image image and the 4D data block [X,Y,Z,CHA] for this n, s and loc
-                auto imageData = hoNDArray<std::complex<float>>(img_dims);
-                memcpy(imageData.get_data_ptr(), &imagearr.data_(0, 0, 0, 0, n, s, loc), X * Y * Z * CHA * sizeof(std::complex<float>));
-
-                // Create a new meta container if needed and copy
-                auto imageMetaContainer = std::optional<ISMRMRD::MetaContainer>();
-                if (imagearr.meta_.size() > 0) {
-                    size_t mindex = loc * N * S + s * N + n;
-                    imageMetaContainer = imagearr.meta_[mindex];
+    // Loop over LOC, S, and N
+    for (auto loc = 0; loc < LOC; loc++) {
+        for (auto s = 0; s < S; s++) {
+            for (auto n = 0; n < N; n++) {
+                mrd::Image<std::complex<float>> img;
+                img.head = imagearr.headers(loc, s, n);
+                if (imagearr.meta.has_value()) {
+                    img.meta = imagearr.meta.value()[loc, s, n];
                 }
 
+                img.data.resize(img_dims);
+                /** TODO Joe: Just use xtensor view to assign img.data ... */
+                memcpy(img.data.data(), &imagearr.data(loc, s, n, 0, 0, 0, 0), X * Y * Z * CHA * sizeof(std::complex<float>));
+
                 // Pass the image down the chain
-                out.push(Core::Image<std::complex<float>>(std::move(imageHeader), std::move(imageData), std::move(imageMetaContainer)));
+                out.push(img);
             }
         }
     }
 }
+
 } // namespace
 
 namespace Gadgetron {

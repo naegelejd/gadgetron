@@ -5,8 +5,6 @@
 
 #pragma once
 
-#include "ismrmrd/ismrmrd.h"
-
 namespace Gadgetron
 {
     /// defination of image meta attributes

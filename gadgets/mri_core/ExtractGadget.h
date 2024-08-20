@@ -6,7 +6,6 @@
 
 #include <bitset>
 #include <complex>
-#include <ismrmrd/ismrmrd.h>
 
 namespace Gadgetron {
 
@@ -30,6 +29,6 @@ namespace Gadgetron {
         void process(Core::InputChannel<Core::Image<std::complex<float>>>& in, Core::OutputChannel& out) override;
 
     protected:
-        std::set<ISMRMRD::ISMRMRD_ImageTypes> image_types;
+        std::set<mrd::ImageType> image_types;
     };
 }

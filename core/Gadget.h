@@ -11,7 +11,7 @@
 #include <mutex>
 #include "Channel.h"
 #include <stdexcept>
-#include <ismrmrd/xml.h>
+#include <mrd/binary/protocols.h>
 #include "LegacyACE.h"
 #include "Node.h"
 #include "Context.h"
@@ -224,13 +224,19 @@ namespace Gadgetron {
         virtual int process(ACE_Message_Block *m) = 0;
 
 
-        virtual int process_config(const ISMRMRD::IsmrmrdHeader &header) {
+        virtual int process_config(const mrd::Header &header) {
             std::stringstream stream;
-            try {
-                ISMRMRD::serialize(header, stream);
-            } catch (...){
 
-            }
+            /** TODO Joe
+             *
+             * Can we just update all Legacy Gadgets to become ChannelGadgets and finally get rid of the ACE shim stuff?
+             *
+             * Then we can NOT do the nonsense below just to pass the header to the Gadget. Gross.
+             */
+            mrd::binary::MrdWriter writer(stream);
+            writer.WriteHeader(header);
+            writer.EndData();
+            writer.Close();
 
             ACE_Message_Block block(stream.str());
             return this->process_config(&block);
