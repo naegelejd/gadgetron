@@ -104,4 +104,47 @@ namespace Gadgetron
     EXPORTMRICORE std::map<std::string,std::string> to_map(const std::vector<ISMRMRD::UserParameterString>&);
 
     ISMRMRD::ImageHeader image_header_from_acquisition(const ISMRMRD::AcquisitionHeader& acq_header,const ISMRMRD::IsmrmrdHeader& header, const hoNDArray<std::complex<float>>& data );
+
+    /** TODO Joe: Remove these now vvvvv */
+
+    // template <typename T, size_t N>
+    // hoNDArray<T> adapt_mrd_to_hoNDArray(yardl::NDArray<T, N>& mrd_array)
+    // {
+    //     auto shape = mrd_array.shape();
+    //     std::vector<size_t> dims(shape.rbegin(), shape.rend());
+    //     hoNDArray<T> ho_array(dims, mrd_array.data());
+    //     return std::move(ho_array);
+    // }
+
+    // template <typename T, size_t N>
+    // hoNDArray<T> copy_mrd_to_hoNDArray(const yardl::NDArray<T, N>& mrd_array)
+    // {
+    //     auto shape = mrd_array.shape();
+    //     std::vector<size_t> dims(shape.rbegin(), shape.rend());
+    //     hoNDArray<T> ho_array(dims);
+    //     std::copy(mrd_array.data(), mrd_array.data() + mrd_array.size(), ho_array.data());
+    //     return std::move(ho_array);
+    // }
+
+    // template <typename T, size_t N>
+    // void copy_hoNDArray_to_mrd(const hoNDArray<T>& ho_array, yardl::NDArray<T, N>& mrd_array)
+    // {
+    //     std::vector<size_t> shape(ho_array.dimensions().rbegin(), ho_array.dimensions().rend());
+    //     for (auto s : shape) {
+    //         GDEBUG_STREAM("Joe: shape: " << s);
+    //     }
+    //     // mrd_array.resize(shape);
+    //     mrd_array.resize(shape, true);
+    //     GDEBUG_STREAM("Joe: mrd_array.size(): " << mrd_array.size() << " at " << mrd_array.data());
+    //     // std::copy(ho_array.data(), ho_array.data() + ho_array.size(), mrd_array.data());
+    //     std::copy(ho_array.begin(), ho_array.end(), mrd_array.begin());
+    // }
+
+    // template <typename T, size_t N>
+    // std::vector<size_t> mrd_shape_to_hoNDArray_shape(const yardl::NDArray<T, N>& mrd_array)
+    // {
+    //     auto shape = mrd_array.shape();
+    //     std::vector<size_t> dims(shape.rbegin(), shape.rend());
+    //     return std::move(dims);
+    // }
 }

@@ -89,7 +89,7 @@ namespace Gadgetron {
         // --------------------------------------------------
 
         // default interface function
-        virtual int process_config(ACE_Message_Block* mb);
+        virtual int process_config(const mrd::Header& header);
         virtual int process(Gadgetron::GadgetContainerMessage< IsmrmrdImageArray >* m1);
 
 

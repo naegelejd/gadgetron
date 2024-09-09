@@ -75,7 +75,7 @@ namespace Gadgetron { namespace Test {
         acq.head.channel_order = std::vector<uint32_t>(channels, 1);
         acq.head.center_sample = number_of_samples / 2;
         acq.head.measurement_uid = measurement_uid;
-        acq.data.resize({channels, number_of_samples});
+        acq.data.create({number_of_samples, channels});
         std::fill(acq.data.begin(), acq.data.end(), std::complex<float>(1));
         return acq;
     }

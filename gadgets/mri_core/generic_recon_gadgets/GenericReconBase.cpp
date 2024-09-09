@@ -17,7 +17,8 @@ namespace Gadgetron {
     }
 
     template <typename T> 
-    int GenericReconBase<T>::process_config(ACE_Message_Block* mb)
+    // int GenericReconBase<T>::process_config(ACE_Message_Block* mb)
+    int GenericReconBase<T>::process_config(const mrd::Header& header)
     {
         if (!debug_folder.value().empty())
         {

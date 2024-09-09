@@ -26,11 +26,9 @@ namespace Gadgetron {
             { 3, IMTYPE::kPhase } };
 
         template <class FUNCTION>
-        mrd::ImageData<float> extract(const mrd::ImageData<std::complex<float>>& data, FUNCTION&& extractor) {
-            mrd::ImageData<float> output(data.shape());
+        hoNDArray<float> extract(const hoNDArray<std::complex<float>>& data, FUNCTION&& extractor) {
+            hoNDArray<float> output(data.dimensions());
             std::transform(data.begin(), data.end(), output.begin(), extractor);
-
-            /** TODO Joe: Should we `move` this? */
             return output;
         }
 

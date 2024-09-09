@@ -260,6 +260,10 @@ namespace Gadgetron
                 Gadgetron::scal(scaling, complexImResized);
             }
         }
+        catch (const std::exception& e)
+        {
+            GADGET_THROW(e.what());
+        }
         catch (...)
         {
             GADGET_THROW("Errors in zero_pad_resize(...) ... ");

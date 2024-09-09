@@ -230,6 +230,18 @@ def validate_output(*, output_file, reference_file, output_group, reference_grou
     except RuntimeError as e:
         return Failure, str(e)
 
+    #### TODO Joe: Begin
+
+    # from PIL import Image
+    print(output_data.shape, output_data.dtype, numpy.mean(output_data), numpy.min(output_data), numpy.max(output_data))
+    # output_image = Image.fromarray(output_data)
+    # output_image.save("output.png")
+    print(reference_data.shape, reference_data.dtype, numpy.mean(reference_data), numpy.min(reference_data), numpy.max(reference_data))
+    # reference_image = Image.fromarray(reference_data)
+    # reference_image.save("reference.png")
+
+    #### TODO Joe: End
+
     output = output_data[...].flatten().astype('float32')
     reference = reference_data[...].flatten().astype('float32')
 
@@ -239,7 +251,8 @@ def validate_output(*, output_file, reference_file, output_group, reference_grou
     if value_threshold < norm_diff:
         return Failure, "Comparing values, norm diff: {} (threshold: {})".format(norm_diff, value_threshold)
 
-    if value_threshold < abs(1 - scale):
+    ## TODO Joe: Kelvin is opening a PR to fix this vvvvv
+    if scale_threshold < abs(1 - scale):
         return Failure, "Comparing image scales, ratio: {} ({}) (threshold: {})".format(scale, abs(1 - scale),
                                                                                         scale_threshold)
 

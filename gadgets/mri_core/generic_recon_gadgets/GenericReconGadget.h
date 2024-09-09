@@ -56,7 +56,7 @@ namespace Gadgetron {
         std::vector<double> acceFactorE2_;
 
         // calibration mode
-        std::vector<Gadgetron::ismrmrdCALIBMODE> calib_mode_;
+        std::vector<mrd::CalibrationMode> calib_mode_;
 
         // --------------------------------------------------
         // variable for recon
@@ -79,7 +79,8 @@ namespace Gadgetron {
         // gadget functions
         // --------------------------------------------------
         // default interface function
-        virtual int process_config(ACE_Message_Block* mb);
+        // virtual int process_config(ACE_Message_Block* mb);
+        virtual int process_config(const mrd::Header& header);
         virtual int process(Gadgetron::GadgetContainerMessage< IsmrmrdReconData >* m1);
         virtual int close(unsigned long flags) { return BaseClass::close(flags); }
 
@@ -120,8 +121,8 @@ namespace Gadgetron {
         std::string study_;
         // measurement ID
         std::string measurement_;
-        // patient position string
-        std::string patient_position_;
+        // patient position enum
+        mrd::PatientPosition patient_position_;
         // acquired measurement ID
         std::string measurement_id_;
         // vendor name

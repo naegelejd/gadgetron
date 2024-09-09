@@ -168,10 +168,10 @@ public:
             try {
                 auto message = output_channel.input.pop();
 
-                if (convertible_to<Gadgetron::AcquisitionBucket>(message) ) {
-                    GERROR_STREAM("AcquisitionBucket not yet supported by MrdWriter");
-                } else if (convertible_to<Gadgetron::IsmrmrdImageArray>(message) ) {
-                    GERROR_STREAM("ImageArray not yet supported by MrdWriter");
+                if (convertible_to<mrd::Acquisition>(message) ) {
+                    mrd_writer.WriteData(force_unpack<mrd::Acquisition>(std::move(message)));
+                } else if (convertible_to<mrd::WaveformUint32>(message) ) {
+                    mrd_writer.WriteData(force_unpack<mrd::WaveformUint32>(std::move(message)));
                 } else if (convertible_to<mrd::ImageUint16>(message) ) {
                     mrd_writer.WriteData(force_unpack<mrd::ImageUint16>(std::move(message)));
                 } else if (convertible_to<mrd::ImageInt16>(message) ) {
@@ -188,6 +188,10 @@ public:
                     mrd_writer.WriteData(force_unpack<mrd::ImageComplexFloat>(std::move(message)));
                 } else if (convertible_to<mrd::ImageComplexDouble>(message) ) {
                     mrd_writer.WriteData(force_unpack<mrd::ImageComplexDouble>(std::move(message)));
+                } else if (convertible_to<mrd::AcquisitionBucket>(message) ) {
+                    mrd_writer.WriteData(force_unpack<mrd::AcquisitionBucket>(std::move(message)));
+                } else if (convertible_to<mrd::ImageArray>(message) ) {
+                    mrd_writer.WriteData(force_unpack<mrd::ImageArray>(std::move(message)));
                 } else {
                     GERROR_STREAM("Unsupported Message type for MrdWriter");
                 }

@@ -14,14 +14,6 @@
 
 namespace Gadgetron
 {
-    template<class T>
-    constexpr auto ismrmrd_image_type(){
-        if constexpr (std::is_same_v<T,unsigned short>) return ISMRMRD::ISMRMRD_USHORT;
-        if constexpr (std::is_same_v<T,short>) return ISMRMRD::ISMRMRD_SHORT;
-        if constexpr (std::is_same_v<T,int >) return ISMRMRD::ISMRMRD_INT;
-        if constexpr (std::is_same_v<T,unsigned int>) return ISMRMRD::ISMRMRD_UINT;
-        throw std::runtime_error("Unsupported type");
-    }
 
     template<typename T, typename Base >
     void FloatToFixPointGadget<T, Base>::process(Core::InputChannel<Core::Image<float>> &input, Core::OutputChannel &output) {
@@ -44,38 +36,39 @@ namespace Gadgetron
         };
 
         for (auto image_in: input) {
-            mrd::Image<T> image_out;
-            image_out.head = image_in.head;
-            image_out.meta = image_in.meta;
-            image_out.data.resize(image_in.data.shape());
+            auto output_data = hoNDArray<T>(image_in.data.dimensions());
 
             // Now we're ready to transform the image data
             switch (image_in.head.image_type) {
                 case mrd::ImageType::kMagnitude: {
-                    std::transform(image_in.data.begin(), image_in.data.end(), image_out.data.begin(), magnitude);
+                    std::transform(image_in.data.begin(), image_in.data.end(), output_data.begin(), magnitude);
                 }
                     break;
 
                 case mrd::ImageType::kReal:
                 case mrd::ImageType::kImag: {
-                    std::transform(image_in.data.begin(), image_in.data.end(), image_out.data.begin(), real_value);
+                    std::transform(image_in.data.begin(), image_in.data.end(), output_data.begin(), real_value);
 
-                    if (image_out.meta.count(GADGETRON_IMAGE_WINDOWCENTER) > 0 && image_out.meta[GADGETRON_IMAGE_WINDOWCENTER].size() > 0) {
-                        std::string value = image_out.meta[GADGETRON_IMAGE_WINDOWCENTER][0]; 
-                        long updatedWindowCenter = std::atol(value.c_str()) + (long) self.intensity_offset;
-                        image_out.meta[GADGETRON_IMAGE_WINDOWCENTER][0] = std::to_string(updatedWindowCenter);
+                    if (image_out.meta.count(GADGETRON_IMAGE_WINDOWCENTER) && image_out.meta[GADGETRON_IMAGE_WINDOWCENTER].size() > 0) {
+                        long windowCenter = std::get<long>(image_out.meta[GADGETRON_IMAGE_WINDOWCENTER].front());
+                        image_out.meta[GADGETRON_IMAGE_WINDOWCENTER][0] = windowCenter + self.intensity_offset;
                     }
                 }
                     break;
 
                 case mrd::ImageType::kPhase: {
-                    std::transform(image_in.data.begin(), image_in.data.end(), image_out.data.begin(), phase);
+                    std::transform(image_in.data.begin(), image_in.data.end(), output_data.begin(), phase);
                 }
                     break;
 
                 default:
                     throw std::runtime_error("Unknown image type in Image");
             }
+
+            mrd::Image<T> image_out;
+            image_out.head = image_in.head;
+            image_out.meta = image_in.meta;
+            image_out.data = output_data;
 
             output.push(std::move(image_out));
         }

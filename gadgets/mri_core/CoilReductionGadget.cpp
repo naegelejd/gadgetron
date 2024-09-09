@@ -53,7 +53,6 @@ CoilReductionGadget::CoilReductionGadget(const Core::Context& context, const Cor
 
 void CoilReductionGadget::process(Core::InputChannel<Core::Acquisition>& in, Core::OutputChannel& out) {
     for (auto acq : in) {
-
         if (acq.Coils() == coils_out_) {
             // No need to do anything
             out.push(std::move(acq));
@@ -65,24 +64,26 @@ void CoilReductionGadget::process(Core::InputChannel<Core::Acquisition>& in, Cor
             continue;
         }
 
-        auto old_channels = acq.Coils();
-        auto old_data = acq.data;
+        auto nsamples = acq.Samples();
+        auto nchannels = acq.Coils();
 
-        /** TODO Joe: Remove this vvvvv */
-        if (acq.data.data() == old_data.data()) {
-            GERROR("ALERT - JOE - Expected to have copied data\n");
-            continue;
-        }
+        std::vector<size_t> dims_out(2);
+        dims_out[0] = nsamples;
+        dims_out[1] = coils_out_;
+        hoNDArray<std::complex<float>> reduced(dims_out);
 
-        acq.data.resize({coils_out_, acq.Samples()});
+        auto s = acq.data.data();
+        auto d = reduced.data();
 
         size_t coils_copied = 0;
-        for (size_t c = 0; c < old_channels; c++) {
+        for (size_t c = 0; c < nchannels; c++) {
             if (coil_mask_[c]) {
-                xt::view(acq.data, coils_copied, xt::all()) = xt::view(old_data, c, xt::all());
+                memcpy(d + coils_copied * nsamples, s + c * nsamples, sizeof(std::complex<float>) * nsamples);
                 coils_copied++;
             }
         }
+
+        acq.data = std::move(reduced);
         acq.head.channel_order = std::vector<uint32_t>(coils_out, 1);
         
         out.push(std::move(acq));

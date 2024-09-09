@@ -4,13 +4,10 @@
 */
 
 #pragma once
-#include "hoNDArray.h"
-#include "ismrmrd/meta.h"
 
-#include <ismrmrd/ismrmrd.h>
-
-#include <Types.h>
 #include "PureGadget.h"
+#include <Types.h>
+
 namespace Gadgetron
 {
 class ComplexToFloatGadget: public Core::PureGadget<Core::Image<float>,Core::Image<std::complex<float>>>
@@ -20,7 +17,6 @@ class ComplexToFloatGadget: public Core::PureGadget<Core::Image<float>,Core::Ima
 
         Core::Image<float> process_function(Core::Image<std::complex<float>> args) const override;
     private:
-        std::map<uint16_t,std::function<hoNDArray<float>(const hoNDArray<std::complex<float>>&)>> converters;
+        std::map<mrd::ImageType, std::function<mrd::ImageData<float>(const mrd::ImageData<std::complex<float>>&)>> converters;
 };
 }
-

@@ -1,10 +1,6 @@
 #pragma once
-#include "Gadget.h"
-#include "hoNDArray.h"
-#include "ismrmrd/meta.h"
-#include "gadgetron_mricore_export.h"
 
-#include <ismrmrd/ismrmrd.h>
+#include "Node.h"
 
 namespace Gadgetron
 {
@@ -20,7 +16,7 @@ namespace Gadgetron
     */
 
     template <typename T, typename Base >
-    class EXPORTGADGETSMRICORE FloatToFixPointGadget: public Core::ChannelGadget<Core::Image<float>>
+    class FloatToFixPointGadget: public Core::ChannelGadget<Core::Image<float>>
     {
     public:
 
@@ -31,7 +27,7 @@ namespace Gadgetron
         void process(Core::InputChannel<Core::Image<float>>& input, Core::OutputChannel& output) override;
     };
 
-    class EXPORTGADGETSMRICORE FloatToShortGadget :public FloatToFixPointGadget < short,FloatToShortGadget >
+    class FloatToShortGadget :public FloatToFixPointGadget < short,FloatToShortGadget >
     {
     public:
         using FloatToFixPointGadget<short,FloatToShortGadget>::FloatToFixPointGadget;
@@ -40,7 +36,7 @@ namespace Gadgetron
         NODE_PROPERTY(intensity_offset, short , "Intensity offset", 0);
         ~FloatToShortGadget() override = default;
     };
-    class EXPORTGADGETSMRICORE FloatToUShortGadget :public FloatToFixPointGadget < unsigned short,FloatToUShortGadget >
+    class FloatToUShortGadget :public FloatToFixPointGadget < unsigned short,FloatToUShortGadget >
     {
     public:
         using FloatToFixPointGadget<unsigned short,FloatToUShortGadget>::FloatToFixPointGadget;
@@ -49,7 +45,7 @@ namespace Gadgetron
         NODE_PROPERTY(intensity_offset, short , "Intensity offset", 2048);
         ~FloatToUShortGadget() override = default;
     };
-    class EXPORTGADGETSMRICORE FloatToUIntGadget :public FloatToFixPointGadget < unsigned int,FloatToUIntGadget >
+    class FloatToUIntGadget :public FloatToFixPointGadget < unsigned int,FloatToUIntGadget >
     {
     public:
         using FloatToFixPointGadget<unsigned int,FloatToUIntGadget>::FloatToFixPointGadget;
@@ -58,7 +54,7 @@ namespace Gadgetron
         NODE_PROPERTY(intensity_offset, int , "Intensity offset", 2048);
         ~FloatToUIntGadget() override = default;
     };
-    class EXPORTGADGETSMRICORE FloatToIntGadget :public FloatToFixPointGadget < int,FloatToIntGadget >
+    class FloatToIntGadget :public FloatToFixPointGadget < int,FloatToIntGadget >
     {
     public:
         using FloatToFixPointGadget<int,FloatToIntGadget>::FloatToFixPointGadget;

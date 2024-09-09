@@ -19,21 +19,13 @@ namespace Gadgetron {
     {
     }
 
-    int GenericReconNoiseStdMapComputingGadget::process_config(ACE_Message_Block* mb)
+    int GenericReconNoiseStdMapComputingGadget::process_config(const mrd::Header& header)
     {
-        GADGET_CHECK_RETURN(BaseClass::process_config(mb) == GADGET_OK, GADGET_FAIL);
+        GADGET_CHECK_RETURN(BaseClass::process_config(header) == GADGET_OK, GADGET_FAIL);
 
-        ISMRMRD::IsmrmrdHeader h;
-        try
-        {
-            deserialize(mb->rd_ptr(), h);
-        }
-        catch (...)
-        {
-            GDEBUG("Error parsing ISMRMRD Header");
-        }
+        auto& h = header;
 
-        if (!h.acquisitionSystemInformation)
+        if (!h.acquisition_system_information)
         {
             GDEBUG("acquisitionSystemInformation not found in header. Bailing out");
             return GADGET_FAIL;
@@ -62,12 +54,13 @@ namespace Gadgetron {
         if (verbose.value())
         {
             GDEBUG_STREAM("----> GenericReconNoiseStdMapComputingGadget::process(...) has been called " << process_called_times_ << " times ...");
-            std::stringstream os;
-            recon_res_->data_.print(os);
-            GDEBUG_STREAM(os.str());
+            /** TODO Joe: Disabled printing entire array... */
+            // std::stringstream os;
+            // recon_res_->data_.print(os);
+            // GDEBUG_STREAM(os.str());
         }
 
-        std::string dataRole = std::string(recon_res_->meta_[0].as_str(GADGETRON_DATA_ROLE));
+        std::string dataRole = std::get<std::string>(recon_res_->meta[0][GADGETRON_DATA_ROLE].front());
         if (dataRole != GADGETRON_IMAGE_SNR_MAP)
         {
             if (this->next()->putq(m1) == -1)
@@ -79,20 +72,22 @@ namespace Gadgetron {
             return GADGET_OK;
         }
 
-        size_t encoding = (size_t)recon_res_->meta_[0].as_long("encoding", 0);
+        size_t encoding = (size_t)std::get<long>(recon_res_->meta[0]["encoding"].front());
         GADGET_CHECK_RETURN(encoding<num_encoding_spaces_, GADGET_FAIL);
 
         std::stringstream os;
         os << "encoding_" << encoding;
         std::string str = os.str();
 
-        size_t RO = recon_res_->data_.get_size(0);
-        size_t E1 = recon_res_->data_.get_size(1);
-        size_t E2 = recon_res_->data_.get_size(2);
-        size_t CHA = recon_res_->data_.get_size(3);
-        size_t N = recon_res_->data_.get_size(4);
-        size_t S = recon_res_->data_.get_size(5);
-        size_t SLC = recon_res_->data_.get_size(6);
+        hoNDArray<std::complex<float>> data = Gadgetron::adapt_mrd_to_hoNDArray(recon_res_->data);
+
+        size_t RO = data.get_size(0);
+        size_t E1 = data.get_size(1);
+        size_t E2 = data.get_size(2);
+        size_t CHA = data.get_size(3);
+        size_t N = data.get_size(4);
+        size_t S = data.get_size(5);
+        size_t SLC = data.get_size(6);
 
         // perform std map computation
         if (N < start_N_for_std_map.value())
@@ -121,7 +116,7 @@ namespace Gadgetron {
 
         if (!debug_folder_full_path_.empty())
         {
-            gt_exporter_.export_array_complex(cm1->getObjectPtr()->data_, debug_folder_full_path_ + "incoming_SNR_images_" + str);
+            gt_exporter_.export_array_complex(data, debug_folder_full_path_ + "incoming_SNR_images_" + str);
         }
 
         // compute std map
@@ -134,7 +129,9 @@ namespace Gadgetron {
         hoNDArray<real_value_type> stdMap(RO, E1, E2, CHA, 1, S, SLC);
         Gadgetron::clear(stdMap);
 
-        hoNDArray<T>& snrMap = cm1->getObjectPtr()->data_;
+        /** TODO Joe: Clean up vvvvv */
+        // hoNDArray<T>& snrMap = cm1->getObjectPtr()->data_;
+        hoNDArray<T> snrMap = Gadgetron::adapt_mrd_to_hoNDArray(cm1->getObjectPtr()->data);
 
         size_t n, s, slc;
 
@@ -181,26 +178,29 @@ namespace Gadgetron {
         GDEBUG_CONDITION_STREAM(verbose.value(), "GenericReconNoiseStdMapComputingGadget::process(...) ends ... ");
 
         // update image headers
-        cm1->getObjectPtr()->data_.clear();
-        Gadgetron::real_to_complex(stdMap, cm1->getObjectPtr()->data_);
+        /** TODO Joe: Clean up vvvvv */
+        // cm1->getObjectPtr()->data_.clear();
+        // Gadgetron::real_to_complex(stdMap, cm1->getObjectPtr()->data_);
+        hoNDArray<T> out;
+        Gadgetron::real_to_complex(stdMap, out);
+        Gadgetron::copy_hoNDArray_to_mrd(out, cm1->getObjectPtr()->data);
 
-        size_t num = cm1->getObjectPtr()->meta_.size();
+        size_t num = cm1->getObjectPtr()->meta.size();
         for (size_t n = 0; n < num; n++)
         {
-            cm1->getObjectPtr()->meta_[n].set(GADGETRON_DATA_ROLE, GADGETRON_IMAGE_STD_MAP);
+            cm1->getObjectPtr()->meta[n][GADGETRON_DATA_ROLE] = {GADGETRON_IMAGE_STD_MAP};
 
-            cm1->getObjectPtr()->meta_[n].set(GADGETRON_IMAGECOMMENT, "GT");
-            cm1->getObjectPtr()->meta_[n].append(GADGETRON_IMAGECOMMENT, "SNR");
-            cm1->getObjectPtr()->meta_[n].append(GADGETRON_IMAGECOMMENT, GADGETRON_IMAGE_STD_MAP);
+            cm1->getObjectPtr()->meta[n][GADGETRON_IMAGECOMMENT] = {"GT", "SNR", GADGETRON_IMAGE_STD_MAP};
 
-            cm1->getObjectPtr()->meta_[n].set(GADGETRON_SEQUENCEDESCRIPTION, "_STD_MAP");
-            cm1->getObjectPtr()->meta_[n].set(GADGETRON_USE_DEDICATED_SCALING_FACTOR, (long)1);
+            cm1->getObjectPtr()->meta[n][GADGETRON_SEQUENCEDESCRIPTION] = {"_STD_MAP"};
+            cm1->getObjectPtr()->meta[n][GADGETRON_USE_DEDICATED_SCALING_FACTOR] = {(long)1};
         }
 
-        num = cm1->getObjectPtr()->headers_.get_number_of_elements();
+        num = cm1->getObjectPtr()->headers.size();
         for (size_t n = 0; n < num; n++)
         {
-            cm1->getObjectPtr()->headers_(n).image_series_index *= 10;
+            auto prev_series_index = cm1->getObjectPtr()->headers(n).image_series_index.value_or(0);
+            cm1->getObjectPtr()->headers(n).image_series_index = prev_series_index * 10;
         }
 
         // ----------------------------------------------------------

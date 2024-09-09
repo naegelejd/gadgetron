@@ -1,5 +1,6 @@
 #include "RemoveROOversamplingGadget.h"
 
+#include <mri_core_utility.h>
 #include <xtensor/xadapt.hpp>
 namespace Gadgetron {
 
@@ -40,12 +41,11 @@ RemoveROOversamplingGadget::RemoveROOversamplingGadget(const Core::Context& cont
 void RemoveROOversamplingGadget::process(Core::InputChannel<Core::Acquisition>& in, Core::OutputChannel& out) {
     for (auto acq : in) {
         if (dowork_) {
-            auto shape = acq.data.shape();
+            // auto shape = acq.data.shape();
 
-            // We'll use hoNDFFT for the FFTs, so we need to "adapt" the MRD arrays (pointers) to hoNDArrays
-
-            // Reverse the dimensions from MRD -> hoNDArray
-            std::vector<size_t> data_in_dims(std::rbegin(shape), std::rend(shape));
+            // // Reverse the dimensions from MRD -> hoNDArray
+            // std::vector<size_t> data_in_dims(std::rbegin(shape), std::rend(shape));
+            auto data_in_dims = acq.data.dimensions();
             if (!ifft_buf_.dimensions_equal(data_in_dims)) {
                 ifft_buf_.create(data_in_dims);
                 ifft_res_.create(data_in_dims);
@@ -59,8 +59,9 @@ void RemoveROOversamplingGadget::process(Core::InputChannel<Core::Acquisition>& 
                 fft_res_.create(data_out_dims);
             }
 
-            hoNDArray<std::complex<float>> adapted(data_in_dims, acq.data.data());
-            hoNDFFT<float>::instance()->ifft1c(adapted, ifft_res_, ifft_buf_);
+            // auto adapted = Gadgetron::adapt_mrd_to_hoNDArray(acq.data);
+            // hoNDFFT<float>::instance()->ifft1c(adapted, ifft_res_, ifft_buf_);
+            hoNDFFT<float>::instance()->ifft1c(acq.data, ifft_res_, ifft_buf_);
 
             hoNDArray<std::complex<float>> temp(data_out_dims);
 
@@ -77,10 +78,9 @@ void RemoveROOversamplingGadget::process(Core::InputChannel<Core::Acquisition>& 
 
             hoNDFFT<float>::instance()->fft1c(temp, fft_res_, fft_buf_);
 
-            // Reverse the dimensions for mrd::Acquisition::data
-            std::vector<size_t> shape_out(std::rbegin(data_out_dims), std::rend(data_out_dims));
-            acq.data.resize(shape_out);
-            memcpy(acq.data.data(), fft_res_.get_data_ptr(), fft_res_.get_number_of_bytes());
+            // /** TODO Joe: Need to copy FFT result back into Acquisition.data */
+            // Gadgetron::copy_hoNDArray_to_mrd(fft_res_, acq.data);
+            acq.data = fft_res_;
 
             acq.head.center_sample = (uint32_t)(acq.head.center_sample.value_or(0) / ratioFOV);
             acq.head.discard_pre = (uint32_t)(acq.head.discard_pre.value_or(0) / ratioFOV);

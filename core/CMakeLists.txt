@@ -26,7 +26,7 @@ set_target_properties(gadgetron_core PROPERTIES
 
 target_link_libraries(gadgetron_core
         ISMRMRD::ISMRMRD
-        MRD::MRD
+        mrd::mrd
         gadgetron_toolbox_cpucore
         Boost::boost
         Boost::filesystem

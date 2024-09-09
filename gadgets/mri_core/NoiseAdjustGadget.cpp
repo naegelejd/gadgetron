@@ -5,6 +5,7 @@
 #include "hoNDArray_linalg.h"
 #include "hoNDArray_reductions.h"
 #include "log.h"
+#include "mri_core_utility.h"
 
 #include <mrd/binary/protocols.h>
 
@@ -211,6 +212,17 @@ namespace Gadgetron {
             noise_covariance_out = context.parameters.at("noisecovarianceout");
             GDEBUG_STREAM("Output noise covariance matrix is provided as a parameter: " << noise_covariance_out);
         }
+
+        /** TODO Joe: Since upgrading to MRDv2, this NoiseAdjustGadget no longer uses the MRD Storage Server
+         * Therefore, one of the following must be set as a parameter to Gadgetron:
+         *  1.  noise_covariance_in (path to previously-saved noise covariance matrix)
+         *  2.  noise_covariance_out (path to save computed noise covariance matrix)
+         */
+        /** TODO Joe: Nevermind - But user will get an error if Noise Acquisitions are Gathered and an output file is not specified */
+        // if (noise_covariance_in.empty() && noise_covariance_out.empty()) {
+        //     GERROR("One of noise_covariance_in or noise_covariance_out must be provided as a parameter\n");
+        //     throw std::runtime_error("One of noise_covariance_in or noise_covariance_out must be provided as a parameter");
+        // }
         
         noisehandler = load_or_gather();
     }
@@ -220,10 +232,10 @@ namespace Gadgetron {
 
         if (noise_covariance) {
             // Load noise covariance matrix into hoNDArray
-            std::vector<size_t> matrix_shape(noise_covariance->matrix.shape().rbegin(), noise_covariance->matrix.shape().rend());
-            hoNDArray<std::complex<float>> matrix(matrix_shape, noise_covariance->matrix.data());
+            // hoNDArray<std::complex<float>> matrix = Gadgetron::adapt_mrd_to_hoNDArray(noise_covariance->matrix);
 
-            size_t CHA = noise_covariance->matrix.shape(0);
+            // size_t CHA = noise_covariance->matrix.shape(0);
+            size_t CHA = noise_covariance->matrix.get_size(0);
             if (noise_covariance->coil_labels.size() == CHA) {
                 std::vector<std::string> current_coil_labels;
                 if (current_mrd_header.acquisition_system_information) {
@@ -250,13 +262,13 @@ namespace Gadgetron {
                     } else {
                         if (coil_order_of_data_in_noise.size() == CHA) {
                             GWARN_STREAM("Noise and measurement have different coils, but will be reordered ... ");
-                            matrix = reorder_noise_channels(matrix, coil_order_of_data_in_noise);
+                            noise_covariance->matrix = reorder_noise_channels(noise_covariance->matrix, coil_order_of_data_in_noise);
                         } else {
                             GWARN_STREAM("Noise and measurement have different coils and cannot be reordered ... ");
                         }
                     }
                 }
-                return LoadedNoise{matrix, noise_covariance->noise_dwell_time_us};
+                return LoadedNoise{noise_covariance->matrix, noise_covariance->noise_dwell_time_us};
 
             } else if (current_mrd_header.acquisition_system_information) {
                 GERROR("Noise covariance matrix is malformed. Number of labels does not match number of channels.");
@@ -286,11 +298,11 @@ namespace Gadgetron {
             ng.noise_dwell_time_us = acq.head.sample_time_us.value_or(0);
         }
 
-        std::vector<size_t> shape(acq.data.shape().rbegin(), acq.data.shape().rend());
-        hoNDArray<std::complex<float>> data(shape);
-        std::copy(acq.data.begin(), acq.data.end(), data.begin());
+        /** TODO Joe: Need to copy to hoNDArray here because we can't adapt a const MRD array */
+        // auto data = Gadgetron::copy_mrd_to_hoNDArray(acq.data);
+        // auto dataM = as_arma_matrix(data);
 
-        auto dataM = as_arma_matrix(data);
+        auto dataM = as_arma_matrix(acq.data);
         auto covariance = as_arma_matrix(ng.tmp_covariance);
         covariance += dataM.t()*dataM;
 
@@ -318,9 +330,13 @@ namespace Gadgetron {
         noise_covariance.sample_count = ng.total_number_of_samples;
         noise_covariance.noise_dwell_time_us = ng.noise_dwell_time_us;
         noise_covariance.receiver_noise_bandwidth = receiver_noise_bandwidth;
+        noise_covariance.matrix = ng.tmp_covariance;
 
-        noise_covariance.matrix.resize(ng.tmp_covariance.dimensions());
-        std::copy(ng.tmp_covariance.begin(), ng.tmp_covariance.end(), noise_covariance.matrix.begin());
+        /** TODO Joe: Need to copy final covariance matrix data into MRD array */
+        // Gadgetron::copy_hoNDArray_to_mrd(ng.tmp_covariance, noise_covariance.matrix);
+        // noise_covariance.matrix.resize(ng.tmp_covariance.dimensions());
+        // std::copy(ng.tmp_covariance.begin(), ng.tmp_covariance.end(), noise_covariance.matrix.begin());
+
 
         if (!noise_covariance_out.empty()) {
             std::ofstream os(noise_covariance_out, std::ios::out | std::ios::binary);
@@ -333,9 +349,11 @@ namespace Gadgetron {
                 os.close();
             } else {
                 GERROR("Unable to open file %s for writing noise covariance\n", noise_covariance_out.c_str());
+                throw std::runtime_error("Unable to open file for writing noise covariance");
             }
         } else {
-            GERROR_STREAM("Noise covariance output file must be provided as a parameter");
+            GERROR_STREAM("Unable to save noise covariance. Noise covariance output file must be provided as a parameter");
+            // throw std::runtime_error("Noise covariance output file must be provided as a parameter");
         }
     }
 
@@ -354,13 +372,19 @@ namespace Gadgetron {
         Prewhitener pw, Core::Acquisition& acq) {
 
         if (acq.Coils() == pw.prewhitening_matrix.get_size(0)) {
-            std::vector<size_t> shape(acq.data.shape().rbegin(), acq.data.shape().rend());
-            hoNDArray<std::complex<float>> data(shape);
-            std::copy(acq.data.begin(), acq.data.end(), data.begin());
+            // auto data = Gadgetron::adapt_mrd_to_hoNDArray(acq.data);
 
-            auto dataM = as_arma_matrix(data);
+            // auto dataM = as_arma_matrix(data);
+            auto dataM = as_arma_matrix(acq.data);
             auto pwm = as_arma_matrix(pw.prewhitening_matrix);
             dataM *= pwm;
+
+            // if (data.data() != acq.data.data()) {
+            //     /** TODO Joe: Should not need to copy *back* to Acquisition here because 
+            //      * the hoNDArray (and arma::Mat) should not change shape...
+            //     */
+            //     Gadgetron::copy_hoNDArray_to_mrd(data, acq.data);
+            // }
         } else if (!this->pass_nonconformant_data) {
             throw std::runtime_error("Input data has different number of channels from noise data");
         }

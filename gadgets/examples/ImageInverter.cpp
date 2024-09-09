@@ -7,18 +7,17 @@ using namespace Gadgetron::Core;
 
 namespace {
     template<class T>
-    Image<T> invert_image(const Image<T> &image) {
+    Image<T> invert_image(const Image<T> &image)
+    {
+        Image<T> out;
+        out.head = image.head;
+        out.meta = image.meta;
+        out.data = image.data;
 
-        auto data = std::get<hoNDArray<T>>(image);
+		auto max_value = *std::max_element(image.data.begin(), image.data.end());
+		for (auto& d : out.data) d = max_value - d;
 
-		auto max_value = *std::max_element(data.begin(), data.end());
-		for (auto& d : data) d = max_value - d;
-
-        return Image<T>(
-                std::get<ISMRMRD::ImageHeader>(image),
-                data,
-                std::get<optional<ISMRMRD::MetaContainer>>(image)
-        );
+        return out;
     }
 
     template<class T>

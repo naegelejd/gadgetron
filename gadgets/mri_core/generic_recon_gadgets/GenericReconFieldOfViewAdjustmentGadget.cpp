@@ -21,21 +21,13 @@ namespace Gadgetron {
     {
     }
 
-    int GenericReconFieldOfViewAdjustmentGadget::process_config(ACE_Message_Block* mb)
+    int GenericReconFieldOfViewAdjustmentGadget::process_config(const mrd::Header& header)
     {
-        GADGET_CHECK_RETURN(BaseClass::process_config(mb) == GADGET_OK, GADGET_FAIL);
+        GADGET_CHECK_RETURN(BaseClass::process_config(header) == GADGET_OK, GADGET_FAIL);
 
-        ISMRMRD::IsmrmrdHeader h;
-        try
-        {
-            deserialize(mb->rd_ptr(), h);
-        }
-        catch (...)
-        {
-            GDEBUG("Error parsing ISMRMRD Header");
-        }
+        auto& h = header;
 
-        if (!h.acquisitionSystemInformation)
+        if (!h.acquisition_system_information)
         {
             GDEBUG("acquisitionSystemInformation not found in header. Bailing out");
             return GADGET_FAIL;
@@ -59,19 +51,19 @@ namespace Gadgetron {
         for (e = 0; e < NE; e++)
         {
             encoding_FOV_[e].resize(3, 0);
-            encoding_FOV_[e][0] = h.encoding[e].encodedSpace.fieldOfView_mm.x;
-            encoding_FOV_[e][1] = h.encoding[e].encodedSpace.fieldOfView_mm.y;
-            encoding_FOV_[e][2] = h.encoding[e].encodedSpace.fieldOfView_mm.z;
+            encoding_FOV_[e][0] = h.encoding[e].encoded_space.field_of_view_mm.x;
+            encoding_FOV_[e][1] = h.encoding[e].encoded_space.field_of_view_mm.y;
+            encoding_FOV_[e][2] = h.encoding[e].encoded_space.field_of_view_mm.z;
 
             recon_FOV_[e].resize(3, 0);
-            recon_FOV_[e][0] = h.encoding[e].reconSpace.fieldOfView_mm.x;
-            recon_FOV_[e][1] = h.encoding[e].reconSpace.fieldOfView_mm.y;
-            recon_FOV_[e][2] = h.encoding[e].reconSpace.fieldOfView_mm.z;
+            recon_FOV_[e][0] = h.encoding[e].recon_space.field_of_view_mm.x;
+            recon_FOV_[e][1] = h.encoding[e].recon_space.field_of_view_mm.y;
+            recon_FOV_[e][2] = h.encoding[e].recon_space.field_of_view_mm.z;
 
             recon_size_[e].resize(3, 0);
-            recon_size_[e][0] = h.encoding[e].reconSpace.matrixSize.x;
-            recon_size_[e][1] = h.encoding[e].reconSpace.matrixSize.y;
-            recon_size_[e][2] = h.encoding[e].reconSpace.matrixSize.z;
+            recon_size_[e][0] = h.encoding[e].recon_space.matrix_size.x;
+            recon_size_[e][1] = h.encoding[e].recon_space.matrix_size.y;
+            recon_size_[e][2] = h.encoding[e].recon_space.matrix_size.z;
 
             GDEBUG_CONDITION_STREAM(verbose.value(), "Encoding space : " << e << " - encoding FOV : [" << encoding_FOV_[e][0] << " " << encoding_FOV_[e][1] << " " << encoding_FOV_[e][2] << " ]");
             GDEBUG_CONDITION_STREAM(verbose.value(), "Encoding space : " << e << " - recon    FOV : [" << recon_FOV_[e][0]    << " " << recon_FOV_[e][1]    << " " << recon_FOV_[e][2] << " ]");
@@ -95,32 +87,43 @@ namespace Gadgetron {
         if (verbose.value())
         {
             GDEBUG_STREAM("----> GenericReconFieldOfViewAdjustmentGadget::process(...) has been called " << process_called_times_ << " times ...");
-            std::stringstream os;
-            recon_res_->data_.print(os);
-            GDEBUG_STREAM(os.str());
+            /** TODO Joe: Disabled this... do we really want to "print" the entire ImageArray data? */
+            // std::stringstream os;
+            // recon_res_->data_.print(os);
+            // GDEBUG_STREAM(os.str());
         }
+        GDEBUG_STREAM("Joe: ----> GenericReconFieldOfViewAdjustmentGadget::process(...) has been called " << process_called_times_ << " times ...");
 
-        if (!debug_folder_full_path_.empty()) { gt_exporter_.export_array_complex(recon_res_->data_, debug_folder_full_path_ + "data_before_FOV_adjustment"); }
+        /** TODO Joe: Implement */
+        // if (!debug_folder_full_path_.empty()) { gt_exporter_.export_array_complex(recon_res_->data_, debug_folder_full_path_ + "data_before_FOV_adjustment"); }
 
+        GDEBUG_STREAM("Joe: ----> GenericReconFieldOfViewAdjustmentGadget - Image  pre-adjustment mean: " << xt::mean(recon_res_->data)() << " , xyz: " << recon_res_->data.shape(6) << " " << recon_res_->data.shape(5) << " " << recon_res_->data.shape(4));
         // ----------------------------------------------------------
         // FOV adjustment
         // ----------------------------------------------------------
+
         GADGET_CHECK_RETURN(this->adjust_FOV(*recon_res_) == GADGET_OK, GADGET_FAIL);
 
-        if (!debug_folder_full_path_.empty()) { gt_exporter_.export_array_complex(recon_res_->data_, debug_folder_full_path_ + "data_after_FOV_adjustment"); }
+        GDEBUG_STREAM("Joe: ----> GenericReconFieldOfViewAdjustmentGadget - Image post-adjustment mean: " << xt::mean(recon_res_->data)() << " , xyz: " << recon_res_->data.shape(6) << " " << recon_res_->data.shape(5) << " " << recon_res_->data.shape(4));
+
+        /** TODO Joe: Implement */
+        // if (!debug_folder_full_path_.empty()) { gt_exporter_.export_array_complex(recon_res_->data_, debug_folder_full_path_ + "data_after_FOV_adjustment"); }
 
         // make sure the image header is consistent with data
-        size_t N = recon_res_->headers_.get_number_of_elements();
-        for (size_t n = 0; n < N; n++)
-        {
-            recon_res_->headers_(n).matrix_size[0] = recon_res_->data_.get_size(0);
-            recon_res_->headers_(n).matrix_size[1] = recon_res_->data_.get_size(1);
-            recon_res_->headers_(n).matrix_size[2] = recon_res_->data_.get_size(2);
-        }
+        /** TODO Joe: This is no longer necessary in MRD2 */
+        // size_t N = recon_res_->headers.size();
+        // for (size_t n = 0; n < N; n++)
+        // {
+        //     recon_res_->headers(n).matrix_size[0] = recon_res_->data_.get_size(0);
+        //     recon_res_->headers(n).matrix_size[1] = recon_res_->data_.get_size(1);
+        //     recon_res_->headers(n).matrix_size[2] = recon_res_->data_.get_size(2);
+        // }
 
-        this->gt_streamer_.stream_to_ismrmrd_image_buffer(GENERIC_RECON_STREAM_RECONED_COMPLEX_IMAGE_AFTER_POSTPROCESSING, recon_res_->data_, recon_res_->headers_, recon_res_->meta_);
+        /** TODO Joe: Implement */
+        // this->gt_streamer_.stream_to_ismrmrd_image_buffer(GENERIC_RECON_STREAM_RECONED_COMPLEX_IMAGE_AFTER_POSTPROCESSING, recon_res_->data_, recon_res_->headers_, recon_res_->meta_);
 
         GDEBUG_CONDITION_STREAM(verbose.value(), "GenericReconFieldOfViewAdjustmentGadget::process(...) ends ... ");
+        GDEBUG_CONDITION_STREAM(true, "Joe: GenericReconFieldOfViewAdjustmentGadget::process(...) ends ... ");
 
         // ----------------------------------------------------------
         // send out results
@@ -176,19 +179,34 @@ namespace Gadgetron {
     {
 //        try
         {
-            size_t RO = recon_res.data_.get_size(0);
-            size_t E1 = recon_res.data_.get_size(1);
-            size_t E2 = recon_res.data_.get_size(2);
+            /** TODO Joe: We need to copy data to hoNDArray because the zero_pad_resize/crop
+             * operations below may reallocate the array's memory.
+             */
+            // hoNDArray<std::complex<float>> data = Gadgetron::adapt_mrd_to_hoNDArray(recon_res.data);
+            auto data = Gadgetron::copy_mrd_to_hoNDArray(recon_res.data);
 
-            double encodingFOV_RO = recon_res.meta_[0].as_double("encoding_FOV", 0);
-            double encodingFOV_E1 = recon_res.meta_[0].as_double("encoding_FOV", 1);
-            double encodingFOV_E2 = recon_res.meta_[0].as_double("encoding_FOV", 2);
+            size_t RO = data.get_size(0);
+            size_t E1 = data.get_size(1);
+            size_t E2 = data.get_size(2);
 
-            double reconFOV_RO = recon_res.meta_[0].as_double("recon_FOV", 0);
-            double reconFOV_E1 = recon_res.meta_[0].as_double("recon_FOV", 1);
-            double reconFOV_E2 = recon_res.meta_[0].as_double("recon_FOV", 2);
+            auto& encoding_fov = recon_res.meta[0]["encoding_FOV"];
+            // double encodingFOV_RO = recon_res.meta[0].as_double("encoding_FOV", 0);
+            // double encodingFOV_E1 = recon_res.meta[0].as_double("encoding_FOV", 1);
+            // double encodingFOV_E2 = recon_res.meta[0].as_double("encoding_FOV", 2);
+            double encodingFOV_RO = std::get<double>(encoding_fov[0]);
+            double encodingFOV_E1 = std::get<double>(encoding_fov[1]);
+            double encodingFOV_E2 = std::get<double>(encoding_fov[2]);
 
-            long encoding = recon_res.meta_[0].as_long("encoding", 0);
+            auto& recon_fov = recon_res.meta[0]["recon_FOV"];
+            // double reconFOV_RO = recon_res.meta[0].as_double("recon_FOV", 0);
+            // double reconFOV_E1 = recon_res.meta[0].as_double("recon_FOV", 1);
+            // double reconFOV_E2 = recon_res.meta[0].as_double("recon_FOV", 2);
+            double reconFOV_RO = std::get<double>(recon_fov[0]);
+            double reconFOV_E1 = std::get<double>(recon_fov[1]);
+            double reconFOV_E2 = std::get<double>(recon_fov[2]);
+
+            // long encoding = recon_res.meta[0].as_long("encoding", 0);
+            long encoding = std::get<long>(recon_res.meta[0]["encoding"].front());
 
             size_t reconSizeRO = recon_size_[encoding][0];
             size_t reconSizeE1 = recon_size_[encoding][1];
@@ -204,15 +222,23 @@ namespace Gadgetron {
             // if encoded FOV are the same as recon FOV
             if ((std::abs(encodingFOV_RO / 2 - reconFOV_RO)<0.1) && (std::abs(encodingFOV_E1 - reconFOV_E1)<0.1) && (std::abs(encodingFOV_E2 - reconFOV_E2)<0.1))
             {
+                GDEBUG_STREAM("Joe: encoded FOV same as recon FOV...")
+
                 if (RO <= reconSizeRO && E1 <= reconSizeE1 && E2 <= reconSizeE2)
                 {
-                    Gadgetron::zero_pad_resize(recon_res.data_, reconSizeRO, reconSizeE1, reconSizeE2, res_);
+                    GDEBUG_STREAM("Joe: incorrect zero_pad_resize...")
+                    /** BUG ALERT
+                     * TODO Joe: This is INCORRECT. The result is stored in `this->res_`, but never used again,
+                     * so in the end, `recon_res.data` is NOT adjusted
+                     */
+                    Gadgetron::zero_pad_resize(data, reconSizeRO, reconSizeE1, reconSizeE2, res_);
                 }
                 else if (RO >= reconSizeRO && E1 >= reconSizeE1 && E2 >= reconSizeE2)
                 {
-                    this->perform_fft(E2, recon_res.data_, kspace_buf_);
+                    GDEBUG_STREAM("Joe: fft, crop, ifft")
+                    this->perform_fft(E2, data, kspace_buf_);
                     Gadgetron::crop(reconSizeRO, reconSizeE1, reconSizeE2, kspace_buf_, res_);
-                    this->perform_ifft(E2, res_, recon_res.data_);
+                    this->perform_ifft(E2, res_, data);
                 }
                 else
                 {
@@ -222,6 +248,7 @@ namespace Gadgetron {
             }
             else if ((encodingFOV_E1 >= reconFOV_E1) && (encodingFOV_E2 >= reconFOV_E2))
             {
+                GDEBUG_STREAM("Joe: encoded FOV not the same as recon FOV...")
                 size_t encodingE1 = reconSizeE1;
                 if (encodingFOV_E1 > reconFOV_E1)
                 {
@@ -236,7 +263,7 @@ namespace Gadgetron {
                     encodingE2 = (size_t)2*std::lround(encodingFOV_E2 / (2*spacingE2));
                 }
 
-                hoNDArray< std::complex<float> >* pSrc = &recon_res.data_;
+                hoNDArray< std::complex<float> >* pSrc = &data;
                 hoNDArray< std::complex<float> >* pDst = &res_;
                 hoNDArray< std::complex<float> >* pTmp;
 
@@ -285,14 +312,18 @@ namespace Gadgetron {
                     pTmp = pSrc; pSrc = pDst; pDst = pTmp;
                 }
 
+                GDEBUG_STREAM("Joe: Final crop to " << reconSizeRO << " " << reconSizeE1 << " " << reconSizeE2 << " - mean : " << Gadgetron::mean(*pSrc));
                 // final cut on image
                 Gadgetron::crop(reconSizeRO, reconSizeE1, reconSizeE2, *pSrc, *pDst);
 
-                if (pDst != &recon_res.data_)
+                if (pDst != &data)
                 {
-                    recon_res.data_ = *pDst;
+                    data = *pDst;
                 }
             }
+
+            /** TODO Joe: We're copying back the result into recon_res.data */
+            Gadgetron::copy_hoNDArray_to_mrd(data, recon_res.data);
         }
 //        catch (...)
 //        {

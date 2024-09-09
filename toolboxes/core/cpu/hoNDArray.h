@@ -266,10 +266,11 @@ namespace Gadgetron{
     virtual void print(std::ostream& os) const;
     virtual void printContent(std::ostream& os) const;
 
-    [[deprecated("Use IO::write instead")]]
-    virtual bool serialize(char*& buf, size_t& len) const;
-    [[deprecated("Use IO::read instead")]]
-    virtual bool deserialize(char* buf, size_t& len);
+    /** TODO Joe: Remove vvvvv */
+    // [[deprecated("Use IO::write instead")]]
+    // virtual bool serialize(char*& buf, size_t& len) const;
+    // [[deprecated("Use IO::read instead")]]
+    // virtual bool deserialize(char* buf, size_t& len);
 
   protected:
 

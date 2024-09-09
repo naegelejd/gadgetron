@@ -3,6 +3,7 @@
 #include "GadgetronTimer.h"
 #include "non_local_bayes.h"
 #include "non_local_means.h"
+#include "mri_core_utility.h"
 
 namespace Gadgetron {
     template <class T>
@@ -22,17 +23,21 @@ namespace Gadgetron {
             [&,this](auto& image) { return DenoiseSupportedTypes(this->denoise(std::move(image))); }, input);
     }
 
-    template <class T> DenoiseImage<T> DenoiseGadget::denoise(DenoiseImage<T> image) const {
-        return DenoiseImage<T>{ std::move(std::get<ISMRMRD::ImageHeader>(image)),
-            denoise_function(std::get<hoNDArray<T>>(image)) };
+    template <class T> mrd::Image<T> DenoiseGadget::denoise(mrd::Image<T> image) const {
+        /** TODO Joe: Copying MRD array to and from hoNDArray to do denoise operation */
+        auto data = Gadgetron::copy_mrd_to_hoNDArray(image.data);
+        data = denoise_function(data);
+        Gadgetron::copy_hoNDArray_to_mrd(data, image.data);
+        return std::move(image);
     }
 
-    IsmrmrdImageArray DenoiseGadget::denoise(IsmrmrdImageArray image_array) const {
-        auto& input = image_array.data_;
-        input       = denoise_function(input);
+    mrd::ImageArray DenoiseGadget::denoise(mrd::ImageArray image_array) const {
+        /** TODO Joe: Copying MRD array to and from hoNDArray to do denoise operation */
+        auto input = Gadgetron::copy_mrd_to_hoNDArray(image_array.data);
+        input = denoise_function(input);
+        Gadgetron::copy_hoNDArray_to_mrd(input, image_array.data);
         return std::move(image_array);
     }
-
 
     GADGETRON_GADGET_EXPORT(DenoiseGadget)
 }

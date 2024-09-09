@@ -175,16 +175,22 @@ namespace Gadgetron {
         mrd::BufferedData buffer;
 
         // Allocate the array for the data
-        buffer.data.resize({NLOC, NS, NN, NCHA, NE2, NE1, NE0});
+        // buffer.data.resize({NLOC, NS, NN, NCHA, NE2, NE1, NE0});
+        buffer.data = hoNDArray<std::complex<float>>(NE0, NE1, NE2, NCHA, NN, NS, NLOC);
+        clear(&buffer.data);
 
         // Allocate the array for the headers
-        buffer.headers.resize({NLOC, NS, NN, NE2, NE1});
+        // buffer.headers.resize({NLOC, NS, NN, NE2, NE1});
+        buffer.headers = hoNDArray<mrd::AcquisitionHeader>(NE1, NE2, NN, NS, NLOC);
+
 
         // Allocate the array for the trajectories
         if (acq.TrajectoryDimensions() > 0 && acq.TrajectorySamples() > 0) {
             auto basis = acq.TrajectoryDimensions();
             auto samples = acq.TrajectorySamples();
-            buffer.trajectory.resize({NLOC, NS, NN, NE2, NE1, basis, samples});
+            // buffer.trajectory.resize({NLOC, NS, NN, NE2, NE1, basis, samples});
+            buffer.trajectory = hoNDArray<float>(samples, basis, NE1, NE2, NN, NS, NLOC);
+            clear(&buffer.trajectory);
         }
         return buffer;
     }
@@ -401,13 +407,20 @@ namespace Gadgetron {
     void BucketToBufferGadget::add_acquisition(mrd::BufferedData& dataBuffer, const Core::Acquisition& acq,
         mrd::EncodingType encoding, const AcquisitionBucketStats& stats, bool forref) {
 
-        uint32_t NLOC = (uint32_t)dataBuffer.data.shape(0);
-        uint32_t NS   = (uint32_t)dataBuffer.data.shape(1);
-        uint32_t NN   = (uint32_t)dataBuffer.data.shape(2);
-        uint32_t NCHA = (uint32_t)dataBuffer.data.shape(3);
-        uint32_t NE2  = (uint32_t)dataBuffer.data.shape(4);
-        uint32_t NE1  = (uint32_t)dataBuffer.data.shape(5);
-        uint32_t NE0  = (uint32_t)dataBuffer.data.shape(6);
+        // uint32_t NLOC = (uint32_t)dataBuffer.data.shape(0);
+        // uint32_t NS   = (uint32_t)dataBuffer.data.shape(1);
+        // uint32_t NN   = (uint32_t)dataBuffer.data.shape(2);
+        // uint32_t NCHA = (uint32_t)dataBuffer.data.shape(3);
+        // uint32_t NE2  = (uint32_t)dataBuffer.data.shape(4);
+        // uint32_t NE1  = (uint32_t)dataBuffer.data.shape(5);
+        // uint32_t NE0  = (uint32_t)dataBuffer.data.shape(6);
+        uint16_t NE0  = (uint16_t)dataBuffer.data.get_size(0);
+        uint16_t NE1  = (uint16_t)dataBuffer.data.get_size(1);
+        uint16_t NE2  = (uint16_t)dataBuffer.data.get_size(2);
+        uint16_t NCHA = (uint16_t)dataBuffer.data.get_size(3);
+        uint16_t NN   = (uint16_t)dataBuffer.data.get_size(4);
+        uint16_t NS   = (uint16_t)dataBuffer.data.get_size(5);
+        uint16_t NLOC = (uint16_t)dataBuffer.data.get_size(6);
 
         const size_t slice_loc = split_slices || NLOC == 1 ? 0 : acq.head.idx.slice.value_or(0);
 
@@ -521,10 +534,15 @@ namespace Gadgetron {
         }
 
         // Stuff the data
-        std::complex<float>* pData = &dataBuffer.data(slice_loc, SUsed, NUsed, 0, e2, e1, offset);
+        // std::complex<float>* pData = &dataBuffer.data(slice_loc, SUsed, NUsed, 0, e2, e1, offset);
+        std::complex<float>* pData = &dataBuffer.data(offset, e1, e2, 0, NUsed, SUsed, slice_loc);
+
         for (size_t cha = 0; cha < NCHA; cha++) {
-            auto fromptr = &acq.data(cha, acq.head.discard_pre.value_or(0));
             auto dataptr = pData + cha * NE0 * NE1 * NE2;
+            // auto fromptr = &acq.data(cha, acq.head.discard_pre.value_or(0));
+            auto fromptr = &acq.data(acq.head.discard_pre.value_or(0), cha);
+
+
             // TODO Joe: At least just set pData = correct location for this CHAN...
             /// e.g.  std::complex<float>* pData = &dataBuffer.data(slice_loc, SUsed, NUsed, cha, e2, e1, offset);
             std::copy(fromptr, fromptr + npts_to_copy, dataptr);
@@ -532,12 +550,15 @@ namespace Gadgetron {
         /** TODO Joe: Use xtensor view to just assign data to subarray */
 
         // Stuff the header
-        dataBuffer.headers(slice_loc, SUsed, NUsed, e2, e1) = acq.head;
+        // dataBuffer.headers(slice_loc, SUsed, NUsed, e2, e1) = acq.head;
+        dataBuffer.headers(e1, e2, NUsed, SUsed, slice_loc) = acq.head;
 
         if (acq.TrajectoryDimensions() > 0 && acq.TrajectorySamples() > 0) {
             // Stuff the trajectory
             /** TODO Joe: I don't know if this is correct... In MRDv2, acq.Samples() is not necessarily equal to acq.TrajectorySamples() */
-            float* trajptr = &dataBuffer.trajectory(slice_loc, SUsed, NUsed, e2, e1, 0, offset);
+            // float* trajptr = &dataBuffer.trajectory(slice_loc, SUsed, NUsed, e2, e1, 0, offset);
+            float* trajptr = &dataBuffer.trajectory(0, offset, e1, e2, NUsed, SUsed, slice_loc);
+
             auto* fromptr  = &acq.trajectory(0, acq.head.discard_pre.value_or(0));
             std::copy(fromptr, fromptr + npts_to_copy * acq.TrajectoryDimensions(), trajptr);
         }

@@ -7,10 +7,8 @@
 
 #pragma once
 
-#include "Gadget.h"
-#include "hoNDArray.h"
-#include "GadgetMRIHeaders.h"
 #include "Node.h"
+#include "hoNDArray.h"
 #include "Types.h"
 
 namespace Gadgetron{

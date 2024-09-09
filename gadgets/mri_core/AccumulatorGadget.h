@@ -23,7 +23,7 @@ namespace Gadgetron{
         NODE_PROPERTY(image_series, int, "Image series", 0);
         hoNDArray<std::complex<float>>* buffer_;
         std::vector<size_t> dimensions_;
-        std::vector<float> field_of_view_;
+        float field_of_view_[3];
         size_t slices_;
         long long image_counter_;
         long long image_series_;

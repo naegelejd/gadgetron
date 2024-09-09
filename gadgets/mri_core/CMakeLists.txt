@@ -27,7 +27,7 @@ set(gadgetron_mricore_header_files
         # readers/MRIImageReader.h
         # NoiseAdjustGadget_unoptimized.h
         ExtractGadget.h
-        FloatToFixPointGadget.h
+        # FloatToFixPointGadget.h
         RemoveROOversamplingGadget.h
         CoilReductionGadget.h
         # ScaleGadget.h
@@ -47,13 +47,13 @@ set(gadgetron_mricore_header_files
         ImageFinishGadget.h
         # dependencyquery/NoiseSummaryGadget.h
         NHLBICompression.h
-        # cpuisa.h
+        cpuisa.h
         # ImageAccumulatorGadget.h
         # writers/GadgetIsmrmrdWriter.h
         # ImageResizingGadget.h
         # ImageArraySendMixin.h
         # ImageArraySendMixin.hpp
-        AutoScaleGadget.h
+        # AutoScaleGadget.h
         # DenoiseGadget.h
         # CoilComputationGadget.h
         # ImageFFTGadget.h
@@ -75,7 +75,7 @@ set(gadgetron_mricore_src_files
         # readers/MRIImageReader.cpp
         # NoiseAdjustGadget_unoptimized.cpp
         ExtractGadget.cpp
-        FloatToFixPointGadget.cpp
+        # FloatToFixPointGadget.cpp
         RemoveROOversamplingGadget.cpp
         CoilReductionGadget.cpp
         # ScaleGadget.cpp
@@ -100,7 +100,7 @@ set(gadgetron_mricore_src_files
         # ImageAccumulatorGadget.cpp
         # writers/GadgetIsmrmrdWriter.cpp
         # ImageResizingGadget.cpp
-        AutoScaleGadget.cpp
+        # AutoScaleGadget.cpp
         # DenoiseGadget.cpp
         # CoilComputationGadget.cpp
         # ImageFFTGadget.cpp
@@ -120,46 +120,46 @@ set(gadgetron_mricore_config_files
         config/NoiseSummary.xml
         )
 set(gadgetron_mricore_generic_recon_gadgets_header_files 
-        # generic_recon_gadgets/GenericReconBase.h
-        # generic_recon_gadgets/GenericReconGadget.h
+        generic_recon_gadgets/GenericReconBase.h
+        generic_recon_gadgets/GenericReconGadget.h
         # generic_recon_gadgets/GenericReconCartesianFFTGadget.h
-        # generic_recon_gadgets/GenericReconCartesianGrappaGadget.h
+        generic_recon_gadgets/GenericReconCartesianGrappaGadget.h
         # generic_recon_gadgets/GenericReconCartesianSpiritGadget.h
         # generic_recon_gadgets/GenericReconCartesianNonLinearSpirit2DTGadget.h
-        # generic_recon_gadgets/GenericReconCartesianReferencePrepGadget.h
-        # generic_recon_gadgets/GenericReconPartialFourierHandlingGadget.h
-        # generic_recon_gadgets/GenericReconPartialFourierHandlingFilterGadget.h
-        # generic_recon_gadgets/GenericReconPartialFourierHandlingPOCSGadget.h
-        # generic_recon_gadgets/GenericReconKSpaceFilteringGadget.h
-        # generic_recon_gadgets/GenericReconFieldOfViewAdjustmentGadget.h
-        # generic_recon_gadgets/GenericReconImageArrayScalingGadget.h
-        # generic_recon_gadgets/GenericReconEigenChannelGadget.h
-        # generic_recon_gadgets/GenericReconNoiseStdMapComputingGadget.h
+        generic_recon_gadgets/GenericReconCartesianReferencePrepGadget.h
+        generic_recon_gadgets/GenericReconPartialFourierHandlingGadget.h
+        generic_recon_gadgets/GenericReconPartialFourierHandlingFilterGadget.h
+        generic_recon_gadgets/GenericReconPartialFourierHandlingPOCSGadget.h
+        generic_recon_gadgets/GenericReconKSpaceFilteringGadget.h
+        generic_recon_gadgets/GenericReconFieldOfViewAdjustmentGadget.h
+        generic_recon_gadgets/GenericReconImageArrayScalingGadget.h
+        generic_recon_gadgets/GenericReconEigenChannelGadget.h
+        generic_recon_gadgets/GenericReconNoiseStdMapComputingGadget.h
         # generic_recon_gadgets/GenericImageReconGadget.h
         # generic_recon_gadgets/GenericReconAccumulateImageTriggerGadget.h
         # generic_recon_gadgets/GenericImageReconArrayToImageGadget.h
         # generic_recon_gadgets/GenericReconReferenceKSpaceDelayedBufferGadget.h
         # generic_recon_gadgets/GenericReconImageToImageArrayGadget.h
-        # generic_recon_gadgets/GenericReconStreamDef.h
+        generic_recon_gadgets/GenericReconStreamDef.h
 )
 
 set(gadgetron_mricore_generic_recon_gadgets_src_files
-        # generic_recon_gadgets/GenericReconBase.cpp
-        # generic_recon_gadgets/GenericReconGadget.cpp
+        generic_recon_gadgets/GenericReconBase.cpp
+        generic_recon_gadgets/GenericReconGadget.cpp
         # generic_recon_gadgets/GenericReconCartesianFFTGadget.cpp
-        # generic_recon_gadgets/GenericReconCartesianGrappaGadget.cpp
+        generic_recon_gadgets/GenericReconCartesianGrappaGadget.cpp
         # generic_recon_gadgets/GenericReconCartesianSpiritGadget.cpp
         # generic_recon_gadgets/GenericReconCartesianNonLinearSpirit2DTGadget.cpp
-        # generic_recon_gadgets/GenericReconCartesianReferencePrepGadget.cpp
-        # generic_recon_gadgets/GenericReconPartialFourierHandlingGadget.cpp
-        # generic_recon_gadgets/GenericReconPartialFourierHandlingFilterGadget.cpp
-        # generic_recon_gadgets/GenericReconPartialFourierHandlingPOCSGadget.cpp
+        generic_recon_gadgets/GenericReconCartesianReferencePrepGadget.cpp
+        generic_recon_gadgets/GenericReconPartialFourierHandlingGadget.cpp
+        generic_recon_gadgets/GenericReconPartialFourierHandlingFilterGadget.cpp
+        generic_recon_gadgets/GenericReconPartialFourierHandlingPOCSGadget.cpp
         # generic_recon_gadgets/GenericReconReferenceKSpaceDelayedBufferGadget.cpp
-        # generic_recon_gadgets/GenericReconKSpaceFilteringGadget.cpp
-        # generic_recon_gadgets/GenericReconFieldOfViewAdjustmentGadget.cpp
-        # generic_recon_gadgets/GenericReconImageArrayScalingGadget.cpp
-        # generic_recon_gadgets/GenericReconEigenChannelGadget.cpp
-        # generic_recon_gadgets/GenericReconNoiseStdMapComputingGadget.cpp
+        generic_recon_gadgets/GenericReconKSpaceFilteringGadget.cpp
+        generic_recon_gadgets/GenericReconFieldOfViewAdjustmentGadget.cpp
+        generic_recon_gadgets/GenericReconImageArrayScalingGadget.cpp
+        generic_recon_gadgets/GenericReconEigenChannelGadget.cpp
+        generic_recon_gadgets/GenericReconNoiseStdMapComputingGadget.cpp
         # generic_recon_gadgets/GenericImageReconGadget.cpp
         # generic_recon_gadgets/GenericReconAccumulateImageTriggerGadget.cpp
         # generic_recon_gadgets/GenericImageReconArrayToImageGadget.cpp
@@ -210,9 +210,9 @@ add_library(gadgetron_mricore SHARED
     ${gadgetron_mricore_header_files}
     ${gadgetron_mricore_src_files}
     ${gadgetron_mricore_config_files}
-    ${gadgetron_mricore_generic_recon_gadgets_header_files}
-    ${gadgetron_mricore_generic_recon_gadgets_src_files}
-    ${gadgetron_mricore_generic_recon_gadgets_config_files} 
+#     ${gadgetron_mricore_generic_recon_gadgets_header_files}
+#     ${gadgetron_mricore_generic_recon_gadgets_src_files}
+#     ${gadgetron_mricore_generic_recon_gadgets_config_files} 
 )
 
 set_target_properties(gadgetron_mricore PROPERTIES VERSION ${GADGETRON_VERSION_STRING} SOVERSION ${GADGETRON_SOVERSION})
@@ -224,7 +224,7 @@ target_link_libraries(gadgetron_mricore
         gadgetron_toolbox_cpucore
         gadgetron_toolbox_cpufft
         # gadgetron_toolbox_image_analyze_io
-        # gadgetron_toolbox_denoise
+        gadgetron_toolbox_denoise
         gadgetron_toolbox_hostutils
         gadgetron_toolbox_cpuoperator
         gadgetron_toolbox_cpuklt

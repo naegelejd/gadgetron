@@ -12,11 +12,11 @@
 #include "Gadget.h"
 #include "GadgetronTimer.h"
 
-#include "ismrmrd/ismrmrd.h"
-#include "ismrmrd/xml.h"
-#include "ismrmrd/meta.h"
-#include "ismrmrd/serialization.h"
-#include "ismrmrd/serialization_iostream.h"
+// #include "ismrmrd/ismrmrd.h"
+// #include "ismrmrd/xml.h"
+// #include "ismrmrd/meta.h"
+// #include "ismrmrd/serialization.h"
+// #include "ismrmrd/serialization_iostream.h"
 
 #include "mri_core_def.h"
 #include "mri_core_data.h"
@@ -81,7 +81,8 @@ namespace Gadgetron {
         // --------------------------------------------------
         // gadget functions
         // --------------------------------------------------
-        virtual int process_config(ACE_Message_Block* mb);
+        // virtual int process_config(ACE_Message_Block* mb);
+        virtual int process_config(const mrd::Header& header);
         virtual int process(GadgetContainerMessage<T>* m1);
         virtual int close(unsigned long flags);
     };
