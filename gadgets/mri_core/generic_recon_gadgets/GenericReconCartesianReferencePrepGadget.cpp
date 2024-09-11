@@ -68,13 +68,13 @@ namespace Gadgetron {
         return GADGET_OK;
     }
 
-    int GenericReconCartesianReferencePrepGadget::process(Gadgetron::GadgetContainerMessage< IsmrmrdReconData >* m1)
+    int GenericReconCartesianReferencePrepGadget::process(Gadgetron::GadgetContainerMessage< ReconData >* m1)
     {
         if (perform_timing.value()) { gt_timer_.start("GenericReconCartesianReferencePrepGadget::process"); }
 
         process_called_times_++;
 
-        IsmrmrdReconData* recon_data = m1->getObjectPtr();
+        ReconData* recon_data = m1->getObjectPtr();
         if (recon_data->rbits.size() > num_encoding_spaces_)
         {
             GWARN_STREAM("Incoming recon_bit has more encoding spaces than the protocol : " << recon_data->rbits.size() << " instead of " << num_encoding_spaces_);
@@ -132,17 +132,12 @@ namespace Gadgetron {
 
             if (!debug_folder_full_path_.empty())
             {
-                /** TODO Joe: Implement */
-                // this->gt_exporter_.export_array_complex(rbit.ref->data, debug_folder_full_path_ + "ref_data" + os.str());
+                this->gt_exporter_.export_array_complex(rbit.ref->data, debug_folder_full_path_ + "ref_data" + os.str());
             }
 
             // useful variables
-            // hoNDArray< std::complex<float> >& ref = (*rbit.ref_).data_;
-            auto ref = adapt_mrd_to_hoNDArray((*rbit.ref).data);
+            hoNDArray< std::complex<float> >& ref = (*rbit.ref).data;
 
-            // SamplingLimit sampling_limits[3];
-            // for (int i = 0; i < 3; i++)
-            //     sampling_limits[i] = (*rbit.ref_).sampling_.sampling_limits_[i];
             auto sampling_limits = (*rbit.ref).sampling.sampling_limits;
 
             size_t RO = ref.get_size(0);
@@ -164,8 +159,7 @@ namespace Gadgetron {
             // if embedded mode, fill back ref if required
             if((calib_mode_[e] == mrd::CalibrationMode::kEmbedded) && ref_fill_into_data_embedded.value())
             {
-                // hoNDArray< std::complex<float> >& data = rbit.data_.data_;
-                hoNDArray<std::complex<float>> data = adapt_mrd_to_hoNDArray(rbit.data.data);
+                hoNDArray< std::complex<float> >& data = rbit.data.data;
 
                 GADGET_CHECK_THROW(data.get_size(0) == RO);
                 GADGET_CHECK_THROW(data.get_size(1) == E1);
@@ -315,36 +309,20 @@ namespace Gadgetron {
                 sampling_limits.ro.maximum = RO - 1;
             }
 
-            // ref = ref_calib;
-            /** TODO Joe:
-             * 
-             * Gotta make sure this is correct... Basically,
-             * 
-             * 1. `ref` is an hoNDArray adapted from the `rbit.ref->data` MRD array
-             * 2. `ref_calib` is calculated from `ref`
-             * 3. `ref_calib` is then cropped using a temporary hoNDarray `ref_recon_buf`
-             * 4. `ref_calib` is then *copied* back to `rbit.ref->data` MRD array
-             * 
-             * Alternatively, if `ref_recon_buf` was adapted from a *new* MRD array `ref_recon_mrd` with size `crop_size`,
-             * then after calling `crop`, we can just assign `rbit.ref->data = ref_recon_mrd`. HOWEVER, this relies
-             * on the implemention of `crop` NOT resizing `ref_recon_buf` since it's already `crop_size`...
-             * 
-             */
-            copy_hoNDArray_to_mrd(ref_calib, rbit.ref->data);
+            ref = ref_calib;
             ref_prepared_[e] = true;
 
             (*rbit.ref).sampling.sampling_limits = sampling_limits;
 
             if (!debug_folder_full_path_.empty())
             {
-                /** TODO Joe: Implement */
-                // this->gt_exporter_.export_array_complex(rbit.ref_->data_, debug_folder_full_path_ + "ref_calib_final" + os.str());
+                this->gt_exporter_.export_array_complex(rbit.ref->data, debug_folder_full_path_ + "ref_calib_final" + os.str());
             }
         }
 
         if (this->next()->putq(m1) < 0)
         {
-            GERROR_STREAM("Put IsmrmrdReconData to Q failed ... ");
+            GERROR_STREAM("Put ReconData to Q failed ... ");
             return GADGET_FAIL;
         }
 

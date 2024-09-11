@@ -1,5 +1,5 @@
 /** \file   GenericReconPartialFourierHandlingGadget.h
-    \brief  This is the class gadget for both 2DT and 3DT cartesian partial fourier handling, working on the IsmrmrdImageArray.
+    \brief  This is the class gadget for both 2DT and 3DT cartesian partial fourier handling, working on the ImageArray.
 
             This class is a part of general cartesian recon chain.
 
@@ -25,20 +25,20 @@
 
 namespace Gadgetron {
 
-class GenericReconPartialFourierHandlingGadget : public Core::PureGadget<IsmrmrdImageArray,IsmrmrdImageArray>
+class GenericReconPartialFourierHandlingGadget : public Core::PureGadget<ImageArray,ImageArray>
     {
     public:
 
         typedef float real_value_type;
         typedef std::complex<real_value_type> ValueType;
         typedef ValueType T;
-        using BaseClass = Core::PureGadget<IsmrmrdImageArray,IsmrmrdImageArray>;
+        using BaseClass = Core::PureGadget<ImageArray,ImageArray>;
 
         GenericReconPartialFourierHandlingGadget(const Core::Context& context, const Core::GadgetProperties& props);
 
         virtual ~GenericReconPartialFourierHandlingGadget() = default;
 
-        IsmrmrdImageArray process_function(IsmrmrdImageArray array) const override;
+        ImageArray process_function(ImageArray array) const override;
         /// ------------------------------------------------------------------------------------
         /// parameters to control the reconstruction
         /// ------------------------------------------------------------------------------------

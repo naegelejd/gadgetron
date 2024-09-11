@@ -44,7 +44,7 @@ namespace Gadgetron {
 
         // default interface function
         virtual int process_config(const mrd::Header& header);
-        virtual int process(Gadgetron::GadgetContainerMessage< IsmrmrdImageArray >* m1);
+        virtual int process(Gadgetron::GadgetContainerMessage< ImageArray >* m1);
 
     };
 }

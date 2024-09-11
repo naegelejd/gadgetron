@@ -1,5 +1,5 @@
 /** \file   GenericReconCartesianNonLinearSpirit2DTGadget.h
-    \brief  This is the class gadget for 2DT cartesian non-linear Spirit reconstruction, working on the IsmrmrdReconData.
+    \brief  This is the class gadget for 2DT cartesian non-linear Spirit reconstruction, working on the ReconData.
             The redundant dimension is dimension N.
 
             Ref: 
@@ -59,14 +59,14 @@ namespace Gadgetron {
         // gadget functions
         // --------------------------------------------------
         // default interface function
-        virtual int process_config(ACE_Message_Block* mb);
+        virtual int process_config(const mrd::Header& header);
 
         // --------------------------------------------------
         // recon step functions
         // --------------------------------------------------
 
         // unwrapping
-        virtual void perform_unwrapping(IsmrmrdReconBit& recon_bit, ReconObjType& recon_obj, size_t encoding);
+        virtual void perform_unwrapping(ReconBit& recon_bit, ReconObjType& recon_obj, size_t encoding);
 
         // perform non-linear spirit unwrapping
         // kspace, kerIm, full_kspace: [RO E1 CHA N S SLC]

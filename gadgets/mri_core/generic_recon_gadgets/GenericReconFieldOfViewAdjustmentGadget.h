@@ -1,5 +1,5 @@
 /** \file   GenericReconFieldOfViewAdjustmentGadget.h
-    \brief  This is the class gadget for both 2DT and 3DT reconstruction, working on the IsmrmrdImageArray.
+    \brief  This is the class gadget for both 2DT and 3DT reconstruction, working on the ImageArray.
             This gadget will adjust the image field-of-view and/or image size to the protocol prescribed values.
 
             This class is a part of general cartesian recon chain.
@@ -59,11 +59,11 @@ namespace Gadgetron {
 
         // default interface function
         virtual int process_config(const mrd::Header& header);
-        virtual int process(Gadgetron::GadgetContainerMessage< IsmrmrdImageArray >* m1);
+        virtual int process(Gadgetron::GadgetContainerMessage< ImageArray >* m1);
         virtual int close(unsigned long flags=1);
 
         // adjust FOV
-        int adjust_FOV(IsmrmrdImageArray& data);
+        int adjust_FOV(ImageArray& data);
 
         // perform fft or ifft
         void perform_fft(size_t E2, const hoNDArray< std::complex<float> >& input, hoNDArray< std::complex<float> >& output);

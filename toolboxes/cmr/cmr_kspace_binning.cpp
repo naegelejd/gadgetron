@@ -478,7 +478,7 @@ void CmrKSpaceBinning<T>::estimate_time_stamps()
 
         size_t rE1 = endE1-startE1+1;
 
-        hoNDArray< ISMRMRD::AcquisitionHeader >& header = binning_obj_.headers_;
+        hoNDArray< mrd::AcquisitionHeader >& header = binning_obj_.headers_;
         GADGET_CHECK_THROW(header.get_size(0)==E1);
         GADGET_CHECK_THROW(header.get_size(1)==N);
         GADGET_CHECK_THROW(header.get_size(2)==S);
@@ -501,9 +501,10 @@ void CmrKSpaceBinning<T>::estimate_time_stamps()
             {
                 for (e1=0; e1<E1; e1++)
                 {
-                    if(header(e1,n,s).number_of_samples>0)
-                    {
-                        binning_obj_.time_stamp_(e1, n, s) = header(e1, n, s).acquisition_time_stamp * this->time_tick_;
+                    /** TODO Joe: number_of_samples is not available in mrd::AcquisitionHeader... */
+                    // if(header(e1,n,s).number_of_samples>0)
+                    if (header(e1, n, s).physiology_time_stamp.size() > this->trigger_time_index_) {
+                        binning_obj_.time_stamp_(e1, n, s) = header(e1, n, s).acquisition_time_stamp.value_or(0) * this->time_tick_;
                         binning_obj_.cpt_time_stamp_(e1, n, s) = header(e1, n, s).physiology_time_stamp[this->trigger_time_index_] * this->time_tick_;
                     }
                 }

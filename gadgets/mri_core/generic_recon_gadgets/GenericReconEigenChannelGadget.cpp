@@ -63,13 +63,13 @@ namespace Gadgetron {
         return GADGET_OK;
     }
 
-    int GenericReconEigenChannelGadget::process(Gadgetron::GadgetContainerMessage< IsmrmrdReconData >* m1)
+    int GenericReconEigenChannelGadget::process(Gadgetron::GadgetContainerMessage< ReconData >* m1)
     {
         if (perform_timing.value()) { gt_timer_.start("GenericReconEigenChannelGadget::process"); }
 
         process_called_times_++;
 
-        IsmrmrdReconData* recon_data = m1->getObjectPtr();
+        ReconData* recon_data = m1->getObjectPtr();
         if (recon_data->rbits.size() > num_encoding_spaces_)
         {
             GWARN_STREAM("Incoming recon_bit has more encoding spaces than the protocol : " << recon_data->rbits.size() << " instead of " << num_encoding_spaces_);
@@ -81,12 +81,7 @@ namespace Gadgetron {
         {
             auto & rbit = recon_data->rbits[e];
 
-            // hoNDArray< std::complex<float> >& data = rbit.data.data;
-            hoNDArray<std::complex<float>> data = adapt_mrd_to_hoNDArray(rbit.data.data);
-            hoNDArray<std::complex<float>> ref;
-            if (rbit.ref) {
-                ref = adapt_mrd_to_hoNDArray(rbit.ref->data);
-            }
+            hoNDArray< std::complex<float> >& data = rbit.data.data;
 
             if (data.get_number_of_elements()==0) continue;
 
@@ -146,7 +141,7 @@ namespace Gadgetron {
                 if(rbit.ref)
                 {
                     // use ref to compute coefficients
-                    Gadgetron::compute_eigen_channel_coefficients(ref, average_N, average_S,
+                    Gadgetron::compute_eigen_channel_coefficients(rbit.ref->data, average_N, average_S,
                         (calib_mode_[e] == mrd::CalibrationMode::kInterleaved), N, S, upstream_coil_compression_thres.value(), upstream_coil_compression_num_modesKept.value(), KLT_[e]);
                 }
                 else
@@ -236,14 +231,14 @@ namespace Gadgetron {
             {
                 if (!debug_folder_full_path_.empty())
                 {
-                    gt_exporter_.export_array_complex(ref, debug_folder_full_path_ + "ref_before_KLT" + os.str());
+                    gt_exporter_.export_array_complex(rbit.ref->data, debug_folder_full_path_ + "ref_before_KLT" + os.str());
                 }
 
-                Gadgetron::apply_eigen_channel_coefficients(KLT_[e], ref);
+                Gadgetron::apply_eigen_channel_coefficients(KLT_[e], rbit.ref->data);
 
                 if (!debug_folder_full_path_.empty())
                 {
-                    gt_exporter_.export_array_complex(ref, debug_folder_full_path_ + "ref_after_KLT" + os.str());
+                    gt_exporter_.export_array_complex(rbit.ref->data, debug_folder_full_path_ + "ref_after_KLT" + os.str());
                 }
             }
         }
@@ -252,7 +247,7 @@ namespace Gadgetron {
 
         if (this->next()->putq(m1) < 0)
         {
-            GERROR_STREAM("Put IsmrmrdReconData to Q failed ... ");
+            GERROR_STREAM("Put ReconData to Q failed ... ");
             return GADGET_FAIL;
         }
 

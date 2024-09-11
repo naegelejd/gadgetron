@@ -10,8 +10,8 @@ namespace Gadgetron::Grappa {
         std::vector<uint64_t> reordering;
     };
 
-    using AnnotatedAcquisition = Core::tuple<ISMRMRD::AcquisitionHeader,
-                                             Core::optional<hoNDArray<float>>,
-                                             hoNDArray<std::complex<float>>,
-                                             Core::optional<ChannelAnnotation>>;
+    /** TODO Joe: The ChannelReorderer is no longer used, so all Gadgets using this
+     *      AnnotatedAcquisition can be updated to just use Core::Acquisition.
+     */
+    using AnnotatedAcquisition = Core::tuple<Core::Acquisition, Core::optional<ChannelAnnotation>>;
 }

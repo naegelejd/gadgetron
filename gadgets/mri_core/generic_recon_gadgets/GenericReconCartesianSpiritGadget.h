@@ -1,5 +1,5 @@
 /** \file   GenericReconCartesianSpiritGadget.h
-    \brief  This is the class gadget for both 2DT and 3DT cartesian Spirit reconstruction, working on the IsmrmrdReconData.
+    \brief  This is the class gadget for both 2DT and 3DT cartesian Spirit reconstruction, working on the ReconData.
     \author Hui Xue
 */
 
@@ -22,7 +22,7 @@ namespace Gadgetron {
         /// recon outputs
         // ------------------------------------
         /// reconstructed images, headers and meta attributes
-        IsmrmrdImageArray recon_res_;
+        ImageArray recon_res_;
 
         /// full kspace reconstructed
         hoNDArray<T> full_kspace_;
@@ -93,18 +93,18 @@ namespace Gadgetron {
         // gadget functions
         // --------------------------------------------------
         // default interface function
-        virtual int process_config(ACE_Message_Block* mb);
-        virtual int process(Gadgetron::GadgetContainerMessage< IsmrmrdReconData >* m1);
+        virtual int process_config(const mrd::Header& header);
+        virtual int process(Gadgetron::GadgetContainerMessage< ReconData >* m1);
 
         // --------------------------------------------------
         // recon step functions
         // --------------------------------------------------
 
         // calibration, if only one dst channel is prescribed, the SpiritOne is used
-        virtual void perform_calib(IsmrmrdReconBit& recon_bit, ReconObjType& recon_obj, size_t encoding);
+        virtual void perform_calib(ReconBit& recon_bit, ReconObjType& recon_obj, size_t encoding);
 
         // unwrapping or coil combination
-        virtual void perform_unwrapping(IsmrmrdReconBit& recon_bit, ReconObjType& recon_obj, size_t encoding);
+        virtual void perform_unwrapping(ReconBit& recon_bit, ReconObjType& recon_obj, size_t encoding);
 
         // perform spirit unwrapping
         // kspace, kerIm, full_kspace: [RO E1 CHA N S SLC]

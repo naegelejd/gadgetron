@@ -15,10 +15,10 @@
 
 namespace Gadgetron {
 
-    class SimpleReconGadget : public Core::ChannelGadget<IsmrmrdReconData> {
+    class SimpleReconGadget : public Core::ChannelGadget<ReconData> {
     public:
         SimpleReconGadget(const Core::Context& context, const Core::GadgetProperties& props);
-        void process(Core::InputChannel<IsmrmrdReconData>& input, Core::OutputChannel& out) override;
+        void process(Core::InputChannel<ReconData>& input, Core::OutputChannel& out) override;
 
     protected:
         mrd::Header header;

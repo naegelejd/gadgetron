@@ -69,16 +69,15 @@ namespace Gadgetron {
         return GADGET_OK;
     }
 
-    int GenericReconKSpaceFilteringGadget::process(Gadgetron::GadgetContainerMessage< IsmrmrdImageArray >* m1)
+    int GenericReconKSpaceFilteringGadget::process(Gadgetron::GadgetContainerMessage< ImageArray >* m1)
     {
         if (perform_timing.value()) { gt_timer_.start("GenericReconKSpaceFilteringGadget::process"); }
 
         GDEBUG_CONDITION_STREAM(verbose.value(), "GenericReconKSpaceFilteringGadget::process(...) starts ... ");
-        GDEBUG_CONDITION_STREAM(true, "Joe: GenericReconKSpaceFilteringGadget::process(...) starts ... ");
 
         process_called_times_++;
 
-        IsmrmrdImageArray* recon_res_ = m1->getObjectPtr();
+        ImageArray* recon_res_ = m1->getObjectPtr();
 
         // print out recon info
         if (verbose.value())
@@ -95,7 +94,6 @@ namespace Gadgetron {
         if (recon_res_->meta[0].count(skip_processing_meta_field) && recon_res_->meta[0][skip_processing_meta_field].size() > 0)
         {
             GDEBUG_CONDITION_STREAM(verbose.value(), "Skip kspace filtering for this image array ... ");
-            GDEBUG_CONDITION_STREAM(true, "Joe: Skip kspace filtering for this image array ... ");
 
             if (this->next()->putq(m1) == -1)
             {
@@ -115,33 +113,22 @@ namespace Gadgetron {
         os << "encoding_" << encoding << "_" << dataRole;
         std::string str = os.str();
 
-        GDEBUG_STREAM("GenericReconKSpaceFilteringGadget:: Image mean : " << xt::mean(recon_res_->data)());
-        hoNDArray<std::complex<float>> data = Gadgetron::adapt_mrd_to_hoNDArray(recon_res_->data);
-
-        size_t RO = data.get_size(0);
-        size_t E1 = data.get_size(1);
-        size_t E2 = data.get_size(2);
-        size_t CHA = data.get_size(3);
-        size_t N = data.get_size(4);
-        size_t S = data.get_size(5);
-        size_t SLC = data.get_size(6);
-
-        GDEBUG_CONDITION_STREAM(true, "Joe: Adapted MRD to hoNDArray [RO E1 E2 CHA N S SLC] = [" << RO << " " << E1 << " " << E2 << " " << CHA << " " << N << " " << S << " " << SLC << "] ");
+        size_t RO = recon_res_->data.get_size(0);
+        size_t E1 = recon_res_->data.get_size(1);
+        size_t E2 = recon_res_->data.get_size(2);
+        size_t CHA = recon_res_->data.get_size(3);
+        size_t N = recon_res_->data.get_size(4);
+        size_t S = recon_res_->data.get_size(5);
+        size_t SLC = recon_res_->data.get_size(6);
 
         // perform SNR unit scaling
         mrd::SamplingLimits sampling_limits;
 
-        // if (recon_res_->meta[0].length("sampling_limits_RO")>0)
-        // {
-        //     sampling_limits.ro.minimum    = (uint16_t)recon_res_->meta[0].as_long("sampling_limits_RO", 0);
-        //     sampling_limits.ro.center = (uint16_t)recon_res_->meta[0].as_long("sampling_limits_RO", 1);
-        //     sampling_limits.ro.maximum    = (uint16_t)recon_res_->meta[0].as_long("sampling_limits_RO", 2);
-        // }
         if (recon_res_->meta[0].count("sampling_limits_RO")) {
             auto& sl = recon_res_->meta[0]["sampling_limits_RO"];
-            sampling_limits.ro.minimum = (uint16_t)std::get<long>(sl[0]);
-            sampling_limits.ro.center = (uint16_t)std::get<long>(sl[1]);
-            sampling_limits.ro.maximum = (uint16_t)std::get<long>(sl[2]);
+            sampling_limits.ro.minimum = (uint32_t)std::get<long>(sl[0]);
+            sampling_limits.ro.center = (uint32_t)std::get<long>(sl[1]);
+            sampling_limits.ro.maximum = (uint32_t)std::get<long>(sl[2]);
         }
 
         if ( !( (sampling_limits.ro.minimum >= 0) && (sampling_limits.ro.maximum < RO) && (sampling_limits.ro.minimum <= sampling_limits.ro.maximum)) )
@@ -153,17 +140,11 @@ namespace Gadgetron {
 
         GDEBUG_CONDITION_STREAM(true, "Joe: Finished setting sampling_limits.ro");
 
-        // if (recon_res_->meta[0].length("sampling_limits_E1") > 0)
-        // {
-        //     sampling_limits.e1.minimum    = (uint16_t)recon_res_->meta[0].as_long("sampling_limits_E1", 0);
-        //     sampling_limits.e1.center = (uint16_t)recon_res_->meta[0].as_long("sampling_limits_E1", 1);
-        //     sampling_limits.e1.maximum    = (uint16_t)recon_res_->meta[0].as_long("sampling_limits_E1", 2);
-        // }
         if (recon_res_->meta[0].count("sampling_limits_E1")) {
             auto& sl = recon_res_->meta[0]["sampling_limits_E1"];
-            sampling_limits.e1.minimum = (uint16_t)std::get<long>(sl[0]);
-            sampling_limits.e1.center = (uint16_t)std::get<long>(sl[1]);
-            sampling_limits.e1.maximum = (uint16_t)std::get<long>(sl[2]);
+            sampling_limits.e1.minimum = (uint32_t)std::get<long>(sl[0]);
+            sampling_limits.e1.center = (uint32_t)std::get<long>(sl[1]);
+            sampling_limits.e1.maximum = (uint32_t)std::get<long>(sl[2]);
         }
 
         if (!((sampling_limits.e1.minimum >= 0) && (sampling_limits.e1.maximum < E1) && (sampling_limits.e1.minimum <= sampling_limits.e1.maximum)))
@@ -175,17 +156,11 @@ namespace Gadgetron {
 
         GDEBUG_CONDITION_STREAM(true, "Joe: Finished setting sampling_limits.e1");
 
-        // if (recon_res_->meta[0].length("sampling_limits_E2") > 0)
-        // {
-        //     sampling_limits.e2.minimum    = (uint16_t)recon_res_->meta[0].as_long("sampling_limits_E2", 0);
-        //     sampling_limits.e2.center = (uint16_t)recon_res_->meta[0].as_long("sampling_limits_E2", 1);
-        //     sampling_limits.e2.maximum    = (uint16_t)recon_res_->meta[0].as_long("sampling_limits_E2", 2);
-        // }
         if (recon_res_->meta[0].count("sampling_limits_E2")) {
             auto& sl = recon_res_->meta[0]["sampling_limits_E2"];
-            sampling_limits.e2.minimum = (uint16_t)std::get<long>(sl[0]);
-            sampling_limits.e2.center = (uint16_t)std::get<long>(sl[1]);
-            sampling_limits.e2.maximum = (uint16_t)std::get<long>(sl[2]);
+            sampling_limits.e2.minimum = (uint32_t)std::get<long>(sl[0]);
+            sampling_limits.e2.center = (uint32_t)std::get<long>(sl[1]);
+            sampling_limits.e2.maximum = (uint32_t)std::get<long>(sl[2]);
         }
 
         if (!((sampling_limits.e2.minimum >= 0) && (sampling_limits.e2.maximum < E2) && (sampling_limits.e2.minimum <= sampling_limits.e2.maximum)))
@@ -347,16 +322,16 @@ namespace Gadgetron {
             // ----------------------------------------------------------
             // go to kspace
             // ----------------------------------------------------------
-            if (!debug_folder_full_path_.empty()) { gt_exporter_.export_array_complex(data, debug_folder_full_path_ + "image_before_filtering_" + str); }
+            if (!debug_folder_full_path_.empty()) { gt_exporter_.export_array_complex(recon_res_->data, debug_folder_full_path_ + "image_before_filtering_" + str); }
 
             if (perform_timing.value()) { gt_timer_.start("GenericReconKSpaceFilteringGadget: fftc"); }
             if (E2 > 1)
             {
-                Gadgetron::hoNDFFT<float>::instance()->fft3c(data, kspace_buf_);
+                Gadgetron::hoNDFFT<float>::instance()->fft3c(recon_res_->data, kspace_buf_);
             }
             else
             {
-                Gadgetron::hoNDFFT<float>::instance()->fft2c(data, kspace_buf_);
+                Gadgetron::hoNDFFT<float>::instance()->fft2c(recon_res_->data, kspace_buf_);
             }
             if (perform_timing.value()) { gt_timer_.stop(); }
 
@@ -437,26 +412,17 @@ namespace Gadgetron {
             // ----------------------------------------------------------
             if (E2 > 1)
             {
-                Gadgetron::hoNDFFT<float>::instance()->ifft3c(filter_res_, data);
+                Gadgetron::hoNDFFT<float>::instance()->ifft3c(filter_res_, recon_res_->data);
             }
             else
             {
-                Gadgetron::hoNDFFT<float>::instance()->ifft2c(filter_res_, data);
+                Gadgetron::hoNDFFT<float>::instance()->ifft2c(filter_res_, recon_res_->data);
             }
 
-            if (!debug_folder_full_path_.empty()) { gt_exporter_.export_array_complex(data, debug_folder_full_path_ + "image_after_filtering_" + str); }
+            if (!debug_folder_full_path_.empty()) { gt_exporter_.export_array_complex(recon_res_->data, debug_folder_full_path_ + "image_after_filtering_" + str); }
 
             GDEBUG_CONDITION_STREAM(verbose.value(), "GenericReconKSpaceFilteringGadget::process(...) ends ... ");
         }
-
-        GDEBUG_CONDITION_STREAM(true, "Joe: Copying filtering result back to recon_res_->data");
-
-        /** TODO Joe: Need to copy hoNDArray data result back to recon_res.data */
-        Gadgetron::copy_hoNDArray_to_mrd(data, recon_res_->data);
-
-        GDEBUG_STREAM("GenericReconKSpaceFilteringGadget:: Image mean : " << xt::mean(recon_res_->data)());
-
-        GDEBUG_CONDITION_STREAM(true, "Joe: GenericReconKSpaceFilteringGadget::process(...) ends ... ");
 
         // ----------------------------------------------------------
         // send out results

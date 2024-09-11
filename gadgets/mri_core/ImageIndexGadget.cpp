@@ -13,8 +13,7 @@ namespace {
 
     template<class T, class F>
     Image<T> update_image_index(Image<T> image, F &index) {
-        auto &header = std::get<ISMRMRD::ImageHeader>(image);
-        header.image_index = index(header.image_series_index);
+        image.head.image_index = index(image.head.image_series_index.value_or(0));
         return image;
     }
 }

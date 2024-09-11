@@ -43,7 +43,7 @@ namespace Gadgetron {
                 if (az != 0 && samples < maxRO_[encoding_ref]) {
                     auto original_data = acq.data;
 
-                    acq.data.resize({channels, maxRO_[encoding_ref]});
+                    acq.data.create(maxRO_[encoding_ref], channels);
                     acq.data.fill(0);
 
                     auto pAdjusted = acq.data.data();

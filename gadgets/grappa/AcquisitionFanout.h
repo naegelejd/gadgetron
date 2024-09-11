@@ -1,7 +1,5 @@
 #pragma once
 
-#include <ismrmrd/ismrmrd.h>
-
 #include "SliceAccumulator.h"
 
 #include "parallel/Fanout.h"

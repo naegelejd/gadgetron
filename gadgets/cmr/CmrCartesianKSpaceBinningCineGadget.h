@@ -113,7 +113,7 @@ namespace Gadgetron {
 
         // the raw recon results
         // [RO E1 E2 1 N S SLC]
-        IsmrmrdImageArray res_raw_;
+        ImageArray res_raw_;
         // acqusition time  and trigger time in ms
         // [N S SLC]
         hoNDArray< float > acq_time_raw_;
@@ -121,7 +121,7 @@ namespace Gadgetron {
 
         // the binning recon results
         // [RO E1 E2 1 binned_N S SLC]
-        IsmrmrdImageArray res_binning_;
+        ImageArray res_binning_;
         // acqusition time  and trigger time in ms for binned images
         // [binned_N S SLC]
         hoNDArray< float > acq_time_binning_;
@@ -134,24 +134,24 @@ namespace Gadgetron {
         // gadget functions
         // --------------------------------------------------
         // default interface function
-        virtual int process_config(ACE_Message_Block* mb);
-        virtual int process(Gadgetron::GadgetContainerMessage< IsmrmrdReconData >* m1);
+        virtual int process_config(const mrd::Header& header);
+        virtual int process(Gadgetron::GadgetContainerMessage< ReconData >* m1);
 
         // --------------------------------------------------
         // recon step functions
         // --------------------------------------------------
-        virtual void perform_binning(IsmrmrdReconBit& recon_bit, size_t encoding);
+        virtual void perform_binning(ReconBit& recon_bit, size_t encoding);
 
         // create binning image header
         void create_binning_image_headers_from_raw();
 
         // set the time stamps
-        void set_time_stamps(IsmrmrdImageArray& res, hoNDArray< float >& acq_time, hoNDArray< float >& cpt_time);
+        void set_time_stamps(ImageArray& res, hoNDArray< float >& acq_time, hoNDArray< float >& cpt_time);
 
         // --------------------------------------------------
         // overload functions
         // --------------------------------------------------
         // send out the recon results
-        virtual int prep_image_header_send_out(IsmrmrdImageArray& res, size_t n, size_t s, size_t slc, size_t encoding, int series_num, const std::string& data_role);
+        virtual int prep_image_header_send_out(ImageArray& res, size_t n, size_t s, size_t slc, size_t encoding, int series_num, const std::string& data_role);
     };
 }

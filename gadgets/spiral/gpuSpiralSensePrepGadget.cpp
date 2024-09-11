@@ -7,7 +7,6 @@
 #include "cuNDArray_reductions.h"
 #include "cuNDArray_utils.h"
 #include "hoNDArray_fileio.h"
-#include "ismrmrd/xml.h"
 #include "mri_core_girf_correction.h"
 #include "vector_td.h"
 #include "vector_td_operators.h"
@@ -34,7 +33,7 @@ namespace Gadgetron {
 
     }
 
-    int gpuSpiralSensePrepGadget::process_config(ACE_Message_Block *mb) {
+    int gpuSpiralSensePrepGadget::process_config(mrd::Header& header) {
 
         int number_of_devices = 0;
         if (cudaGetDeviceCount(&number_of_devices) != cudaSuccess) {
@@ -90,9 +89,7 @@ namespace Gadgetron {
         // Start parsing the ISMRMRD XML header
         //
 
-        ISMRMRD::IsmrmrdHeader h;
-        ISMRMRD::deserialize(mb->rd_ptr(), h);
-
+        mrd::Header& h = header;
 
         if (h.encoding.size() != 1) {
             GDEBUG("This Gadget only supports one encoding space\n");
@@ -101,13 +98,13 @@ namespace Gadgetron {
 
         // Get the encoding space and trajectory description
 
-        ISMRMRD::TrajectoryDescription traj_desc;
+        mrd::TrajectoryDescription traj_desc;
 
 
         // Determine reconstruction matrix sizes
         //
 
-        ISMRMRD::EncodingSpace e_space = h.encoding[0].encodedSpace;
+        mrd::EncodingSpaceType e_space = h.encoding[0].encoded_space;
 
         kernel_width_ = buffer_convolution_kernel_width.value();
         oversampling_factor_ = buffer_convolution_oversampling_factor.value();

@@ -175,8 +175,6 @@ namespace Gadgetron {
                     if (uncombined_channel) {
                         A(sample_counter, c) = std::complex<float>(0.0, 0.0);
                     } else {
-                        // A(sample_counter, c) = tmp.data(c, data_offset + s);
-                        // means(c) += tmp.data(c, data_offset + s);
                         A(sample_counter, c) = tmp.data(data_offset + s, c);
                         means(c) += tmp.data(data_offset + s, c);
                     }
@@ -227,15 +225,6 @@ namespace Gadgetron {
     {
         auto location = get_location(acq);
 
-        // std::vector<size_t> shape{acq.Samples(), acq.Coils()};
-
-        // auto mrd_data_in = acq.data;
-        // if (mrd_data_in.data() == acq.data.data()) {
-        //     GERROR_STREAM("ALERT - JOE - Expected this to copy the data");
-        // }
-
-        // hoNDArray<std::complex<float>> data_in(shape, mrd_data_in.data());
-        // hoNDArray<std::complex<float>> data_out(shape, acq.data.data());
         hoNDArray<std::complex<float>> data_out(acq.data.dimensions());
 
         if (pca_coefficients_[location] != 0)

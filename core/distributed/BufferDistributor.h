@@ -6,12 +6,12 @@
 #include "mri_core_data.h"
 
 namespace Gadgetron::Core::Distributed {
-    class BufferDistributor : public TypedDistributor<IsmrmrdReconData> {
+    class BufferDistributor : public TypedDistributor<ReconData> {
 
     public:
         BufferDistributor(const Context &context, const GadgetProperties &props);
 
-        void process(InputChannel<IsmrmrdReconData> &input, ChannelCreator &creator) override;
+        void process(InputChannel<ReconData> &input, ChannelCreator &creator) override;
 
     private:
         const size_t encoding_spaces;

@@ -45,38 +45,38 @@ set( config_cmr_files
     ${config_BinningCine_files} 
     ${config_Mapping_files})
 
-if (BUILD_PYTHON_SUPPORT)
+# if (BUILD_PYTHON_SUPPORT)
 
-    message("Build python cmr gadgets ... ")
+#     message("Build python cmr gadgets ... ")
 
-    include_directories(${CMAKE_SOURCE_DIR}/toolboxes/python)
+#     include_directories(${CMAKE_SOURCE_DIR}/toolboxes/python)
 
-    set( gadgetron_cmr_header_files ${gadgetron_cmr_header_files} CmrRealTimeLAXCineAIAnalysisGadget.h)
-    set( gadgetron_cmr_src_files ${gadgetron_cmr_src_files} CmrRealTimeLAXCineAIAnalysisGadget.cpp)
+#     set( gadgetron_cmr_header_files ${gadgetron_cmr_header_files} CmrRealTimeLAXCineAIAnalysisGadget.h)
+#     set( gadgetron_cmr_src_files ${gadgetron_cmr_src_files} CmrRealTimeLAXCineAIAnalysisGadget.cpp)
 
-    set( config_LandmarkDetection_files 
-        config/LandmarkDetection/CMR_RTCine_LAX_AI.xml
-        config/LandmarkDetection/CMR_RTCine_Recon.xml
-        config/LandmarkDetection/CMR_Image_Chain_RTCine_LAX_AI.xml
-        config/LandmarkDetection/stream_image_array.xml
-        )
+#     set( config_LandmarkDetection_files 
+#         config/LandmarkDetection/CMR_RTCine_LAX_AI.xml
+#         config/LandmarkDetection/CMR_RTCine_Recon.xml
+#         config/LandmarkDetection/CMR_Image_Chain_RTCine_LAX_AI.xml
+#         config/LandmarkDetection/stream_image_array.xml
+#         )
 
-    set( config_cmr_files ${config_cmr_files} ${config_LandmarkDetection_files})
+#     set( config_cmr_files ${config_cmr_files} ${config_LandmarkDetection_files})
 
-    set( python_LandmarkDetection_files 
-        config/LandmarkDetection/gadgetron_cmr_landmark_detection.py
-        config/LandmarkDetection/gadgetron_cmr_landmark_detection_util.py
-        )
+#     set( python_LandmarkDetection_files 
+#         config/LandmarkDetection/gadgetron_cmr_landmark_detection.py
+#         config/LandmarkDetection/gadgetron_cmr_landmark_detection_util.py
+#         )
 
-    source_group(config/LandmarkDetection FILES ${config_LandmarkDetection_files} ${python_LandmarkDetection_files})
+#     source_group(config/LandmarkDetection FILES ${config_LandmarkDetection_files} ${python_LandmarkDetection_files})
 
-    set( config_cmr_files 
-        ${config_cmr_files} 
-        ${config_LandmarkDetection_files} 
-        ${python_LandmarkDetection_files} )
+#     set( config_cmr_files 
+#         ${config_cmr_files} 
+#         ${config_LandmarkDetection_files} 
+#         ${python_LandmarkDetection_files} )
 
-    install(FILES ${python_LandmarkDetection_files} DESTINATION ${GADGETRON_INSTALL_PYTHON_MODULE_PATH}/cmr_lax_landmark_detection COMPONENT main)
-endif ()
+#     install(FILES ${python_LandmarkDetection_files} DESTINATION ${GADGETRON_INSTALL_PYTHON_MODULE_PATH}/cmr_lax_landmark_detection COMPONENT main)
+# endif ()
 
 add_library(gadgetron_cmr SHARED 
     ${gadgetron_cmr_header_files} 
@@ -98,9 +98,9 @@ target_link_libraries(gadgetron_cmr
     gadgetron_toolbox_cmr
 )
 
-if (BUILD_PYTHON_SUPPORT)
-    target_link_libraries(gadgetron_cmr gadgetron_toolbox_python)
-endif ()
+# if (BUILD_PYTHON_SUPPORT)
+#     target_link_libraries(gadgetron_cmr gadgetron_toolbox_python)
+# endif ()
 
 install(FILES ${gadgetron_cmr_header_files} DESTINATION ${GADGETRON_INSTALL_INCLUDE_PATH} COMPONENT main)
 

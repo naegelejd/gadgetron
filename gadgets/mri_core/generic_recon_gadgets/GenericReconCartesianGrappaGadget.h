@@ -1,5 +1,5 @@
 /** \file   GenericReconCartesianGrappaGadget.h
-    \brief  This is the class gadget for both 2DT and 3DT cartesian grappa and grappaone reconstruction, working on the IsmrmrdReconData.
+    \brief  This is the class gadget for both 2DT and 3DT cartesian grappa and grappaone reconstruction, working on the ReconData.
     \author Hui Xue
 */
 
@@ -18,7 +18,7 @@ namespace Gadgetron {
         /// recon outputs
         // ------------------------------------
         /// reconstructed images, headers and meta attributes
-        IsmrmrdImageArray recon_res_;
+        ImageArray recon_res_;
 
         /// gfactor, [RO E1 E2 uncombinedCHA+1 N S SLC]
         hoNDArray<typename realType<T>::Type> gfactor_;
@@ -101,7 +101,7 @@ namespace Gadgetron {
         // default interface function
         // virtual int process_config(ACE_Message_Block* mb) override;
         virtual int process_config(const mrd::Header& header) override;
-        virtual int process(Gadgetron::GadgetContainerMessage< IsmrmrdReconData >* m1) override;
+        virtual int process(Gadgetron::GadgetContainerMessage< ReconData >* m1) override;
         virtual int close(unsigned long flags);
 
         // --------------------------------------------------
@@ -112,10 +112,10 @@ namespace Gadgetron {
         virtual void prepare_down_stream_coil_compression_ref_data(const hoNDArray< std::complex<float> >& ref_src, hoNDArray< std::complex<float> >& ref_coil_map, hoNDArray< std::complex<float> >& ref_dst, size_t encoding);
 
         // calibration, if only one dst channel is prescribed, the GrappaOne is used
-        virtual void perform_calib(IsmrmrdReconBit& recon_bit, ReconObjType& recon_obj, size_t encoding);
+        virtual void perform_calib(ReconBit& recon_bit, ReconObjType& recon_obj, size_t encoding);
 
         // unwrapping or coil combination
-        virtual void perform_unwrapping(IsmrmrdReconBit& recon_bit, ReconObjType& recon_obj, size_t encoding);
+        virtual void perform_unwrapping(ReconBit& recon_bit, ReconObjType& recon_obj, size_t encoding);
 
         // compute snr map
         virtual void compute_snr_map(ReconObjType& recon_obj, hoNDArray< std::complex<float> >& snr_map);

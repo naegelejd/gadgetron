@@ -4,10 +4,9 @@
  */
 
 #include "ComplexToFloatGadget.h"
+#include "hoNDArray_elemwise.h"
 
 #include "log.h"
-
-#include <xtensor/xcomplex.hpp>
 
 
 Gadgetron::ComplexToFloatGadget::ComplexToFloatGadget(
@@ -15,10 +14,10 @@ Gadgetron::ComplexToFloatGadget::ComplexToFloatGadget(
     : PureGadget(context,props)
 {
 
-    converters = { { mrd::ImageType::kMagnitude, [](const auto& image) { return xt::abs(image); } },
-                   { mrd::ImageType::kPhase,     [](const auto& image) { return xt::arg(image); } },
-                   { mrd::ImageType::kReal,      [](const auto& image) { return xt::real(image); } },
-                   { mrd::ImageType::kImag,      [](const auto& image) { return xt::imag(image); } }};
+    converters = { { mrd::ImageType::kMagnitude, [](const auto& image) { return abs(image); } },
+                   { mrd::ImageType::kPhase,     [](const auto& image) { return argument(image); } },
+                   { mrd::ImageType::kReal,      [](const auto& image) { return real(image); } },
+                   { mrd::ImageType::kImag,      [](const auto& image) { return imag(image); } }};
 };
 
 Gadgetron::Core::Image<float> Gadgetron::ComplexToFloatGadget::process_function(
@@ -38,8 +37,6 @@ Gadgetron::Core::Image<float> Gadgetron::ComplexToFloatGadget::process_function(
         out.data = converters.at(mrd::ImageType::kMagnitude)(input_image.data);
         out.head.image_type = mrd::ImageType::kMagnitude;
     }
-
-    GDEBUG_STREAM("Joe: Image mean IN: " << xt::mean(input_image.data)() << ", OUT: " << xt::mean(out.data)());
 
     return out;
 }

@@ -4,7 +4,7 @@
 #include "hoNDArray_reductions.h"
 
 /*
-    The input is IsmrmrdReconData and output is single 2D or 3D ISMRMRD images
+    The input is mrd::ReconData and output is single 2D or 3D ISMRMRD images
 
     If required, the gfactor map can be sent out
 
@@ -45,16 +45,15 @@ namespace Gadgetron {
         return GADGET_OK;
     }
 
-    int GenericReconCartesianGrappaGadget::process(Gadgetron::GadgetContainerMessage<IsmrmrdReconData> *m1)
+    int GenericReconCartesianGrappaGadget::process(Gadgetron::GadgetContainerMessage<ReconData> *m1)
     {
         if (perform_timing.value()) { gt_timer_local_.start("GenericReconCartesianGrappaGadget::process"); }
 
         process_called_times_++;
 
-        /** TODO Joe: Rename recon_bit_ to recon_data because uhhhh */
-        IsmrmrdReconData *recon_bit_ = m1->getObjectPtr();
-        if (recon_bit_->rbits.size() > num_encoding_spaces_) {
-            GWARN_STREAM("Incoming recon_bit has more encoding spaces than the protocol : " << recon_bit_->rbits.size()
+        ReconData *recon_data = m1->getObjectPtr();
+        if (recon_data->rbits.size() > num_encoding_spaces_) {
+            GWARN_STREAM("Incoming recon_bit has more encoding spaces than the protocol : " << recon_data->rbits.size()
                                                                                             << " instead of "
                                                                                             << num_encoding_spaces_);
         }
@@ -69,7 +68,7 @@ namespace Gadgetron {
         }
 
         // for every encoding space
-        for (size_t e = 0; e < recon_bit_->rbits.size(); e++) {
+        for (size_t e = 0; e < recon_data->rbits.size(); e++) {
             std::stringstream os;
             os << "_encoding_" << e << "_" << process_called_times_;
 
@@ -78,38 +77,33 @@ namespace Gadgetron {
             GDEBUG_CONDITION_STREAM(verbose.value(),
                                     "======================================================================");
 
-            if (recon_bit_->rbits[e].data.data.size()==0) continue;
+            if (recon_data->rbits[e].data.data.size()==0) continue;
 
             // ---------------------------------------------------------------
             // export incoming data
             if (!debug_folder_full_path_.empty())
             {
-                /** TODO Joe: Implement */
-                // gt_exporter_.export_array_complex(recon_bit_->rbits[e].data.data, debug_folder_full_path_ + "data" + os.str());
+                gt_exporter_.export_array_complex(recon_data->rbits[e].data.data, debug_folder_full_path_ + "data" + os.str());
             }
 
-            if (!debug_folder_full_path_.empty() && recon_bit_->rbits[e].data.trajectory.size() > 0)
+            if (!debug_folder_full_path_.empty() && recon_data->rbits[e].data.trajectory.size() > 0)
             {
-                /** TODO Joe: Implement */
-                // gt_exporter_.export_array(*(recon_bit_->rbits[e].data.trajectory), debug_folder_full_path_ + "data_traj" + os.str());
+                gt_exporter_.export_array(recon_data->rbits[e].data.trajectory, debug_folder_full_path_ + "data_traj" + os.str());
             }
 
             // ---------------------------------------------------------------
 
-            if (recon_bit_->rbits[e].ref) {
-                /** TODO Joe: Implement */
-                // this->gt_streamer_.stream_to_array_buffer(GENERIC_RECON_STREAM_REF_KSPACE, recon_bit_->rbits[e].ref->data);
+            if (recon_data->rbits[e].ref) {
+                this->gt_streamer_.stream_to_array_buffer(GENERIC_RECON_STREAM_REF_KSPACE, recon_data->rbits[e].ref->data);
 
                 if (!debug_folder_full_path_.empty()) {
-                    /** TODO Joe: Implement */
-                    // gt_exporter_.export_array_complex(recon_bit_->rbits[e].ref->data,
-                    //                                   debug_folder_full_path_ + "ref" + os.str());
+                    gt_exporter_.export_array_complex(recon_data->rbits[e].ref->data,
+                                                      debug_folder_full_path_ + "ref" + os.str());
                 }
 
-                if (!debug_folder_full_path_.empty() && recon_bit_->rbits[e].ref->trajectory.size() > 0) {
-                    /** TODO Joe: Implement */
-                    // gt_exporter_.export_array(recon_bit_->rbits[e].ref->trajectory,
-                    //                             debug_folder_full_path_ + "ref_traj" + os.str());
+                if (!debug_folder_full_path_.empty() && recon_data->rbits[e].ref->trajectory.size() > 0) {
+                    gt_exporter_.export_array(recon_data->rbits[e].ref->trajectory,
+                                                debug_folder_full_path_ + "ref_traj" + os.str());
                 }
 
                 // ---------------------------------------------------------------
@@ -117,7 +111,7 @@ namespace Gadgetron {
                 // after this step, the recon_obj_[e].ref_calib_ and recon_obj_[e].ref_coil_map_ are set
 
                 if (perform_timing.value()) { gt_timer_.start("GenericReconCartesianGrappaGadget::make_ref_coil_map"); }
-                this->make_ref_coil_map(*recon_bit_->rbits[e].ref, Gadgetron::mrd_shape_to_hoNDArray_shape(recon_bit_->rbits[e].data.data),
+                this->make_ref_coil_map(*recon_data->rbits[e].ref, recon_data->rbits[e].data.data.dimensions(),
                                         recon_obj_[e].ref_calib_, recon_obj_[e].ref_coil_map_, e);
                 if (perform_timing.value()) { gt_timer_.stop(); }
 
@@ -169,30 +163,27 @@ namespace Gadgetron {
                 // after this step, recon_obj_[e].kernel_, recon_obj_[e].kernelIm_, recon_obj_[e].unmixing_coeff_ are filled
                 // gfactor is computed too
                 if (perform_timing.value()) { gt_timer_.start("GenericReconCartesianGrappaGadget::perform_calib"); }
-                this->perform_calib(recon_bit_->rbits[e], recon_obj_[e], e);
+                this->perform_calib(recon_data->rbits[e], recon_obj_[e], e);
                 if (perform_timing.value()) { gt_timer_.stop(); }
 
                 // ---------------------------------------------------------------
 
                 /** TODO Joe: After adapting ref.data into an hoNDArray (ref_calib), ensure this line doesn't bork the underlying array */
-                recon_bit_->rbits[e].ref = Core::none;
+                recon_data->rbits[e].ref = Core::none;
             }
 
-            if (recon_bit_->rbits[e].data.data.size() > 0) {
+            if (recon_data->rbits[e].data.data.size() > 0) {
 
-                /** TODO Joe: Implement */
-                // this->gt_streamer_.stream_to_array_buffer(GENERIC_RECON_STREAM_UNDERSAMPLED_KSPACE, recon_bit_->rbits[e].data.data);
+                this->gt_streamer_.stream_to_array_buffer(GENERIC_RECON_STREAM_UNDERSAMPLED_KSPACE, recon_data->rbits[e].data.data);
 
                 if (!debug_folder_full_path_.empty()) {
-                    /** TODO Joe: Implement */
-                    // gt_exporter_.export_array_complex(recon_bit_->rbits[e].data.data,
-                    //                                   debug_folder_full_path_ + "data_before_unwrapping" + os.str());
+                    gt_exporter_.export_array_complex(recon_data->rbits[e].data.data,
+                                                      debug_folder_full_path_ + "data_before_unwrapping" + os.str());
                 }
 
-                if (!debug_folder_full_path_.empty() && recon_bit_->rbits[e].data.trajectory.size() > 0) {
-                    /** TODO Joe: Implement */
-                    // gt_exporter_.export_array(recon_bit_->rbits[e].data.trajectory,
-                    //                             debug_folder_full_path_ + "data_before_unwrapping_traj" + os.str());
+                if (!debug_folder_full_path_.empty() && recon_data->rbits[e].data.trajectory.size() > 0) {
+                    gt_exporter_.export_array(recon_data->rbits[e].data.trajectory,
+                                                debug_folder_full_path_ + "data_before_unwrapping_traj" + os.str());
                 }
 
                 // ---------------------------------------------------------------
@@ -200,7 +191,7 @@ namespace Gadgetron {
                 if (perform_timing.value()) {
                     gt_timer_.start("GenericReconCartesianGrappaGadget::perform_unwrapping");
                 }
-                this->perform_unwrapping(recon_bit_->rbits[e], recon_obj_[e], e);
+                this->perform_unwrapping(recon_data->rbits[e], recon_obj_[e], e);
                 if (perform_timing.value()) { gt_timer_.stop(); }
 
                 // ---------------------------------------------------------------
@@ -209,7 +200,7 @@ namespace Gadgetron {
                     gt_timer_.start("GenericReconCartesianGrappaGadget::compute_image_header");
                 }
                 GDEBUG_STREAM("Joe: Computing Image header... ");
-                this->compute_image_header(recon_bit_->rbits[e], recon_obj_[e].recon_res_, e);
+                this->compute_image_header(recon_data->rbits[e], recon_obj_[e].recon_res_, e);
                 if (perform_timing.value()) { gt_timer_.stop(); }
 
                 GDEBUG_STREAM("Joe: Image header computed");
@@ -220,30 +211,17 @@ namespace Gadgetron {
 
                 GDEBUG_STREAM("Joe: Waveforms attached to ImageArray");
 
-                /** TODO Joe: I removed `acq_headers` from mrd::ImageArray... so delete this line vvvvv */
-                // recon_obj_[e].recon_res_.acq_headers = recon_bit_->rbits[e].data.headers;
-
                 // ---------------------------------------------------------------
                 if (send_out_gfactor.value() && recon_obj_[e].gfactor_.get_number_of_elements() > 0 &&
                     (acceFactorE1_[e] * acceFactorE2_[e] > 1)) {
-                    IsmrmrdImageArray res;
-
-                    /** TODO Joe: This is not ideal...
-                     * 
-                     * We want to use Gadgetron::real_to_complex, but the target is an mrd array,
-                     * not hoNDArray, so I'm copying it after transforming.
-                     */
-                    hoNDArray<std::complex<float>> gfactor_cplx;
-                    Gadgetron::real_to_complex(recon_obj_[e].gfactor_, gfactor_cplx);
-                    Gadgetron::copy_hoNDArray_to_mrd(gfactor_cplx, res.data);
-
+                    ImageArray res;
+                    Gadgetron::real_to_complex(recon_obj_[e].gfactor_, res.data);
                     res.headers = recon_obj_[e].recon_res_.headers;
                     res.meta = recon_obj_[e].recon_res_.meta;
 
                     if (!debug_folder_full_path_.empty()) {
-                        /** TODO Joe: Implement */
-                        // gt_exporter_.export_array_complex(res.data,
-                        //                                 debug_folder_full_path_ + "gfactor_" + os.str());
+                        gt_exporter_.export_array_complex(res.data,
+                                                        debug_folder_full_path_ + "gfactor_" + os.str());
                     }
 
                     if (perform_timing.value()) {
@@ -262,8 +240,7 @@ namespace Gadgetron {
                     hoNDArray<std::complex<float> > snr_map;
 
                     if (calib_mode_[e] == mrd::CalibrationMode::kNoacceleration) {
-                        /** TODO Joe: Again, this should be correct */
-                        snr_map = Gadgetron::copy_mrd_to_hoNDArray(recon_obj_[e].recon_res_.data);
+                        snr_map = recon_obj_[e].recon_res_.data;
                     } else {
                         if (recon_obj_[e].gfactor_.get_number_of_elements() > 0) {
                             if (perform_timing.value()) { gt_timer_.start("compute SNR map array"); }
@@ -280,14 +257,10 @@ namespace Gadgetron {
 
                         if (perform_timing.value()) { gt_timer_.start("send out gfactor array, snr map"); }
 
-                        IsmrmrdImageArray res;
-                        // res.data = snr_map;
-                        Gadgetron::copy_hoNDArray_to_mrd(snr_map, res.data);
-
+                        ImageArray res;
+                        res.data = snr_map;
                         res.headers = recon_obj_[e].recon_res_.headers;
                         res.meta = recon_obj_[e].recon_res_.meta;
-                        /** TODO Joe: I removed `acq_headers` from mrd::ImageArray... so delete this line vvvvv */
-                        // res.acq_headers = recon_bit_->rbits[e].data.headers;
 
                         this->send_out_image_array(res, e, image_series.value() + 100 * ((int) e + 3), GADGETRON_IMAGE_SNR_MAP);
 
@@ -298,9 +271,8 @@ namespace Gadgetron {
                 // ---------------------------------------------------------------
 
                 if (!debug_folder_full_path_.empty()) {
-                    /** TODO Joe: Implement */
-                    // this->gt_exporter_.export_array_complex(recon_obj_[e].recon_res_.data,
-                    //     debug_folder_full_path_ + "recon_res" + os.str());
+                    this->gt_exporter_.export_array_complex(recon_obj_[e].recon_res_.data,
+                        debug_folder_full_path_ + "recon_res" + os.str());
                 }
 
                 /** TODO Joe: Implement */
@@ -317,21 +289,10 @@ namespace Gadgetron {
                 if (perform_timing.value()) { gt_timer_.stop(); }
             }
 
+            recon_obj_[e].recon_res_.data.clear();
             recon_obj_[e].gfactor_.clear();
-            // recon_obj_[e].recon_res_.data.clear();
-            // recon_obj_[e].recon_res_.headers.clear();
-            // recon_obj_[e].recon_res_.meta.clear();
-            /** TODO Joe: It looks like xtensor doesn't have a "clear/reset/release" capability.
-             * We can either
-             * 1. *NOT* clear the mrd arrays
-             * 2. Set them to an uninitialized array (e.g. recon_res_.data = yardl::NDArray<std::complex<float>, 7>();)
-             * 3. std::move(them) to a temporary to trigger destruct (e.g. auto delete_data = std::move(recon_res_.data);
-            */
-            GDEBUG_STREAM("Joe: Preparing to destruct recon_res_ data (" << recon_obj_[e].recon_res_.data.data() << "), headers(" << recon_obj_[e].recon_res_.headers.data() << "), and meta (" << recon_obj_[e].recon_res_.meta.data() << ")");
-            auto destruct_data = std::move(recon_obj_[e].recon_res_.data);
-            auto destruct_headers = std::move(recon_obj_[e].recon_res_.headers);
-            auto destruct_meta = std::move(recon_obj_[e].recon_res_.meta);
-            GDEBUG_STREAM("Joe: Destructed recon_res_ data (" << recon_obj_[e].recon_res_.data.data() << "), headers(" << recon_obj_[e].recon_res_.headers.data() << "), and meta (" << recon_obj_[e].recon_res_.meta.data() << ")");
+            recon_obj_[e].recon_res_.headers.clear();
+            recon_obj_[e].recon_res_.meta.clear();
         }
 
         m1->release();
@@ -431,15 +392,11 @@ namespace Gadgetron {
         }
     }
 
-    void GenericReconCartesianGrappaGadget::perform_calib(IsmrmrdReconBit &recon_bit, ReconObjType &recon_obj, size_t e)
+    void GenericReconCartesianGrappaGadget::perform_calib(ReconBit &recon_bit, ReconObjType &recon_obj, size_t e)
     {
-        /** TODO Joe: Test then cleanup */
-        // size_t RO = recon_bit.data.data.get_size(0);
-        // size_t E1 = recon_bit.data.data.get_size(1);
-        // size_t E2 = recon_bit.data.data.get_size(2);
-        size_t RO = recon_bit.data.data.shape(6);
-        size_t E1 = recon_bit.data.data.shape(5);
-        size_t E2 = recon_bit.data.data.shape(4);
+        size_t RO = recon_bit.data.data.get_size(0);
+        size_t E1 = recon_bit.data.data.get_size(1);
+        size_t E2 = recon_bit.data.data.get_size(2);
 
         hoNDArray<std::complex<float> > &src = recon_obj.ref_calib_;
         hoNDArray<std::complex<float> > &dst = recon_obj.ref_calib_dst_;
@@ -613,9 +570,9 @@ namespace Gadgetron {
 
     }
 
-    void GenericReconCartesianGrappaGadget::perform_unwrapping(IsmrmrdReconBit &recon_bit, ReconObjType &recon_obj, size_t e)
+    void GenericReconCartesianGrappaGadget::perform_unwrapping(ReconBit &recon_bit, ReconObjType &recon_obj, size_t e)
     {
-        hoNDArray<std::complex<float>> data_in = Gadgetron::adapt_mrd_to_hoNDArray(recon_bit.data.data);
+        hoNDArray<std::complex<float>>& data_in = recon_bit.data.data;
 
         size_t RO = data_in.get_size(0);
         size_t E1 = data_in.get_size(1);
@@ -641,10 +598,7 @@ namespace Gadgetron {
         size_t convkE1 = recon_obj.kernel_.get_size(1);
         size_t convkE2 = recon_obj.kernel_.get_size(2);
 
-        /** TODO Joe: Clean this up vvvvv */
-        // recon_obj.recon_res_.data.resize({SLC, S, N, 1, E2, E1, RO});
-        // hoNDArray<std::complex<float>> unwrapped_data = Gadgetron::adapt_mrd_to_hoNDArray(recon_obj.recon_res_.data);
-        hoNDArray<std::complex<float>> unwrapped_data(RO, E1, E2, 1, N, S, SLC);
+        recon_obj.recon_res_.data.create(RO, E1, E2, 1, N, S, SLC);
 
         if (!debug_folder_full_path_.empty()) {
             std::stringstream os;
@@ -694,7 +648,7 @@ namespace Gadgetron {
 /** TODO Joe: Cleanup after testing... */
 // #pragma omp parallel default(none) private(ii) shared(num, N, S, RO, E1, E2, srcCHA, convkRO, convkE1, convkE2, ref_N, ref_S, recon_obj, dstCHA, unmixingCoeff_CHA, e) if(num>1)
 // #pragma omp parallel default(none) private(ii) shared(num, N, S, RO, E1, E2, srcCHA, convkRO, convkE1, convkE2, ref_N, ref_S, recon_obj, dstCHA, unmixingCoeff_CHA, e, unwrapped_data) if(num>1)
-#pragma omp parallel default(none) private(ii) shared(num, N, S, RO, E1, E2, srcCHA, ref_N, ref_S, recon_obj, unmixingCoeff_CHA, unwrapped_data) if(num>1)
+#pragma omp parallel default(none) private(ii) shared(num, N, S, RO, E1, E2, srcCHA, ref_N, ref_S, recon_obj, unmixingCoeff_CHA) if(num>1)
         {
 #pragma omp for
             for (ii = 0; ii < num; ii++) {
@@ -715,7 +669,7 @@ namespace Gadgetron {
 
                 T *pUnmix = &(recon_obj.unmixing_coeff_(0, 0, 0, 0, usedN, usedS, slc));
 
-                T *pRes = &(unwrapped_data(0, 0, 0, 0, n, s, slc));
+                T *pRes = &(recon_obj.recon_res_.data(0, 0, 0, 0, n, s, slc));
                 hoNDArray<std::complex<float> > res(RO, E1, E2, 1, pRes);
 
                 hoNDArray<std::complex<float> > unmixing(RO, E1, E2, unmixingCoeff_CHA, pUnmix);
@@ -732,33 +686,15 @@ namespace Gadgetron {
             std::stringstream os;
             os << "encoding_" << e;
             std::string suffix = os.str();
-            gt_exporter_.export_array_complex(unwrapped_data,
+            gt_exporter_.export_array_complex(recon_obj.recon_res_.data,
                                               debug_folder_full_path_ + "unwrappedIm_" + suffix);
         }
-
-        GDEBUG_STREAM("Joe: Unwrapped data computed... " << unwrapped_data.size() << " at " << unwrapped_data.data());
-        GDEBUG_STREAM("Joe: Copying it into recon_obj... " << recon_obj.recon_res_.data.size() << " at " << recon_obj.recon_res_.data.data());
-
-        try {
-        /** TODO Joe: Copying unwrapped_data result back to recon_obj.recon_res_.data */
-        Gadgetron::copy_hoNDArray_to_mrd(unwrapped_data, recon_obj.recon_res_.data);
-        } catch (const std::exception &e) {
-            GDEBUG_STREAM("Joe: Exception copying unwrapped_data to recon_obj.recon_res_.data: " << e.what());
-        }
-
-        GDEBUG_STREAM("Joe: Unwrapped data copied to recon_obj.recon_res_.data")
     }
 
     void GenericReconCartesianGrappaGadget::compute_snr_map(ReconObjType &recon_obj,
                                                             hoNDArray<std::complex<float> > &snr_map)
     {
-        // snr_map = recon_obj.recon_res_.data;
-        /** TODO Joe: This should be equivalent...
-         * Previously, snr_map = recon_obj.recon_res_.data used the hoNDArray copy constructor.
-         * Now, we'll copy recon_obj.recon_res_.data from MRD to hoNDArray, then
-         *  snr_map = <copy> will use the hoNDArray move constructor...
-         */
-        snr_map = Gadgetron::copy_mrd_to_hoNDArray(recon_obj.recon_res_.data);
+        snr_map = recon_obj.recon_res_.data;
 
         size_t RO = snr_map.get_size(0);
         size_t E1 = snr_map.get_size(1);
@@ -790,8 +726,7 @@ namespace Gadgetron {
                     float *pG = &(recon_obj.gfactor_(0, 0, 0, 0, usedN, usedS, slc));
 
                     typedef std::complex<float> T;
-                    /** TODO Joe: This is an MRD array, reverse indices... vvvvv */
-                    T *pIm = &(recon_obj.recon_res_.data(slc, s, n, 0, 0, 0, 0));
+                    T *pIm = &(recon_obj.recon_res_.data(0, 0, 0, 0, n, s, slc));
                     T *pSNR = &(snr_map(0, 0, 0, 0, n, s, slc));
 
                     for (size_t ii = 0; ii < RO * E1 * E2 * CHA; ii++) {

@@ -36,9 +36,9 @@ namespace Gadgetron {
         /// whether to average all S for coefficient computation
         GADGET_PROPERTY(average_all_ref_S, bool, "Whether to average all S for ref generation", false);
 
-        /// if update_eigen_channel_coefficients==true, every incoming IsmrmrdReconData will be used to compute KLT coefficients
+        /// if update_eigen_channel_coefficients==true, every incoming ReconData will be used to compute KLT coefficients
         /// and the older one will be replaced
-        /// if update_eigen_channel_coefficients==false, the KLT coefficients will be computed only once for the first incoming IsmrmrdReconData
+        /// if update_eigen_channel_coefficients==false, the KLT coefficients will be computed only once for the first incoming ReconData
         GADGET_PROPERTY(update_eigen_channel_coefficients, bool, "Whether to update KLT coefficients for eigen channel computation", false);
 
         /// optionally, upstream coil compression can be applied
@@ -74,6 +74,6 @@ namespace Gadgetron {
         // default interface function
         // virtual int process_config(ACE_Message_Block* mb);
         virtual int process_config(const mrd::Header& header);
-        virtual int process(Gadgetron::GadgetContainerMessage< IsmrmrdReconData >* m1);
+        virtual int process(Gadgetron::GadgetContainerMessage< ReconData >* m1);
     };
 }

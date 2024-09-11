@@ -39,7 +39,7 @@ namespace Gadgetron {
         // --------------------------------------------------
 
         // default interface function
-        virtual int process_config(ACE_Message_Block* mb);
+        virtual int process_config(const mrd::Header& header);
 
         virtual int close(unsigned long flags);
 
@@ -47,6 +47,6 @@ namespace Gadgetron {
         // data: input image array [RO E1 E2 CHA N S SLC]
         // map and map_sd: mapping result and its sd
         // para and para_sd: other parameters of mapping and its sd
-        virtual int perform_mapping(IsmrmrdImageArray& data, IsmrmrdImageArray& map, IsmrmrdImageArray& para, IsmrmrdImageArray& map_sd, IsmrmrdImageArray& para_sd);
+        virtual int perform_mapping(ImageArray& data, ImageArray& map, ImageArray& para, ImageArray& map_sd, ImageArray& para_sd);
     };
 }

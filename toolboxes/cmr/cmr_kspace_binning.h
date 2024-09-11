@@ -18,10 +18,6 @@
 #include <algorithm>
 #include "hoMatrix.h"
 
-#include "ismrmrd/ismrmrd.h"
-#include "ismrmrd/xml.h"
-#include "ismrmrd/meta.h"
-
 #include "mri_core_def.h"
 #include "mri_core_data.h"
 #include "mri_core_utility.h"
@@ -79,7 +75,7 @@ namespace Gadgetron {
         mrd::SamplingDescription sampling_;
 
         /// [E1 N S]
-        hoNDArray< ISMRMRD::AcquisitionHeader > headers_;
+        hoNDArray< mrd::AcquisitionHeader > headers_;
 
         // ------------------------------------
         /// buffer for recon

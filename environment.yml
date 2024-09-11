@@ -29,6 +29,7 @@ dependencies:
   - doxygen=1.10.0                          # dev
   - eigen=3.4.0
   - fftw=3.3.9
+  - fmt=8.1.1
   - gadgetron-python=1.4.1
   - gcc_linux-64=9.4.0                      # dev
   - gdb=11.1                                # dev
@@ -38,6 +39,7 @@ dependencies:
   - h5py=3.7.0
   - hdf5=1.10.6
   - howardhinnant_date=3.0.1                # dev
+  - imagemagick=7.0.11_13                   # dev
   - ismrmrd=1.13.7
   - ismrmrd-python=1.14.0
   - junitparser=3.1.2
@@ -73,4 +75,6 @@ dependencies:
   - sysroot_linux-64=2.12
   - valgrind=3.23.0                         # dev
   - xsdata=24.5
+  - xtensor=0.24.2
+  - xtensor-fftw=0.2.5
   - yq=3.4.3                                # dev

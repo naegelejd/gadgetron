@@ -1,13 +1,8 @@
 #pragma once
 #include "Gadget.h"
-#include "GadgetMRIHeaders.h"
 #include "hoNDArray.h"
-#include "gadgetron_mricore_export.h"
 
-#include <ismrmrd/ismrmrd.h>
 #include <complex>
-#include <boost/shared_ptr.hpp>
-#include <boost/shared_array.hpp>
 
 namespace Gadgetron{
   

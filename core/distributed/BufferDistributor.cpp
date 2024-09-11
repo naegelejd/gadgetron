@@ -1,16 +1,16 @@
 #include "BufferDistributor.h"
 
 void Gadgetron::Core::Distributed::BufferDistributor::process(
-        Gadgetron::Core::InputChannel<Gadgetron::IsmrmrdReconData> &input,
+        Gadgetron::Core::InputChannel<Gadgetron::ReconData> &input,
         Gadgetron::Core::Distributed::ChannelCreator &creator) {
 
     std::vector<OutputChannel> channels;
     for (size_t i = 0; i < encoding_spaces; i++) channels.push_back(creator.create());
 
-    for (IsmrmrdReconData reconData : input){
+    for (ReconData reconData : input){
 
-        for (size_t i =0; i < reconData.rbit_.size(); i++)
-            channels[i].push(IsmrmrdReconData{{std::move(reconData.rbit_[i])}});
+        for (size_t i =0; i < reconData.rbits.size(); i++)
+            channels[i].push(ReconData{{std::move(reconData.rbits[i])}});
     }
 }
 

@@ -67,7 +67,7 @@ namespace Gadgetron {
                 auto key              = getKey(acq.head.idx);
                 uint32_t espace       = acq.head.encoding_space_ref.value_or(0);
                 mrd::ReconBit& rbit = getRBit(recon_data_buffers, key, espace);
-                if (rbit.data.data.size() == 0) {
+                if (rbit.data.data.empty()) {
                     /** TODO Joe: Combine makeDataBuffer and createSamplingDescription */
                     rbit.data = makeDataBuffer(acq, header.encoding[espace], acq_bucket.datastats[espace], false);
                     rbit.data.sampling = createSamplingDescription(
@@ -159,6 +159,9 @@ namespace Gadgetron {
     mrd::BufferedData BucketToBufferGadget::makeDataBuffer(const mrd::Acquisition& acq,
         mrd::EncodingType encoding, const AcquisitionBucketStats& stats, bool forref) const
     {
+        // Allocate the reference data array
+        // 7D,  fixed order [E0, E1, E2, CHA, N, S, LOC]
+        // 11D, fixed order [E0, E1, E2, CHA, SLC, PHS, CON, REP, SET, SEG, AVE]
         const uint32_t NE0 = getNE0(acq, encoding);
         uint32_t NE1 = getNE1(encoding, stats, forref);
         uint32_t NE2 = getNE2(encoding, stats, forref);
@@ -170,17 +173,14 @@ namespace Gadgetron {
         GDEBUG_CONDITION_STREAM(verbose, "Data dimensions [RO E1 E2 CHA N S SLC] : ["
                                              << NE0 << " " << NE1 << " " << NE2 << " " << NCHA << " " << NN << " " << NS
                                              << " " << NLOC << "]");
-        // GDEBUG_STREAM("Creating data buffer with dimensions " << NE0 << " " << NE1 << " " << NE2 << " " << NCHA << " " << NN << " " << NS << " " << NLOC);
 
         mrd::BufferedData buffer;
 
         // Allocate the array for the data
-        // buffer.data.resize({NLOC, NS, NN, NCHA, NE2, NE1, NE0});
         buffer.data = hoNDArray<std::complex<float>>(NE0, NE1, NE2, NCHA, NN, NS, NLOC);
         clear(&buffer.data);
 
         // Allocate the array for the headers
-        // buffer.headers.resize({NLOC, NS, NN, NE2, NE1});
         buffer.headers = hoNDArray<mrd::AcquisitionHeader>(NE1, NE2, NN, NS, NLOC);
 
 
@@ -188,8 +188,7 @@ namespace Gadgetron {
         if (acq.TrajectoryDimensions() > 0 && acq.TrajectorySamples() > 0) {
             auto basis = acq.TrajectoryDimensions();
             auto samples = acq.TrajectorySamples();
-            // buffer.trajectory.resize({NLOC, NS, NN, NE2, NE1, basis, samples});
-            buffer.trajectory = hoNDArray<float>(samples, basis, NE1, NE2, NN, NS, NLOC);
+            buffer.trajectory = hoNDArray<float>(basis, samples, NE1, NE2, NN, NS, NLOC);
             clear(&buffer.trajectory);
         }
         return buffer;
@@ -297,12 +296,6 @@ namespace Gadgetron {
         }
         return NE0;
     }
-    namespace {
-        template <class DIMSTRUCT> auto xyz_to_vector(const DIMSTRUCT& dimstruct) {
-            std::array<decltype(dimstruct.x), 3> result = { dimstruct.x, dimstruct.y, dimstruct.z };
-            return result;
-        }
-    }
 
     mrd::SamplingDescription BucketToBufferGadget::createSamplingDescription(const mrd::EncodingType& encoding,
         const AcquisitionBucketStats& stats, const mrd::Acquisition& acq, bool forref) const
@@ -407,13 +400,6 @@ namespace Gadgetron {
     void BucketToBufferGadget::add_acquisition(mrd::BufferedData& dataBuffer, const Core::Acquisition& acq,
         mrd::EncodingType encoding, const AcquisitionBucketStats& stats, bool forref) {
 
-        // uint32_t NLOC = (uint32_t)dataBuffer.data.shape(0);
-        // uint32_t NS   = (uint32_t)dataBuffer.data.shape(1);
-        // uint32_t NN   = (uint32_t)dataBuffer.data.shape(2);
-        // uint32_t NCHA = (uint32_t)dataBuffer.data.shape(3);
-        // uint32_t NE2  = (uint32_t)dataBuffer.data.shape(4);
-        // uint32_t NE1  = (uint32_t)dataBuffer.data.shape(5);
-        // uint32_t NE0  = (uint32_t)dataBuffer.data.shape(6);
         uint16_t NE0  = (uint16_t)dataBuffer.data.get_size(0);
         uint16_t NE1  = (uint16_t)dataBuffer.data.get_size(1);
         uint16_t NE2  = (uint16_t)dataBuffer.data.get_size(2);
@@ -534,35 +520,27 @@ namespace Gadgetron {
         }
 
         // Stuff the data
-        // std::complex<float>* pData = &dataBuffer.data(slice_loc, SUsed, NUsed, 0, e2, e1, offset);
         std::complex<float>* pData = &dataBuffer.data(offset, e1, e2, 0, NUsed, SUsed, slice_loc);
 
         for (size_t cha = 0; cha < NCHA; cha++) {
             auto dataptr = pData + cha * NE0 * NE1 * NE2;
-            // auto fromptr = &acq.data(cha, acq.head.discard_pre.value_or(0));
             auto fromptr = &acq.data(acq.head.discard_pre.value_or(0), cha);
-
-
-            // TODO Joe: At least just set pData = correct location for this CHAN...
-            /// e.g.  std::complex<float>* pData = &dataBuffer.data(slice_loc, SUsed, NUsed, cha, e2, e1, offset);
             std::copy(fromptr, fromptr + npts_to_copy, dataptr);
         }
-        /** TODO Joe: Use xtensor view to just assign data to subarray */
 
         // Stuff the header
-        // dataBuffer.headers(slice_loc, SUsed, NUsed, e2, e1) = acq.head;
         dataBuffer.headers(e1, e2, NUsed, SUsed, slice_loc) = acq.head;
 
         if (acq.TrajectoryDimensions() > 0 && acq.TrajectorySamples() > 0) {
             // Stuff the trajectory
-            /** TODO Joe: I don't know if this is correct... In MRDv2, acq.Samples() is not necessarily equal to acq.TrajectorySamples() */
-            // float* trajptr = &dataBuffer.trajectory(slice_loc, SUsed, NUsed, e2, e1, 0, offset);
+            /** TODO Joe: I don't know if this is correct... */
             float* trajptr = &dataBuffer.trajectory(0, offset, e1, e2, NUsed, SUsed, slice_loc);
-
             auto* fromptr  = &acq.trajectory(0, acq.head.discard_pre.value_or(0));
             std::copy(fromptr, fromptr + npts_to_copy * acq.TrajectoryDimensions(), trajptr);
         }
     }
+
+
     BucketToBufferGadget::BucketToBufferGadget(const Core::Context& context, const Core::GadgetProperties& props)
         : ChannelGadget(context, props), header{ context.header } {}
 

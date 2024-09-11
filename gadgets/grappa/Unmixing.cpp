@@ -43,7 +43,7 @@ namespace {
         }
 
         static size_t number_of_slices(const Context &context) {
-            auto e_limits = context.header.encoding[0].encodingLimits;
+            auto e_limits = context.header.encoding[0].encoding_limits;
             return e_limits.slice ? e_limits.slice->maximum + 1u : 1u;
         }
 
@@ -73,10 +73,10 @@ namespace Gadgetron::Grappa {
 
         for (auto image : images) {
             auto current_weights = weights_provider[image.meta.slice];
-            output.push(
-                    create_image_header(image, current_weights),
-                    unmix(image, current_weights)
-            );
+            mrd::Image<std::complex<float>> out;
+            out.head = create_image_header(image, current_weights);
+            out.data = unmix(image, current_weights);
+            output.push(std::move(out));
         }
     }
 
@@ -105,20 +105,18 @@ namespace Gadgetron::Grappa {
         return std::move(unmixed_image);
     }
 
-    ISMRMRD::ImageHeader Unmixing::create_image_header(const Image &image, const Weights &weights) {
+    mrd::ImageHeader Unmixing::create_image_header(const Image &image, const Weights &weights) {
 
-        ISMRMRD::ImageHeader header;
+        mrd::ImageHeader header;
 
         header.slice = image.meta.slice;
         header.acquisition_time_stamp = image.meta.time_stamp;
-        header.channels = weights.meta.n_uncombined_channels + uint16_t(1);
 
-        std::copy(image_dimensions.begin(), image_dimensions.end(), std::begin(header.matrix_size));
         std::copy(image_fov.begin(), image_fov.end(), std::begin(header.field_of_view));
 
         std::copy(image.meta.position.begin(), image.meta.position.end(), std::begin(header.position));
-        std::copy(image.meta.read_dir.begin(), image.meta.read_dir.end(), std::begin(header.read_dir));
-        std::copy(image.meta.phase_dir.begin(), image.meta.phase_dir.end(), std::begin(header.phase_dir));
+        std::copy(image.meta.read_dir.begin(), image.meta.read_dir.end(), std::begin(header.col_dir));
+        std::copy(image.meta.phase_dir.begin(), image.meta.phase_dir.end(), std::begin(header.line_dir));
         std::copy(image.meta.slice_dir.begin(), image.meta.slice_dir.end(), std::begin(header.slice_dir));
         std::copy(image.meta.table_pos.begin(), image.meta.table_pos.end(), std::begin(header.patient_table_position));
 
@@ -129,20 +127,20 @@ namespace Gadgetron::Grappa {
     }
 
     std::vector<size_t> Unmixing::create_output_image_dimensions(const Core::Context &context) {
-        auto r_space  = context.header.encoding[0].reconSpace;
+        auto r_space  = context.header.encoding[0].recon_space;
         return {
-                r_space.matrixSize.x,
-                r_space.matrixSize.y,
-                r_space.matrixSize.z
+                r_space.matrix_size.x,
+                r_space.matrix_size.y,
+                r_space.matrix_size.z
         };
     }
 
     std::vector<float> Unmixing::create_output_image_fov(const Core::Context &context) {
-        auto r_space  = context.header.encoding[0].reconSpace;
+        auto r_space  = context.header.encoding[0].recon_space;
         return {
-                r_space.fieldOfView_mm.x,
-                r_space.fieldOfView_mm.y,
-                r_space.fieldOfView_mm.z
+                r_space.field_of_view_mm.x,
+                r_space.field_of_view_mm.y,
+                r_space.field_of_view_mm.z
         };
     }
 

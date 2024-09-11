@@ -1,5 +1,7 @@
 #pragma once
 
+/** TODO Joe: Heavy cleanup needed vvvvv */
+
 // #include <mrd/types.h>
 // #include "ismrmrd/ismrmrd.h"
 // #include "ismrmrd/waveform.h"
@@ -119,7 +121,7 @@ namespace Gadgetron
   //   mrd::SamplingDescription sampling_;
   // };
 
-  using IsmrmrdDataBuffered = mrd::BufferedData;
+  // using IsmrmrdDataBuffered = mrd::BufferedData;
   
 
   /**
@@ -131,7 +133,7 @@ namespace Gadgetron
   //   IsmrmrdDataBuffered data_;
   //   Core::optional<IsmrmrdDataBuffered> ref_;
   // };
-  using IsmrmrdReconBit = mrd::ReconBit;
+  // using IsmrmrdReconBit = mrd::ReconBit;
 
   /**
      This class is used to store a unit of data that would feed into a reconstruction. 
@@ -141,7 +143,7 @@ namespace Gadgetron
   // public:
   //   std::vector<IsmrmrdReconBit> rbit_;
   // };
-  using IsmrmrdReconData = mrd::ReconData;
+  // using IsmrmrdReconData = mrd::ReconData;
 
   /**
      This class is used to store an array of reconstructed data. 
@@ -167,13 +169,12 @@ namespace Gadgetron
   //   // Core::optional<hoNDArray< mrd::AcquisitionHeader >> acq_headers_;
   // };
 
-  using IsmrmrdImageArray = mrd::ImageArray;
+  // using IsmrmrdImageArray = mrd::ImageArray;
 
-  using ReconData = IsmrmrdReconData;
-  using ImageArray = IsmrmrdImageArray;
-  using DataBuffered = IsmrmrdDataBuffered;
-
-
+using ReconBit = mrd::ReconBit;
+using ReconData = mrd::ReconData;
+using ImageArray = mrd::ImageArray;
+using DataBuffered = mrd::BufferedData;
 using AcquisitionBucket = mrd::AcquisitionBucket;
 using AcquisitionBucketStats = mrd::AcquisitionBucketStats;
 

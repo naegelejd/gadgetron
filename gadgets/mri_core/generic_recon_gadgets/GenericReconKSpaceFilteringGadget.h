@@ -1,5 +1,5 @@
 /** \file   GenericReconKSpaceFilteringGadget.h
-    \brief  This is the class gadget for both 2DT and 3DT cartesian kspace filtering, working on the IsmrmrdImageArray.
+    \brief  This is the class gadget for both 2DT and 3DT cartesian kspace filtering, working on the ImageArray.
 
             This class is a part of general cartesian recon chain.
 
@@ -90,7 +90,7 @@ namespace Gadgetron {
 
         // default interface function
         virtual int process_config(const mrd::Header& header);
-        virtual int process(Gadgetron::GadgetContainerMessage< IsmrmrdImageArray >* m1);
+        virtual int process(Gadgetron::GadgetContainerMessage< ImageArray >* m1);
 
 
         // find kspace sampled range

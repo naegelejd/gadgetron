@@ -6,7 +6,7 @@ add_subdirectory(examples)
 # add_subdirectory(debugging)
 add_subdirectory(mri_core)
 # add_subdirectory(interventional_mri)
-# add_subdirectory(cmr)
+add_subdirectory(cmr)
 # add_subdirectory(epi)
 # add_subdirectory(fatwater)
 # add_subdirectory(T1)
@@ -29,7 +29,7 @@ add_subdirectory(mri_core)
 
 # add_subdirectory(mri_noncartesian)
 # add_subdirectory(spiral)
-# add_subdirectory(grappa)
+add_subdirectory(grappa)
 
 # add_subdirectory(python)
 

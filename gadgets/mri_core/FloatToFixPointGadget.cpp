@@ -36,7 +36,11 @@ namespace Gadgetron
         };
 
         for (auto image_in: input) {
-            auto output_data = hoNDArray<T>(image_in.data.dimensions());
+            mrd::Image<T> image_out;
+            image_out.head = image_in.head;
+            image_out.meta = image_in.meta;
+            image_out.data.create(image_in.data.dimensions());
+            auto& output_data = image_out.data;
 
             // Now we're ready to transform the image data
             switch (image_in.head.image_type) {
@@ -64,11 +68,6 @@ namespace Gadgetron
                 default:
                     throw std::runtime_error("Unknown image type in Image");
             }
-
-            mrd::Image<T> image_out;
-            image_out.head = image_in.head;
-            image_out.meta = image_in.meta;
-            image_out.data = output_data;
 
             output.push(std::move(image_out));
         }

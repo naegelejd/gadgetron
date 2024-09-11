@@ -10,6 +10,7 @@
 
 namespace Gadgetron::Grappa {
 
+/** TODO Joe: This is not actually used anymore... */
     class ChannelReorderer : public Core::PureGadget<AnnotatedAcquisition, Core::Acquisition> {
     public:
         ChannelReorderer(const Core::Context &, const std::unordered_map<std::string, std::string> &);

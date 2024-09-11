@@ -89,21 +89,43 @@ namespace {
 
         void operator()(const Grappa::AnnotatedAcquisition &acquisition) {
 
-            auto header = std::get<ISMRMRD::AcquisitionHeader>(acquisition);
+            auto header = std::get<mrd::Acquisition>(acquisition).head;
 
             auto& [position, read_dir, slice_dir,phase_dir] = orientations.at(slice_of(acquisition));
 
-            if (position == to_array(header.position) &&
-                read_dir == to_array(header.read_dir) &&
-                phase_dir == to_array(header.phase_dir) &&
-                slice_dir == to_array(header.slice_dir)) {
+            /** TODO Joe: This no longer works with mrd::AcquisitionHeader */
+            // if (position == to_array<3>(header.position) &&
+            //     read_dir == to_array(header.read_dir) &&
+            //     phase_dir == to_array(header.phase_dir) &&
+            //     slice_dir == to_array(header.slice_dir)) {
+            //     return;
+            // }
+
+            // position = to_array(header.position);
+            // read_dir = to_array(header.read_dir);
+            // phase_dir = to_array(header.phase_dir);
+            // slice_dir = to_array(header.slice_dir);
+
+            std::array<float, 3> header_position;
+            std::copy(std::begin(header.position), std::end(header.position), std::begin(header_position));
+            std::array<float, 3> header_read_dir;
+            std::copy(std::begin(header.read_dir), std::end(header.read_dir), std::begin(header_read_dir));
+            std::array<float, 3> header_phase_dir;
+            std::copy(std::begin(header.phase_dir), std::end(header.phase_dir), std::begin(header_phase_dir));
+            std::array<float, 3> header_slice_dir;
+            std::copy(std::begin(header.slice_dir), std::end(header.slice_dir), std::begin(header_slice_dir));
+
+            if (position == header_position &&
+                read_dir == header_read_dir &&
+                phase_dir == header_phase_dir &&
+                slice_dir == header_slice_dir) {
                 return;
             }
 
-            position = to_array(header.position);
-            read_dir = to_array(header.read_dir);
-            phase_dir = to_array(header.phase_dir);
-            slice_dir = to_array(header.slice_dir);
+            position = header_position;
+            read_dir = header_read_dir;
+            phase_dir = header_phase_dir;
+            slice_dir = header_slice_dir;
 
             clear(slice_of(acquisition));
         }
@@ -167,8 +189,8 @@ namespace Gadgetron::Grappa {
         std::set<uint16_t> updated_slices{};
         uint16_t n_combined_channels = 0, n_uncombined_channels = 0;
 
-        const auto slice_limits = context.header.encoding[0].encodingLimits.slice;
-        const size_t max_slices = slice_limits ? context.header.encoding[0].encodingLimits.slice->maximum+1 : 1;
+        const auto slice_limits = context.header.encoding[0].encoding_limits.slice;
+        const size_t max_slices = slice_limits ? context.header.encoding[0].encoding_limits.slice->maximum+1 : 1;
 
         AcquisitionBuffer buffer{context};
         AccelerationMonitor acceleration_monitor{max_slices};

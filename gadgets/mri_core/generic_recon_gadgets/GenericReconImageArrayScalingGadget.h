@@ -62,10 +62,10 @@ namespace Gadgetron {
 
         // default interface function
         virtual int process_config(const mrd::Header& header);
-        virtual int process(Gadgetron::GadgetContainerMessage< IsmrmrdImageArray >* m1);
+        virtual int process(Gadgetron::GadgetContainerMessage< mrd::ImageArray >* m1);
 
         // scale the recon images
-        virtual int compute_and_apply_scaling_factor(IsmrmrdImageArray& res, size_t encoding);
+        virtual int compute_and_apply_scaling_factor(mrd::ImageArray& res, size_t encoding);
 
     };
 }

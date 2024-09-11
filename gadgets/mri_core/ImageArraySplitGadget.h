@@ -15,7 +15,7 @@
 
 namespace Gadgetron{
 
-  using ImageOrImageArray = Core::variant<Core::AnyImage, IsmrmrdImageArray>;
+  using ImageOrImageArray = Core::variant<Core::AnyImage, ImageArray>;
 
   class ImageArraySplitGadget : public Core::ChannelGadget<ImageOrImageArray> 
     {

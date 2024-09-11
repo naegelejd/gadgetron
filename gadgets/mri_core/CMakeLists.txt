@@ -16,7 +16,7 @@ endif()
 
 set(gadgetron_mricore_header_files 
         # GadgetMRIHeaders.h
-        # AugmentImageMetadataGadget.h
+        AugmentImageMetadataGadget.h
         NoiseAdjustGadget.h
         PCACoilGadget.h
         # AccumulatorGadget.h
@@ -27,23 +27,23 @@ set(gadgetron_mricore_header_files
         # readers/MRIImageReader.h
         # NoiseAdjustGadget_unoptimized.h
         ExtractGadget.h
-        # FloatToFixPointGadget.h
+        FloatToFixPointGadget.h
         RemoveROOversamplingGadget.h
         CoilReductionGadget.h
         # ScaleGadget.h
-        # FlowPhaseSubtractionGadget.h
+        FlowPhaseSubtractionGadget.h
         # readers/GadgetIsmrmrdReader.h
-        # PhysioInterpolationGadget.h
-        # AsymmetricEchoAdjustROGadget.h
-        # MaxwellCorrectionGadget.h
+        PhysioInterpolationGadget.h
+        AsymmetricEchoAdjustROGadget.h
+        MaxwellCorrectionGadget.h
         # dependencyquery/DependencyQueryGadget.h
         # dependencyquery/DependencyQueryWriter.h
-        # ComplexToFloatGadget.h
+        ComplexToFloatGadget.h
         AcquisitionAccumulateTriggerGadget.h
         BucketToBufferGadget.h
         ImageArraySplitGadget.h
         SimpleReconGadget.h
-        # ImageSortGadget.h
+        ImageSortGadget.h
         ImageFinishGadget.h
         # dependencyquery/NoiseSummaryGadget.h
         NHLBICompression.h
@@ -51,19 +51,19 @@ set(gadgetron_mricore_header_files
         # ImageAccumulatorGadget.h
         # writers/GadgetIsmrmrdWriter.h
         # ImageResizingGadget.h
-        # ImageArraySendMixin.h
-        # ImageArraySendMixin.hpp
-        # AutoScaleGadget.h
-        # DenoiseGadget.h
+        ImageArraySendMixin.h
+        ImageArraySendMixin.hpp
+        AutoScaleGadget.h
+        DenoiseGadget.h
         # CoilComputationGadget.h
         # ImageFFTGadget.h
         # FlagTriggerGadget.h
-        # ImageIndexGadget.h
+        ImageIndexGadget.h
         # IsmrmrdDumpGadget.h
         )
 
 set(gadgetron_mricore_src_files
-        # AugmentImageMetadataGadget.cpp
+        AugmentImageMetadataGadget.cpp
         NoiseAdjustGadget.cpp
         PCACoilGadget.cpp
         # AccumulatorGadget.cpp
@@ -75,23 +75,23 @@ set(gadgetron_mricore_src_files
         # readers/MRIImageReader.cpp
         # NoiseAdjustGadget_unoptimized.cpp
         ExtractGadget.cpp
-        # FloatToFixPointGadget.cpp
+        FloatToFixPointGadget.cpp
         RemoveROOversamplingGadget.cpp
         CoilReductionGadget.cpp
         # ScaleGadget.cpp
-        # FlowPhaseSubtractionGadget.cpp
+        FlowPhaseSubtractionGadget.cpp
         # readers/GadgetIsmrmrdReader.cpp
-        # PhysioInterpolationGadget.cpp
-        # AsymmetricEchoAdjustROGadget.cpp
-        # MaxwellCorrectionGadget.cpp
+        PhysioInterpolationGadget.cpp
+        AsymmetricEchoAdjustROGadget.cpp
+        MaxwellCorrectionGadget.cpp
         # dependencyquery/DependencyQueryGadget.cpp
         # dependencyquery/DependencyQueryWriter.cpp
-        # ComplexToFloatGadget.cpp
+        ComplexToFloatGadget.cpp
         AcquisitionAccumulateTriggerGadget.cpp
         BucketToBufferGadget.cpp
         ImageArraySplitGadget.cpp
         SimpleReconGadget.cpp
-        # ImageSortGadget.cpp
+        ImageSortGadget.cpp
         CompressedFloatBuffer.cpp
         CompressedFloatBufferSse41.cpp
         CompressedFloatBufferAvx2.cpp
@@ -100,12 +100,12 @@ set(gadgetron_mricore_src_files
         # ImageAccumulatorGadget.cpp
         # writers/GadgetIsmrmrdWriter.cpp
         # ImageResizingGadget.cpp
-        # AutoScaleGadget.cpp
-        # DenoiseGadget.cpp
+        AutoScaleGadget.cpp
+        DenoiseGadget.cpp
         # CoilComputationGadget.cpp
         # ImageFFTGadget.cpp
         # FlagTriggerGadget.cpp
-        # ImageIndexGadget.cpp
+        ImageIndexGadget.cpp
         # IsmrmrdDumpGadget.cpp
         )
 
@@ -124,8 +124,8 @@ set(gadgetron_mricore_generic_recon_gadgets_header_files
         generic_recon_gadgets/GenericReconGadget.h
         # generic_recon_gadgets/GenericReconCartesianFFTGadget.h
         generic_recon_gadgets/GenericReconCartesianGrappaGadget.h
-        # generic_recon_gadgets/GenericReconCartesianSpiritGadget.h
-        # generic_recon_gadgets/GenericReconCartesianNonLinearSpirit2DTGadget.h
+        generic_recon_gadgets/GenericReconCartesianSpiritGadget.h
+        generic_recon_gadgets/GenericReconCartesianNonLinearSpirit2DTGadget.h
         generic_recon_gadgets/GenericReconCartesianReferencePrepGadget.h
         generic_recon_gadgets/GenericReconPartialFourierHandlingGadget.h
         generic_recon_gadgets/GenericReconPartialFourierHandlingFilterGadget.h
@@ -148,8 +148,8 @@ set(gadgetron_mricore_generic_recon_gadgets_src_files
         generic_recon_gadgets/GenericReconGadget.cpp
         # generic_recon_gadgets/GenericReconCartesianFFTGadget.cpp
         generic_recon_gadgets/GenericReconCartesianGrappaGadget.cpp
-        # generic_recon_gadgets/GenericReconCartesianSpiritGadget.cpp
-        # generic_recon_gadgets/GenericReconCartesianNonLinearSpirit2DTGadget.cpp
+        generic_recon_gadgets/GenericReconCartesianSpiritGadget.cpp
+        generic_recon_gadgets/GenericReconCartesianNonLinearSpirit2DTGadget.cpp
         generic_recon_gadgets/GenericReconCartesianReferencePrepGadget.cpp
         generic_recon_gadgets/GenericReconPartialFourierHandlingGadget.cpp
         generic_recon_gadgets/GenericReconPartialFourierHandlingFilterGadget.cpp
@@ -210,9 +210,9 @@ add_library(gadgetron_mricore SHARED
     ${gadgetron_mricore_header_files}
     ${gadgetron_mricore_src_files}
     ${gadgetron_mricore_config_files}
-#     ${gadgetron_mricore_generic_recon_gadgets_header_files}
-#     ${gadgetron_mricore_generic_recon_gadgets_src_files}
-#     ${gadgetron_mricore_generic_recon_gadgets_config_files} 
+    ${gadgetron_mricore_generic_recon_gadgets_header_files}
+    ${gadgetron_mricore_generic_recon_gadgets_src_files}
+    ${gadgetron_mricore_generic_recon_gadgets_config_files} 
 )
 
 set_target_properties(gadgetron_mricore PROPERTIES VERSION ${GADGETRON_VERSION_STRING} SOVERSION ${GADGETRON_SOVERSION})

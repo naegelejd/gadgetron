@@ -4,17 +4,17 @@
 
 namespace {
 
-    using Header = ISMRMRD::AcquisitionHeader;
-    const std::unordered_map<std::string, std::function<uint16_t(const Header &)>> function_map = {
-            {"kspace_encode_step_1", [](const Header &header) { return header.idx.kspace_encode_step_1; }},
-            {"kspace_encode_step_2", [](const Header &header) { return header.idx.kspace_encode_step_2; }},
-            {"average",              [](const Header &header) { return header.idx.average; }},
-            {"slice",                [](const Header &header) { return header.idx.slice; }},
-            {"contrast",             [](const Header &header) { return header.idx.contrast; }},
-            {"phase",                [](const Header &header) { return header.idx.phase; }},
-            {"repetition",           [](const Header &header) { return header.idx.repetition; }},
-            {"set",                  [](const Header &header) { return header.idx.set; }},
-            {"segment",              [](const Header &header) { return header.idx.segment; }},
+    using Header = mrd::AcquisitionHeader;
+    const std::unordered_map<std::string, std::function<uint32_t(const Header &)>> function_map = {
+            {"kspace_encode_step_1", [](const Header &header) { return header.idx.kspace_encode_step_1.value_or(0); }},
+            {"kspace_encode_step_2", [](const Header &header) { return header.idx.kspace_encode_step_2.value_or(0); }},
+            {"average",              [](const Header &header) { return header.idx.average.value_or(0); }},
+            {"slice",                [](const Header &header) { return header.idx.slice.value_or(0); }},
+            {"contrast",             [](const Header &header) { return header.idx.contrast.value_or(0); }},
+            {"phase",                [](const Header &header) { return header.idx.phase.value_or(0); }},
+            {"repetition",           [](const Header &header) { return header.idx.repetition.value_or(0); }},
+            {"set",                  [](const Header &header) { return header.idx.set.value_or(0); }},
+            {"segment",              [](const Header &header) { return header.idx.segment.value_or(0); }},
             {"user_0",               [](const Header &header) { return header.idx.user[0]; }},
             {"user_1",               [](const Header &header) { return header.idx.user[1]; }},
             {"user_2",               [](const Header &header) { return header.idx.user[2]; }},
@@ -25,7 +25,7 @@ namespace {
             {"user_7",               [](const Header &header) { return header.idx.user[7]; }}
     };
 
-    const std::function<uint16_t(const ISMRMRD::AcquisitionHeader&)> &selector_function(const std::string &key) {
+    const std::function<uint32_t(const mrd::AcquisitionHeader&)> &selector_function(const std::string &key) {
         return function_map.at(key);
     }
 }
@@ -36,10 +36,10 @@ namespace Gadgetron::Core::Distributed {
     void AcquisitionDistributor::process(InputChannel<Acquisition> &input,
             ChannelCreator &creator
     ) {
-        std::map<uint16_t, OutputChannel> channels{};
+        std::map<uint32_t, OutputChannel> channels{};
 
         for (Acquisition acq : input) {
-            auto index = selector(std::get<Header>(acq));
+            auto index = selector(acq.head);
 
             if (!channels.count(index)) channels.emplace(index, creator.create());
 

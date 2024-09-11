@@ -1,7 +1,7 @@
 /** \file   GenericReconBase.h
     \brief  This serves an optional base class gadget for the generic chain.
             Some common functionalities are implemented here and can be reused in specific recon gadgets.
-            This gadget is instantiated for IsmrmrdReconData and IsmrmrdImageArray
+            This gadget is instantiated for ReconData and ImageArray
     \author Hui Xue
 */
 
@@ -11,12 +11,6 @@
 #include "gadgetron_mricore_export.h"
 #include "Gadget.h"
 #include "GadgetronTimer.h"
-
-// #include "ismrmrd/ismrmrd.h"
-// #include "ismrmrd/xml.h"
-// #include "ismrmrd/meta.h"
-// #include "ismrmrd/serialization.h"
-// #include "ismrmrd/serialization_iostream.h"
 
 #include "mri_core_def.h"
 #include "mri_core_data.h"
@@ -81,54 +75,53 @@ namespace Gadgetron {
         // --------------------------------------------------
         // gadget functions
         // --------------------------------------------------
-        // virtual int process_config(ACE_Message_Block* mb);
         virtual int process_config(const mrd::Header& header);
         virtual int process(GadgetContainerMessage<T>* m1);
         virtual int close(unsigned long flags);
     };
 
-    class EXPORTGADGETSMRICORE GenericReconKSpaceReadoutBase :public GenericReconBase < ISMRMRD::AcquisitionHeader >
+    class EXPORTGADGETSMRICORE GenericReconKSpaceReadoutBase :public GenericReconBase < mrd::AcquisitionHeader >
     {
     public:
         GADGET_DECLARE(GenericReconKSpaceReadoutBase);
 
-        typedef GenericReconBase < ISMRMRD::AcquisitionHeader > BaseClass;
+        typedef GenericReconBase < mrd::AcquisitionHeader > BaseClass;
 
         GenericReconKSpaceReadoutBase();
         virtual ~GenericReconKSpaceReadoutBase();
         virtual int close(unsigned long flags) { return BaseClass::close(flags); }
     };
 
-    class EXPORTGADGETSMRICORE GenericReconDataBase :public GenericReconBase < IsmrmrdReconData >
+    class EXPORTGADGETSMRICORE GenericReconDataBase :public GenericReconBase < ReconData >
     {
     public:
         GADGET_DECLARE(GenericReconDataBase);
 
-        typedef GenericReconBase < IsmrmrdReconData > BaseClass;
+        typedef GenericReconBase < ReconData > BaseClass;
 
         GenericReconDataBase();
         virtual ~GenericReconDataBase();
         virtual int close(unsigned long flags) { return BaseClass::close(flags); }
     };
 
-    class EXPORTGADGETSMRICORE GenericReconImageBase :public GenericReconBase < IsmrmrdImageArray >
+    class EXPORTGADGETSMRICORE GenericReconImageBase :public GenericReconBase < ImageArray >
     {
     public:
         GADGET_DECLARE(GenericReconImageBase);
 
-        typedef GenericReconBase < IsmrmrdImageArray > BaseClass;
+        typedef GenericReconBase < ImageArray > BaseClass;
 
         GenericReconImageBase();
         virtual ~GenericReconImageBase();
         virtual int close(unsigned long flags) { return BaseClass::close(flags); }
     };
 
-    class EXPORTGADGETSMRICORE GenericReconImageHeaderBase :public GenericReconBase < ISMRMRD::ImageHeader >
+    class EXPORTGADGETSMRICORE GenericReconImageHeaderBase :public GenericReconBase < mrd::ImageHeader >
     {
     public:
         GADGET_DECLARE(GenericReconImageHeaderBase);
 
-        typedef GenericReconBase < ISMRMRD::ImageHeader > BaseClass;
+        typedef GenericReconBase < mrd::ImageHeader > BaseClass;
 
         GenericReconImageHeaderBase();
         virtual ~GenericReconImageHeaderBase();

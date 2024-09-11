@@ -7,27 +7,27 @@ namespace Gadgetron::Grappa {
 
     template<class T>
     bool is_last_in_slice(const T &acquisition) {
-        return std::get<ISMRMRD::AcquisitionHeader>(acquisition).isFlagSet(ISMRMRD::ISMRMRD_ACQ_LAST_IN_SLICE);
+        return std::get<mrd::Acquisition>(acquisition).head.flags.HasFlags(mrd::AcquisitionFlags::kLastInSlice);
     }
 
     template<class T>
     uint16_t slice_of(const T &acquisition) {
-        return std::get<ISMRMRD::AcquisitionHeader>(acquisition).idx.slice;
+        return std::get<mrd::Acquisition>(acquisition).head.idx.slice.value_or(0);
     }
 
     template<class T>
     uint16_t line_of(const T &acquisition) {
-        return std::get<ISMRMRD::AcquisitionHeader>(acquisition).idx.kspace_encode_step_1;
+        return std::get<mrd::Acquisition>(acquisition).head.idx.kspace_encode_step_1.value_or(0);
     }
 
     template<class T>
     uint16_t samples_in(const T &acquisition) {
-        return std::get<ISMRMRD::AcquisitionHeader>(acquisition).number_of_samples;
+        return std::get<mrd::Acquisition>(acquisition).Samples();
     }
 
     template<class T>
     uint16_t channels_in(const T &acquisition) {
-        return std::get<ISMRMRD::AcquisitionHeader>(acquisition).active_channels;
+        return std::get<mrd::Acquisition>(acquisition).Coils();
     }
 
     template<class T>

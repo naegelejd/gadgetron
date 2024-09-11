@@ -140,10 +140,10 @@ namespace Gadgetron {
         return GADGET_OK;
     }
 
-    int GenericReconGadget::process(Gadgetron::GadgetContainerMessage<IsmrmrdReconData>* m1) {
+    int GenericReconGadget::process(Gadgetron::GadgetContainerMessage<ReconData>* m1) {
         process_called_times_++;
 
-        IsmrmrdReconData* recon_data = m1->getObjectPtr();
+        ReconData* recon_data = m1->getObjectPtr();
         if (recon_data->rbits.size() > num_encoding_spaces_) {
             GWARN_STREAM("Incoming recon_bit has more encoding spaces than the protocol : "
                          << recon_data->rbits.size() << " instead of " << num_encoding_spaces_);
@@ -215,12 +215,10 @@ namespace Gadgetron {
 
     // ----------------------------------------------------------------------------------------
 
-    void GenericReconGadget::make_ref_coil_map(IsmrmrdDataBuffered& ref, std::vector<size_t> recon_dims,
+    void GenericReconGadget::make_ref_coil_map(DataBuffered& ref, std::vector<size_t> recon_dims,
         hoNDArray<std::complex<float>>& ref_calib, hoNDArray<std::complex<float>>& ref_coil_map, size_t encoding)
     {
-        // hoNDArray<std::complex<float>>& ref_data = ref.data_;
-        /** TODO Joe: This changed to adapt MRD array */
-        hoNDArray<std::complex<float>> ref_data = adapt_mrd_to_hoNDArray(ref.data);
+        hoNDArray<std::complex<float>>& ref_data = ref.data;
 
         // sampling limits
         size_t sRO = ref.sampling.sampling_limits.ro.minimum;
@@ -430,35 +428,30 @@ namespace Gadgetron {
         }
     }
 
-    void GenericReconGadget::compute_image_header(IsmrmrdReconBit& recon_bit, IsmrmrdImageArray& res, size_t e)
+    void GenericReconGadget::compute_image_header(ReconBit& recon_bit, ImageArray& res, size_t e)
     {
-        size_t SLC = res.data.shape(0);
-        size_t S   = res.data.shape(1);
-        size_t N   = res.data.shape(2);
-        size_t CHA = res.data.shape(3);
-        size_t E2  = res.data.shape(4);
-        size_t E1  = res.data.shape(5);
-        size_t RO  = res.data.shape(6);
+        size_t RO  = res.data.get_size(0);
+        size_t E1  = res.data.get_size(1);
+        size_t E2  = res.data.get_size(2);
+        size_t CHA = res.data.get_size(3);
+        size_t N   = res.data.get_size(4);
+        size_t S   = res.data.get_size(5);
+        size_t SLC = res.data.get_size(6);
 
-        GADGET_CHECK_THROW(SLC == recon_bit.data.headers.shape(0));
-        GADGET_CHECK_THROW(S == recon_bit.data.headers.shape(1));
-        GADGET_CHECK_THROW(N == recon_bit.data.headers.shape(2));
+        GADGET_CHECK_THROW(N == recon_bit.data.headers.get_size(2));
+        GADGET_CHECK_THROW(S == recon_bit.data.headers.get_size(3));
+        GADGET_CHECK_THROW(SLC == recon_bit.data.headers.get_size(4));
 
-        GDEBUG_STREAM("GenericReconGadget::compute_image_header(...) - SLC : " << SLC << " S : " << S << " N : " << N
-                                                                                << " CHA : " << CHA << " E2 : " << E2 << " E1 : " << E1 << " RO : " << RO);
-        GDEBUG_STREAM("GenericReconGadget::compute_image_header(...) - res.headers are " << res.headers.size() << " at " << res.headers.data());
-        /** TODO Joe: For some reason, "all of a sudden", I need to use the force=true flag to resize everywhere we use MRD (xtensor) arrays... WTF */
-        res.headers.resize({SLC, S, N}, true);
-        GDEBUG_STREAM("GenericReconGadget::compute_image_header(...) - res.headers resized to " << res.headers.size() << " at " << res.headers.data());
-        res.meta.resize({SLC, S, N}, true);
+        res.headers.create(N, S, SLC);
+        res.meta.create(N, S, SLC);
 
         size_t n, s, slc;
 
         for (slc = 0; slc < SLC; slc++) {
             for (s = 0; s < S; s++) {
                 for (n = 0; n < N; n++) {
-                    size_t header_E2 = recon_bit.data.headers.shape(3);
-                    size_t header_E1 = recon_bit.data.headers.shape(4);
+                    size_t header_E1 = recon_bit.data.headers.get_size(0);
+                    size_t header_E2 = recon_bit.data.headers.get_size(1);
 
                     // for every kspace, find the recorded header which is closest to the kspace center [E1/2 E2/2]
                     mrd::AcquisitionHeader acq_header;
@@ -477,7 +470,7 @@ namespace Gadgetron {
 
                     for (size_t e2 = 0; e2 < header_E2; e2++) {
                         for (size_t e1 = 0; e1 < header_E1; e1++) {
-                            mrd::AcquisitionHeader& curr_header = recon_bit.data.headers(slc, s, n, e2, e1);
+                            mrd::AcquisitionHeader& curr_header = recon_bit.data.headers(e1, e2, n, s, slc);
 
                             if (curr_header.acquisition_time_stamp>0) {
                                 if (min_acq_time > curr_header.acquisition_time_stamp)
@@ -524,8 +517,8 @@ namespace Gadgetron {
                         }
                     }
 
-                    mrd::ImageHeader& im_header = res.headers(slc, s, n);
-                    mrd::ImageMeta& meta = res.meta(slc, s, n);
+                    mrd::ImageHeader& im_header = res.headers(n, s, slc);
+                    mrd::ImageMeta& meta = res.meta(n, s, slc);
                     mrd::SamplingDescription& sampling = recon_bit.data.sampling;
 
                     im_header.measurement_uid = acq_header.measurement_uid;
@@ -562,140 +555,54 @@ namespace Gadgetron {
                     im_header.user_int = acq_header.user_int;
                     im_header.user_float = acq_header.user_float;
 
-                    /** TODO Joe:
-                     * 
-                     * MRD2 `ImageMeta` is a std::unordered_map<std::string, std::string>, but to make it
-                     * compatible with Gadgetron, it should be something like:
-                     * 
-                     *  std::unordered_map<std::string, std::vector<std::variant<long, double, std::string>>>
-                     */
-
-                    // meta.set("encoding", (long)e);
                     meta["encoding"] = {(long)e};
 
-                    // meta.set("encoding_FOV", recon_bit.data_.sampling_.encoded_FOV_[0]);
-                    // meta.append("encoding_FOV", recon_bit.data_.sampling_.encoded_FOV_[1]);
-                    // meta.append("encoding_FOV", recon_bit.data_.sampling_.encoded_FOV_[2]);
                     meta["encoding_FOV"] = {sampling.encoded_fov.x, sampling.encoded_fov.y, sampling.encoded_fov.z};
 
-                    // meta.set("recon_FOV", recon_bit.data_.sampling_.recon_FOV_[0]);
-                    // meta.append("recon_FOV", recon_bit.data_.sampling_.recon_FOV_[1]);
-                    // meta.append("recon_FOV", recon_bit.data_.sampling_.recon_FOV_[2]);
                     meta["recon_FOV"] = {sampling.recon_fov.x, sampling.recon_fov.y, sampling.recon_fov.z};
 
-                    // meta.set("encoded_matrix", (long)recon_bit.data_.sampling_.encoded_matrix_[0]);
-                    // meta.append("encoded_matrix", (long)recon_bit.data_.sampling_.encoded_matrix_[1]);
-                    // meta.append("encoded_matrix", (long)recon_bit.data_.sampling_.encoded_matrix_[2]);
                     meta["encoded_matrix"] = {(long)sampling.encoded_matrix.x, (long)sampling.encoded_matrix.y, (long)sampling.encoded_matrix.z};
 
-                    // meta.set("recon_matrix", (long)recon_bit.data_.sampling_.recon_matrix_[0]);
-                    // meta.append("recon_matrix", (long)recon_bit.data_.sampling_.recon_matrix_[1]);
-                    // meta.append("recon_matrix", (long)recon_bit.data_.sampling_.recon_matrix_[2]);
                     meta["recon_matrix"] = {(long)sampling.recon_matrix.x, (long)sampling.recon_matrix.y, (long)sampling.recon_matrix.z};
 
-                    // meta.set("sampling_limits_RO", (long)recon_bit.data_.sampling_.sampling_limits_[0].min_);
-                    // meta.append("sampling_limits_RO", (long)recon_bit.data_.sampling_.sampling_limits_[0].center_);
-                    // meta.append("sampling_limits_RO", (long)recon_bit.data_.sampling_.sampling_limits_[0].max_);
                     meta["sampling_limits_RO"] = {(long)sampling.sampling_limits.ro.minimum, (long)sampling.sampling_limits.ro.center, (long)sampling.sampling_limits.ro.maximum};
 
-                    // meta.set("sampling_limits_E1", (long)recon_bit.data_.sampling_.sampling_limits_[1].min_);
-                    // meta.append("sampling_limits_E1", (long)recon_bit.data_.sampling_.sampling_limits_[1].center_);
-                    // meta.append("sampling_limits_E1", (long)recon_bit.data_.sampling_.sampling_limits_[1].max_);
                     meta["sampling_limits_E1"] = {(long)sampling.sampling_limits.e1.minimum, (long)sampling.sampling_limits.e1.center, (long)sampling.sampling_limits.e1.maximum};
 
-                    // meta.set("sampling_limits_E2", (long)recon_bit.data_.sampling_.sampling_limits_[2].min_);
-                    // meta.append("sampling_limits_E2", (long)recon_bit.data_.sampling_.sampling_limits_[2].center_);
-                    // meta.append("sampling_limits_E2", (long)recon_bit.data_.sampling_.sampling_limits_[2].max_);
                     meta["sampling_limits_E2"] = {(long)sampling.sampling_limits.e2.minimum, (long)sampling.sampling_limits.e2.center, (long)sampling.sampling_limits.e2.maximum};
 
-                    // meta.set("PatientPosition", (double)res.headers_(n, s, slc).position[0]);
-                    // meta.append("PatientPosition", (double)res.headers_(n, s, slc).position[1]);
-                    // meta.append("PatientPosition", (double)res.headers_(n, s, slc).position[2]);
                     meta["PatientPosition"] = {im_header.position[0], im_header.position[1], im_header.position[2]};
 
-                    // meta.set("read_dir", (double)res.headers_(n, s, slc).read_dir[0]);
-                    // meta.append("read_dir", (double)res.headers_(n, s, slc).read_dir[1]);
-                    // meta.append("read_dir", (double)res.headers_(n, s, slc).read_dir[2]);
                     meta["read_dir"] = {im_header.col_dir[0], im_header.col_dir[1], im_header.col_dir[2]};
 
-                    // meta.set("phase_dir", (double)res.headers_(n, s, slc).phase_dir[0]);
-                    // meta.append("phase_dir", (double)res.headers_(n, s, slc).phase_dir[1]);
-                    // meta.append("phase_dir", (double)res.headers_(n, s, slc).phase_dir[2]);
                     meta["phase_dir"] = {im_header.line_dir[0], im_header.line_dir[1], im_header.line_dir[2]};
 
-                    // meta.set("slice_dir", (double)res.headers_(n, s, slc).slice_dir[0]);
-                    // meta.append("slice_dir", (double)res.headers_(n, s, slc).slice_dir[1]);
-                    // meta.append("slice_dir", (double)res.headers_(n, s, slc).slice_dir[2]);
                     meta["slice_dir"] = {im_header.slice_dir[0], im_header.slice_dir[1], im_header.slice_dir[2]};
 
-                    // meta.set("patient_table_position", (double)res.headers_(n, s, slc).patient_table_position[0]);
-                    // meta.append("patient_table_position", (double)res.headers_(n, s, slc).patient_table_position[1]);
-                    // meta.append("patient_table_position", (double)res.headers_(n, s, slc).patient_table_position[2]);
                     meta["patient_table_position"] = {im_header.patient_table_position[0], im_header.patient_table_position[1], im_header.patient_table_position[2]};
 
-                    // meta.set("acquisition_time_stamp", (long)res.headers_(n, s, slc).acquisition_time_stamp);
                     meta["acquisition_time_stamp"] = {(long)im_header.acquisition_time_stamp.value_or(0)};
 
-                    // meta.set("physiology_time_stamp", (long)res.headers_(n, s, slc).physiology_time_stamp[0]);
-                    // meta.append("physiology_time_stamp", (long)res.headers_(n, s, slc).physiology_time_stamp[1]);
-                    // meta.append("physiology_time_stamp", (long)res.headers_(n, s, slc).physiology_time_stamp[2]);
                     std::transform(im_header.physiology_time_stamp.begin(), im_header.physiology_time_stamp.end(), std::back_inserter(meta["physiology_time_stamp"]), [](const auto& i) { return (long)i; });
 
-                    // meta.set("acquisition_time_range", (long)min_acq_time);
-                    // meta.append("acquisition_time_range", (long)max_acq_time);
                     meta["acquisition_time_range"] = {(long)min_acq_time, (long)max_acq_time};
 
-                    // meta.set("physiology_time_range", (long)min_physio_time[0]);
-                    // meta.append("physiology_time_range", (long)max_physio_time[0]);
-                    // meta.append("physiology_time_range", (long)min_physio_time[1]);
-                    // meta.append("physiology_time_range", (long)max_physio_time[1]);
-                    // meta.append("physiology_time_range", (long)min_physio_time[2]);
-                    // meta.append("physiology_time_range", (long)max_physio_time[2]);
                     meta["physiology_time_range"] = {(long)min_physio_time[0], (long)max_physio_time[0], (long)min_physio_time[1], (long)max_physio_time[1], (long)min_physio_time[2], (long)max_physio_time[2]};
 
-                    // size_t ui;
-                    // for (ui = 0; ui < ISMRMRD::ISMRMRD_USER_INTS; ui++)
-                    // {
-                    //     std::ostringstream str;
-                    //     str << "user_int_" << ui;
-                    //     meta.append(str.str().c_str(), (long)res.headers_(n, s, slc).user_int[ui]);
-                    // }
-                    // for (auto i : im_header.user_int) {
-                    //     meta["user_int"].push_back((long)i);
-                    // }
-                    /** TODO Joe: Prefer the above, which is different than before */
                     for (size_t i = 0; i < im_header.user_int.size(); i++) {
                         std::stringstream str;
                         str << "user_int_" << i;
                         meta[str.str()] = {(long)im_header.user_int[i]};
                     }
 
-                    // for (ui = 0; ui < ISMRMRD::ISMRMRD_USER_FLOATS; ui++)
-                    // {
-                    //     std::ostringstream str;
-                    //     str << "user_float_" << ui;
-                    //     meta.append(str.str().c_str(), (long)res.headers_(n, s, slc).user_float[ui]);
-                    // }
-                    // for (auto f : im_header.user_float) {
-                    //     meta["user_float"].push_back(f);
-                    // }
-                    /** TODO Joe: Prefer the above, which is different than before */
                     for (size_t i = 0; i < im_header.user_float.size(); i++) {
                         std::stringstream str;
                         str << "user_float_" << i;
                         meta[str.str()] = {im_header.user_float[i]};
                     }
 
-                    // meta.set("gadgetron_sha1", GADGETRON_SHA1);
                     meta["gadgetron_sha1"] = {GADGETRON_SHA1};
 
-                    // meta.set("measurementID", this->measurement_id_.c_str());
-                    // meta.set("protocolName", this->protocol_name_.c_str());
-                    // meta.set("patientID", this->patient_.c_str());
-                    // meta.set("studyID", this->study_.c_str());
-                    // meta.set("measurementNumber", this->measurement_.c_str());
-                    // meta.set("deviceID", this->device_.c_str());
-                    // meta.set("patient_position", this->patient_position_.c_str())
                     meta["measurementID"] = {this->measurement_id_};
                     meta["protocolName"] = {this->protocol_name_};
                     meta["patientID"] = {this->patient_};
@@ -709,15 +616,15 @@ namespace Gadgetron {
         GDEBUG_STREAM("Joe: Finished all ImageHeaders");
     }
 
-    void GenericReconGadget::compute_snr_scaling_factor(IsmrmrdReconBit& recon_bit, float& effective_acce_factor, float& snr_scaling_ratio)
+    void GenericReconGadget::compute_snr_scaling_factor(ReconBit& recon_bit, float& effective_acce_factor, float& snr_scaling_ratio)
     {
-        size_t SLC    = recon_bit.data.data.shape(0);
-        size_t S      = recon_bit.data.data.shape(1);
-        size_t N      = recon_bit.data.data.shape(2);
-        size_t dstCHA = recon_bit.data.data.shape(3);
-        size_t E2     = recon_bit.data.data.shape(4);
-        size_t E1     = recon_bit.data.data.shape(5);
-        size_t RO     = recon_bit.data.data.shape(6);
+        size_t RO     = recon_bit.data.data.get_size(0);
+        size_t E1     = recon_bit.data.data.get_size(1);
+        size_t E2     = recon_bit.data.data.get_size(2);
+        size_t dstCHA = recon_bit.data.data.get_size(3);
+        size_t N      = recon_bit.data.data.get_size(4);
+        size_t S      = recon_bit.data.data.get_size(5);
+        size_t SLC    = recon_bit.data.data.get_size(6);
 
         effective_acce_factor = 1;
         snr_scaling_ratio     = 1;
@@ -728,7 +635,7 @@ namespace Gadgetron {
             for (n = 0; n < N; n++) {
                 for (e2 = 0; e2 < E2; e2++) {
                     for (e1 = 0; e1 < E1; e1++) {
-                        if (std::abs(recon_bit.data.data(0, 0, n, 0, e2, e1, RO / 2)) > 0) {
+                        if (std::abs(recon_bit.data.data(RO / 2, e1, e2, 0, n, 0, 0)) > 0) {
                             num_readout_lines++;
                         }
                     }
@@ -763,13 +670,13 @@ namespace Gadgetron {
         }
     }
 
-    void GenericReconGadget::send_out_image_array(IsmrmrdImageArray& res, size_t encoding, int series_num, const std::string& data_role)
+    void GenericReconGadget::send_out_image_array(ImageArray& res, size_t encoding, int series_num, const std::string& data_role)
     {
         this->prepare_image_array(res, encoding, series_num, data_role);
-        this->next()->putq(new GadgetContainerMessage<IsmrmrdImageArray>(res));
+        this->next()->putq(new GadgetContainerMessage<ImageArray>(res));
     }
 
-    void GenericReconGadget::set_wave_form_to_image_array(const std::vector<Core::Waveform>& w_in, IsmrmrdImageArray& res)
+    void GenericReconGadget::set_wave_form_to_image_array(const std::vector<Core::Waveform>& w_in, ImageArray& res)
     {
         /** TODO Joe: This is now trivial, no need for function */
         res.waveforms = w_in;

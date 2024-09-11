@@ -40,20 +40,18 @@ namespace Gadgetron {
         }
     }
 
-    IsmrmrdImageArray GenericReconPartialFourierHandlingGadget::process_function(IsmrmrdImageArray recon_res) const {
+    ImageArray GenericReconPartialFourierHandlingGadget::process_function(ImageArray recon_res) const {
         Core::optional<GadgetronTimer> gt_timer;
         if (perform_timing) {
             gt_timer = GadgetronTimer("GenericReconPartialFourierHandlingGadget::process");
         }
 
         GDEBUG_CONDITION_STREAM(verbose, "GenericReconPartialFourierHandlingGadget::process(...) starts ... ");
-        GDEBUG_CONDITION_STREAM(true, "Joe: GenericReconPartialFourierHandlingGadget::process(...) starts ... ");
 
         // some images do not need partial fourier handling processing
         if (recon_res.meta[0].count(skip_processing_meta_field) && recon_res.meta[0][skip_processing_meta_field].size() > 0) {
             return std::move(recon_res);
         }
-
 
         // call the partial foureir
 
@@ -66,29 +64,22 @@ namespace Gadgetron {
         // os << "encoding_" << encoding << "_" << dataRole;
         // std::string str = os.str();
 
-        hoNDArray<std::complex<float>> data = Gadgetron::adapt_mrd_to_hoNDArray(recon_res.data);
-        size_t RO  = data.get_size(0);
-        size_t E1  = data.get_size(1);
-        size_t E2  = data.get_size(2);
-        size_t CHA = data.get_size(3);
-        size_t N   = data.get_size(4);
-        size_t S   = data.get_size(5);
-        size_t SLC = data.get_size(6);
-
-        GDEBUG_CONDITION_STREAM(true, "Joe: Adapted MRD to hoNDArray [RO E1 E2 CHA N S SLC] = [" << RO << " " << E1 << " " << E2 << " " << CHA << " " << N << " " << S << " " << SLC << "] ");
+        size_t RO  = recon_res.data.get_size(0);
+        size_t E1  = recon_res.data.get_size(1);
+        size_t E2  = recon_res.data.get_size(2);
+        size_t CHA = recon_res.data.get_size(3);
+        size_t N   = recon_res.data.get_size(4);
+        size_t S   = recon_res.data.get_size(5);
+        size_t SLC = recon_res.data.get_size(6);
 
         // perform SNR unit scaling
         mrd::SamplingLimits sampling_limits;
 
-        // if (recon_res.meta[0].length("sampling_limits_RO") > 0) {
         if (recon_res.meta[0].count("sampling_limits_RO")) {
-            // sampling_limits.ro.minimum    = (uint16_t)recon_res.meta[0].as_long("sampling_limits_RO", 0);
-            // sampling_limits.ro.center = (uint16_t)recon_res.meta[0].as_long("sampling_limits_RO", 1);
-            // sampling_limits.ro.maximum    = (uint16_t)recon_res.meta[0].as_long("sampling_limits_RO", 2);
             auto& sl = recon_res.meta[0]["sampling_limits_RO"];
-            sampling_limits.ro.minimum = (uint16_t)std::get<long>(sl[0]);
-            sampling_limits.ro.center = (uint16_t)std::get<long>(sl[1]);
-            sampling_limits.ro.maximum = (uint16_t)std::get<long>(sl[2]);
+            sampling_limits.ro.minimum = (uint32_t)std::get<long>(sl[0]);
+            sampling_limits.ro.center = (uint32_t)std::get<long>(sl[1]);
+            sampling_limits.ro.maximum = (uint32_t)std::get<long>(sl[2]);
         }
 
         if (!((sampling_limits.ro.minimum >= 0) && (sampling_limits.ro.maximum < RO)
@@ -100,15 +91,11 @@ namespace Gadgetron {
 
         GDEBUG_CONDITION_STREAM(true, "Joe: Finished setting sampling_limits.ro");
 
-        // if (recon_res.meta[0].length("sampling_limits_E1") > 0) {
         if (recon_res.meta[0].count("sampling_limits_E1")) {
-            // sampling_limits.e1.minimum    = (uint16_t)recon_res.meta[0].as_long("sampling_limits_E1", 0);
-            // sampling_limits.e1.center = (uint16_t)recon_res.meta[0].as_long("sampling_limits_E1", 1);
-            // sampling_limits.e1.maximum    = (uint16_t)recon_res.meta[0].as_long("sampling_limits_E1", 2);
             auto& sl = recon_res.meta[0]["sampling_limits_E1"];
-            sampling_limits.e1.minimum = (uint16_t)std::get<long>(sl[0]);
-            sampling_limits.e1.center = (uint16_t)std::get<long>(sl[1]);
-            sampling_limits.e1.maximum = (uint16_t)std::get<long>(sl[2]);
+            sampling_limits.e1.minimum = (uint32_t)std::get<long>(sl[0]);
+            sampling_limits.e1.center = (uint32_t)std::get<long>(sl[1]);
+            sampling_limits.e1.maximum = (uint32_t)std::get<long>(sl[2]);
         }
 
         if (!((sampling_limits.e1.minimum >= 0) && (sampling_limits.e1.maximum < E1)
@@ -120,15 +107,11 @@ namespace Gadgetron {
 
         GDEBUG_CONDITION_STREAM(true, "Joe: Finished setting sampling_limits.e1");
 
-        // if (recon_res.meta[0].length("sampling_limits_E2") > 0) {
         if (recon_res.meta[0].count("sampling_limits_E2")) {
-            // sampling_limits.e2.minimum    = (uint16_t)recon_res.meta[0].as_long("sampling_limits_E2", 0);
-            // sampling_limits.e2.center = (uint16_t)recon_res.meta[0].as_long("sampling_limits_E2", 1);
-            // sampling_limits.e2.maximum    = (uint16_t)recon_res.meta[0].as_long("sampling_limits_E2", 2);
             auto& sl = recon_res.meta[0]["sampling_limits_E2"];
-            sampling_limits.e2.minimum = (uint16_t)std::get<long>(sl[0]);
-            sampling_limits.e2.center = (uint16_t)std::get<long>(sl[1]);
-            sampling_limits.e2.maximum = (uint16_t)std::get<long>(sl[2]);
+            sampling_limits.e2.minimum = (uint32_t)std::get<long>(sl[0]);
+            sampling_limits.e2.center = (uint32_t)std::get<long>(sl[1]);
+            sampling_limits.e2.maximum = (uint32_t)std::get<long>(sl[2]);
         }
 
         if (!((sampling_limits.e2.minimum >= 0) && (sampling_limits.e2.maximum < E2)
@@ -172,7 +155,6 @@ namespace Gadgetron {
 
         if (lenRO == RO && lenE1 == E1 && lenE2 == E2) {
             GDEBUG_CONDITION_STREAM(verbose, "lenRO == RO && lenE1 == E1 && lenE2 == E2");
-            GDEBUG_CONDITION_STREAM(true, "Joe: lenRO == RO && lenE1 == E1 && lenE2 == E2");
             return recon_res;
         }
 
@@ -183,9 +165,9 @@ namespace Gadgetron {
         hoNDArray<std::complex<float>> kspace_buf;
 
         if (E2 > 1) {
-            Gadgetron::hoNDFFT<typename realType<T>::Type>::instance()->fft3c(data, kspace_buf);
+            Gadgetron::hoNDFFT<typename realType<T>::Type>::instance()->fft3c(recon_res.data, kspace_buf);
         } else {
-            Gadgetron::hoNDFFT<typename realType<T>::Type>::instance()->fft2c(data, kspace_buf);
+            Gadgetron::hoNDFFT<typename realType<T>::Type>::instance()->fft2c(recon_res.data, kspace_buf);
         }
 
         GDEBUG_CONDITION_STREAM(true, "Joe: Performing partial fourier handling");
@@ -199,19 +181,12 @@ namespace Gadgetron {
         // go back to image domain
         // ----------------------------------------------------------
         if (E2 > 1) {
-            // Gadgetron::hoNDFFT<typename realType<T>::Type>::instance()->ifft3c(pf_res, recon_res.data_);
-            Gadgetron::hoNDFFT<typename realType<T>::Type>::instance()->ifft3c(pf_res, data);
+            Gadgetron::hoNDFFT<typename realType<T>::Type>::instance()->ifft3c(pf_res, recon_res.data);
         } else {
-            // Gadgetron::hoNDFFT<typename realType<T>::Type>::instance()->ifft2c(pf_res, recon_res.data_);
-            Gadgetron::hoNDFFT<typename realType<T>::Type>::instance()->ifft2c(pf_res, data);
+            Gadgetron::hoNDFFT<typename realType<T>::Type>::instance()->ifft2c(pf_res, recon_res.data);
         }
 
-        GDEBUG_CONDITION_STREAM(true, "Joe: Copying result back to recon_res.data");
-        /** TODO Joe: Still need to copy hoNDArray `data` back to MRD `recon_res.data`... */
-        Gadgetron::copy_hoNDArray_to_mrd(data, recon_res.data);
-
         GDEBUG_CONDITION_STREAM(verbose, "GenericReconPartialFourierHandlingGadget::process(...) ends ... ");
-        GDEBUG_CONDITION_STREAM(true, "Joe: GenericReconPartialFourierHandlingGadget::process(...) ends ... ");
         return std::move(recon_res);
 
     }

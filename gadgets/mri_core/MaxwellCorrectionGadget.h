@@ -6,7 +6,6 @@
 #pragma once
 
 #include "Gadget.h"
-#include "GadgetMRIHeaders.h"
 #include "Node.h"
 #include "Types.h"
 #include "hoNDArray.h"
@@ -22,7 +21,7 @@ class MaxwellCorrectionGadget : public Core::ChannelGadget<Core::Image<std::comp
     MaxwellCorrectionGadget(const Core::Context& context, const Core::GadgetProperties& props);
     ~MaxwellCorrectionGadget() override = default;
     void process(Core::InputChannel<Core::Image<std::complex<float>>>& input, Core::OutputChannel& output) override;
-    void patient_to_physical_coordinate(std::vector<float> &norm_vec, std::string patient_position);
+    void patient_to_physical_coordinate(std::vector<float> &norm_vec, mrd::PatientPosition patient_position);
     void find_flow_dir(Core::Image<std::complex<float>> m1);
   protected:
     std::vector<double> maxwell_coefficients_;
@@ -32,7 +31,7 @@ class MaxwellCorrectionGadget : public Core::ChannelGadget<Core::Image<std::comp
 	std::vector<float> SLC_position_Physical_;
     bool FlipPhaseDirection_ = false;
     int FlowDirection_ = 4; //flow encoding direction: 4 through plane, 2 RO direction, 1 PE direction
-	std::string patient_position_;
+	mrd::PatientPosition patient_position_;
 	bool maxwell_coefficients_present_;
 };
 } // namespace Gadgetron
