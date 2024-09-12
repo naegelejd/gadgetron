@@ -23,8 +23,8 @@ template <typename T> class EPIReconXObjectTrapezoid : public EPIReconXObject<T>
 
   virtual int computeTrajectory();
 
-  virtual int apply(ISMRMRD::AcquisitionHeader &hdr_in, hoNDArray <T> &data_in, 
-		    ISMRMRD::AcquisitionHeader &hdr_out, hoNDArray <T> &data_out);
+  virtual int apply(mrd::AcquisitionHeader &hdr_in, hoNDArray <T> &data_in, 
+		    mrd::AcquisitionHeader &hdr_out, hoNDArray <T> &data_out);
 
   using EPIReconXObject<T>::filterPos_;
   using EPIReconXObject<T>::filterNeg_;
@@ -51,7 +51,7 @@ template <typename T> class EPIReconXObjectTrapezoid : public EPIReconXObject<T>
   hoNDArray <T> Mneg_;
   bool operatorComputed_;
 
-  float calcOffCenterDistance(ISMRMRD::AcquisitionHeader& hdr_in);
+  float calcOffCenterDistance(mrd::AcquisitionHeader& hdr_in);
 };
 
 template <typename T> EPIReconXObjectTrapezoid<T>::EPIReconXObjectTrapezoid()
@@ -153,8 +153,8 @@ template <typename T> int EPIReconXObjectTrapezoid<T>::computeTrajectory()
 }
 
 
-template <typename T> int EPIReconXObjectTrapezoid<T>::apply(ISMRMRD::AcquisitionHeader &hdr_in, hoNDArray <T> &data_in, 
-		    ISMRMRD::AcquisitionHeader &hdr_out, hoNDArray <T> &data_out)
+template <typename T> int EPIReconXObjectTrapezoid<T>::apply(mrd::AcquisitionHeader &hdr_in, hoNDArray <T> &data_in, 
+		    mrd::AcquisitionHeader &hdr_out, hoNDArray <T> &data_out)
 {
   if (!operatorComputed_) {
     // Compute the reconstruction operator
@@ -257,7 +257,8 @@ template <typename T> int EPIReconXObjectTrapezoid<T>::apply(ISMRMRD::Acquisitio
   //arma::Mat<typename stdType<T>::Type> adata_out = as_arma_matrix(&data_out);
 
   // Apply it
-  if (hdr_in.isFlagSet(ISMRMRD::ISMRMRD_ACQ_IS_REVERSE)) {
+  if (hdr_in.flags.HasFlags(mrd::AcquisitionFlags::kIsReverse)) {
+
     // Negative readout
     // adata_out = as_arma_matrix(&Mneg_) * adata_in;
       Gadgetron::gemm(data_out, Mneg_, data_in);
@@ -269,13 +270,12 @@ template <typename T> int EPIReconXObjectTrapezoid<T>::apply(ISMRMRD::Acquisitio
 
   // Copy the input header to the output header and set the size and the center sample
   hdr_out = hdr_in;
-  hdr_out.number_of_samples = reconNx_;
   hdr_out.center_sample = reconNx_/2;
   
   return 0;
 }
 
-template <typename T> float EPIReconXObjectTrapezoid<T>::calcOffCenterDistance(ISMRMRD::AcquisitionHeader& hdr_in)
+template <typename T> float EPIReconXObjectTrapezoid<T>::calcOffCenterDistance(mrd::AcquisitionHeader& hdr_in)
 {
   // armadillo vectors with the position and readout direction:
   arma::fvec pos(3);

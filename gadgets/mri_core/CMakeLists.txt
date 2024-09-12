@@ -20,8 +20,8 @@ set(gadgetron_mricore_header_files
         NoiseAdjustGadget.h
         PCACoilGadget.h
         # AccumulatorGadget.h
-        # FFTGadget.h
-        # CombineGadget.h
+        FFTGadget.h
+        CombineGadget.h
         # CropAndCombineGadget.h
         # writers/MRIImageWriter.h
         # readers/MRIImageReader.h
@@ -67,8 +67,8 @@ set(gadgetron_mricore_src_files
         NoiseAdjustGadget.cpp
         PCACoilGadget.cpp
         # AccumulatorGadget.cpp
-        # FFTGadget.cpp
-        # CombineGadget.cpp
+        FFTGadget.cpp
+        CombineGadget.cpp
         # CropAndCombineGadget.cpp
         ImageFinishGadget.cpp
         # writers/MRIImageWriter.cpp

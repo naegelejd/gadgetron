@@ -164,8 +164,11 @@ class NDArray : public Gadgetron::hoNDArray<T> {
   NDArray()
       : BaseType() {}
 
-  NDArray(BaseType const& other)
-      : BaseType(other) {}
+  NDArray(BaseType const& other) : BaseType(other) {
+      if (this->get_number_of_dimensions() != N) {
+          throw std::runtime_error("Number of dimensions does not match");
+      }
+  }
 
   NDArray(detail::nested_initializer_list_t<T, N> t)
       : BaseType() {

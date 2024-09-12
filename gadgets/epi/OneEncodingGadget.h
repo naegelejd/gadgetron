@@ -10,20 +10,19 @@
 #include "hoNDArray.h"
 #include "gadgetron_epi_export.h"
 
-#include <ismrmrd/ismrmrd.h>
 #include <complex>
 
 namespace Gadgetron {
 
     class EXPORTGADGETS_EPI OneEncodingGadget :
-        public Gadget2<ISMRMRD::AcquisitionHeader, hoNDArray< std::complex<float> > >
+        public Gadget1<mrd::Acquisition>
     {
     public:
         OneEncodingGadget();
         virtual ~OneEncodingGadget();
 
     protected:
-        virtual int process(GadgetContainerMessage< ISMRMRD::AcquisitionHeader>* m1, GadgetContainerMessage< hoNDArray< std::complex<float> > >* m2);
+        virtual int process(GadgetContainerMessage< mrd::Acquisition>* m1);
     };
 }
 

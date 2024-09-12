@@ -193,6 +193,7 @@ int main(int argc, char *argv[]) {
                 consumer.consume(std::cin, std::cout, cfg);
                 std::flush(std::cout);
             }
+            GDEBUG_STREAM("Finished consuming stream");
         }
     }
     catch (std::exception &e)

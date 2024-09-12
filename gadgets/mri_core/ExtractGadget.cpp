@@ -60,7 +60,6 @@ namespace Gadgetron {
                 extracted.data = extract_image(image.data, imtype, real_imag_offset);
                 extracted.meta = image.meta;
 
-                GDEBUG_STREAM("Extracted image " << ++count);
                 out.push(std::move(extracted));
             }
         }

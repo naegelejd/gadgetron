@@ -420,7 +420,9 @@ namespace Gadgetron {
             std::ifstream file(noise_covariance_in, std::ios::binary);
             if (!file) {
                 GERROR("Could not open noise covariance file %s\n", noise_covariance_in.c_str());
-                throw std::runtime_error("Could not open noise covariance file");
+                GWARN("Falling back to noise gathering\n");
+                // throw std::runtime_error("Could not open noise covariance file");
+                return Core::none;
             }
             mrd::binary::MrdNoiseCovarianceReader reader(file);
             mrd::NoiseCovariance noise_covariance;
@@ -428,9 +430,9 @@ namespace Gadgetron {
             reader.Close();
             file.close();
             return noise_covariance;
-        } else {
-            return Core::none;
         }
+
+        return Core::none;
     }
 
     GADGETRON_GADGET_EXPORT(NoiseAdjustGadget)

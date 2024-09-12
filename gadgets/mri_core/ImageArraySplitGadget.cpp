@@ -34,7 +34,6 @@ void splitInputData(ImageArray imagearr, Core::OutputChannel& out) {
             for (auto n = 0; n < N; n++) {
                 mrd::Image<std::complex<float>> img;
                 img.head = imagearr.headers(n, s, loc);
-
                 if (imagearr.meta.size() >= LOC * S * N) {
                     img.meta = imagearr.meta(n, s, loc);
                 }
@@ -44,7 +43,7 @@ void splitInputData(ImageArray imagearr, Core::OutputChannel& out) {
                 memcpy(img.data.data(), &imagearr.data(0, 0, 0, 0, n, s, loc), X * Y * Z * CHA * sizeof(std::complex<float>));
 
                 // Pass the image down the chain
-                out.push(img);
+                out.push(std::move(img));
             }
         }
     }

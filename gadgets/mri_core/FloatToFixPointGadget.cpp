@@ -55,7 +55,7 @@ namespace Gadgetron
 
                     if (image_out.meta.count(GADGETRON_IMAGE_WINDOWCENTER) && image_out.meta[GADGETRON_IMAGE_WINDOWCENTER].size() > 0) {
                         long windowCenter = std::get<long>(image_out.meta[GADGETRON_IMAGE_WINDOWCENTER].front());
-                        image_out.meta[GADGETRON_IMAGE_WINDOWCENTER][0] = windowCenter + self.intensity_offset;
+                        image_out.meta[GADGETRON_IMAGE_WINDOWCENTER] = {windowCenter + self.intensity_offset};
                     }
                 }
                     break;

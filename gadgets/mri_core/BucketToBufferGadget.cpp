@@ -45,7 +45,7 @@ namespace Gadgetron {
 
         for (auto acq_bucket : input) {
             std::map<BufferKey, mrd::ReconData> recon_data_buffers;
-            GDEBUG_STREAM("BUCKET_SIZE " << acq_bucket.data.size() << " ESPACE " << acq_bucket.refstats.size());
+            // GDEBUG_STREAM("BUCKET_SIZE " << acq_bucket.data.size() << " ESPACE " << acq_bucket.refstats.size());
 
             // Buffer the reference data
             for (auto& acq : acq_bucket.ref) {
@@ -83,12 +83,12 @@ namespace Gadgetron {
             for (auto& recon_data_buffer : recon_data_buffers) {
                 if (acq_bucket.waveforms.empty())
                 {
-                    GDEBUG_STREAM("Sending out ReconData buffers without waveforms ...");
+                    // GDEBUG_STREAM("Sending out ReconData buffers without waveforms ...");
                     out.push(recon_data_buffer.second);
                 }
                 else
                 {
-                    GDEBUG_STREAM("Sending out ReconData buffers with waveforms ...");
+                    // GDEBUG_STREAM("Sending out ReconData buffers with waveforms ...");
                     out.push(recon_data_buffer.second, acq_bucket.waveforms);
                 }
             }

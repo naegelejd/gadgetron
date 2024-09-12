@@ -23,8 +23,8 @@ template <typename T> class EPIReconXObjectFlat : public EPIReconXObject<T>
 
   virtual int computeTrajectory();
 
-  virtual int apply(ISMRMRD::AcquisitionHeader &hdr_in, hoNDArray <T> &data_in, 
-		    ISMRMRD::AcquisitionHeader &hdr_out, hoNDArray <T> &data_out);
+  virtual int apply(mrd::AcquisitionHeader &hdr_in, hoNDArray <T> &data_in, 
+		    mrd::AcquisitionHeader &hdr_out, hoNDArray <T> &data_out);
 
   using EPIReconXObject<T>::filterPos_;
   using EPIReconXObject<T>::filterNeg_;
@@ -110,8 +110,8 @@ template <typename T> int EPIReconXObjectFlat<T>::computeTrajectory()
 }
 
 
-template <typename T> int EPIReconXObjectFlat<T>::apply(ISMRMRD::AcquisitionHeader &hdr_in, hoNDArray <T> &data_in, 
-		    ISMRMRD::AcquisitionHeader &hdr_out, hoNDArray <T> &data_out)
+template <typename T> int EPIReconXObjectFlat<T>::apply(mrd::AcquisitionHeader &hdr_in, hoNDArray <T> &data_in, 
+		    mrd::AcquisitionHeader &hdr_out, hoNDArray <T> &data_out)
 {
   if (!operatorComputed_) {
     // Compute the reconstruction operator
@@ -176,7 +176,7 @@ template <typename T> int EPIReconXObjectFlat<T>::apply(ISMRMRD::AcquisitionHead
   //arma::Mat<typename stdType<T>::Type> adata_out = as_arma_matrix(&data_out);
 
   // Apply it
-  if (hdr_in.isFlagSet(ISMRMRD::ISMRMRD_ACQ_IS_REVERSE)) {
+  if (hdr_in.flags.HasFlags(mrd::AcquisitionFlags::kIsReverse)) {
     // Negative readout
     // adata_out = as_arma_matrix(&Mneg_) * adata_in;
       Gadgetron::gemm(data_out, Mneg_, data_in);
@@ -188,7 +188,6 @@ template <typename T> int EPIReconXObjectFlat<T>::apply(ISMRMRD::AcquisitionHead
 
   // Copy the input header to the output header and set the size and the center sample
   hdr_out = hdr_in;
-  hdr_out.number_of_samples = reconNx_;
   hdr_out.center_sample = reconNx_/2;
   
   return 0;

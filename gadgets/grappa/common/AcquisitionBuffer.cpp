@@ -79,7 +79,6 @@ namespace Gadgetron::Grappa {
             buffers[current_slice] = create_buffer({
                 internals.number_of_samples,
                 internals.number_of_lines,
-                // header.active_channels
                 acq.Coils()
             });
         }
@@ -88,7 +87,6 @@ namespace Gadgetron::Grappa {
         buffer.sampled_lines.insert(header.idx.kspace_encode_step_1.value_or(0));
 
         // Copy the acquisition data to the buffer for each channel.
-        // for (size_t channel = 0; channel < header.active_channels; channel++) {
         for (size_t channel = 0; channel < acq.Coils(); channel++) {
 
             using namespace Gadgetron::Indexing;
