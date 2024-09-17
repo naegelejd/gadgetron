@@ -72,6 +72,7 @@ void CoilReductionGadget::process(Core::InputChannel<Core::Acquisition>& in, Cor
         dims_out[1] = coils_out_;
         hoNDArray<std::complex<float>> reduced(dims_out);
 
+        acq.head.channel_order.resize(coils_out_);
         auto s = acq.data.data();
         auto d = reduced.data();
 
@@ -79,12 +80,12 @@ void CoilReductionGadget::process(Core::InputChannel<Core::Acquisition>& in, Cor
         for (size_t c = 0; c < nchannels; c++) {
             if (coil_mask_[c]) {
                 memcpy(d + coils_copied * nsamples, s + c * nsamples, sizeof(std::complex<float>) * nsamples);
+                acq.head.channel_order[coils_copied] = coils_copied;
                 coils_copied++;
             }
         }
 
         acq.data = std::move(reduced);
-        acq.head.channel_order = std::vector<uint32_t>(coils_out, 1);
         
         out.push(std::move(acq));
     }

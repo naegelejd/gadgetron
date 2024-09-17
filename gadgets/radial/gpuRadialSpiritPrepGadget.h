@@ -14,7 +14,7 @@ namespace Gadgetron{
     
   protected:
     
-    virtual int process_config(ACE_Message_Block *mb);
+    virtual int process_config(const mrd::Header& header);
 
     virtual void reconfigure(unsigned int set, unsigned int slice, bool use_dcw = true );
 

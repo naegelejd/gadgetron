@@ -4,7 +4,6 @@
 
 #include "gadgetron_spiral_export.h"
 #include "Gadget.h"
-#include "GadgetMRIHeaders.h"
 #include "cuCgSolver.h"
 #include "cuNonCartesianSenseOperator.h"
 #include "cuCgPreconditioner.h"
@@ -22,7 +21,7 @@
 namespace Gadgetron {
 
     class EXPORTGADGETS_SPIRAL gpuSpiralSensePrepGadget :
-            public Gadget2<mrd::AcquisitionHeader, hoNDArray<std::complex<float> > > {
+            public Gadget1<mrd::Acquisition> {
 
     public:
         GADGET_DECLARE(gpuSpiralSensePrepGadget);
@@ -41,13 +40,9 @@ namespace Gadgetron {
         GADGET_PROPERTY(reconstruction_os_factor_x, float, "Oversampling for reconstruction in x-direction", 1.0);
         GADGET_PROPERTY(reconstruction_os_factor_y, float, "Oversampling for reconstruction in y-direction", 1.0);
 
-        virtual int process_config(mrd::Header& header);
+        virtual int process_config(const mrd::Header& header);
 
-        virtual int process(GadgetContainerMessage<mrd::AcquisitionHeader> *m1,
-                            GadgetContainerMessage<hoNDArray<std::complex<float> > > *m2);
-
-        virtual GadgetContainerMessage<mrd::AcquisitionHeader> *
-        duplicate_profile(GadgetContainerMessage<mrd::AcquisitionHeader> *profile);
+        virtual int process(GadgetContainerMessage<mrd::Acquisition> *m1);
 
     private:
         int samples_to_skip_start_;
@@ -91,14 +86,14 @@ namespace Gadgetron {
         boost::shared_ptr<cuNonCartesianSenseOperator<float, 2> > E_;
         boost::shared_ptr<cuCgPreconditioner<float_complext> > D_;
 
-        std::vector<std::vector<std::pair<GadgetContainerMessage<mrd::AcquisitionHeader>*,GadgetContainerMessage<hoNDArray<std::complex<float>>>*>>> buffer_;
+        std::vector<std::vector<GadgetContainerMessage<mrd::Acquisition>*>> buffer_;
         std::vector<std::vector<mrd::ImageHeader>> image_headers_queue_;
 
-        void prepare_nfft( const mrd::AcquisitionHeader& header);
+        void prepare_nfft( const mrd::Acquisition& acq);
 
         mrd::ImageHeader make_image_header(const mrd::AcquisitionHeader &acq_header);
 
-        void change_acceleration_factor(const mrd::AcquisitionHeader &header);
+        void change_acceleration_factor(const mrd::Acquisition &acq);
 
         cuNDArray<float_complext> make_reg_image(const hoNDArray<float_complext> &buffer, size_t set, size_t num_coils);
 
@@ -106,7 +101,7 @@ namespace Gadgetron {
                 boost::shared_ptr<hoNDArray<floatd2>>,
                 boost::shared_ptr<hoNDArray<float>>> get_data_from_queues(size_t set, size_t slice, size_t num_coils);
 
-        void setup_buffers(const mrd::AcquisitionHeader &header);
+        void setup_buffers(const mrd::Acquisition &acq);
 
     };
 }

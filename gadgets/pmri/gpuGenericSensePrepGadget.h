@@ -2,14 +2,12 @@
 
 #include "gadgetron_gpupmri_export.h"
 #include "Gadget.h"
-#include "GadgetMRIHeaders.h"
 #include "hoNDArray.h"
 #include "vector_td.h"
 #include "cuNFFT.h"
 #include "cuCgPreconditioner.h"
 #include "cuSenseBufferCg.h"
 
-#include <ismrmrd/ismrmrd.h>
 #include <complex>
 #include <queue>
 #include <map>
@@ -19,13 +17,13 @@
 namespace Gadgetron{
 
   class EXPORTGADGETS_GPUPMRI gpuGenericSensePrepGadget :
-    public Gadget3< ISMRMRD::AcquisitionHeader, hoNDArray< std::complex<float> >, hoNDArray<float> >
+    public Gadget1< mrd::Acquisition >
   {
     
   public:
     using ReadoutMessage = GadgetContainerMessage<hoNDArray<std::complex<float>>>;
     using TrajectoryMessage = GadgetContainerMessage<hoNDArray<float>>;
-    using ImageHeaderMessage = GadgetContainerMessage<ISMRMRD::ImageHeader>;
+    using ImageHeaderMessage = GadgetContainerMessage<mrd::ImageHeader>;
 
     GADGET_DECLARE(gpuGenericSensePrepGadget);
 
@@ -50,26 +48,24 @@ namespace Gadgetron{
     GADGET_PROPERTY(buffer_frames_per_rotation, int, "Frames per rotation in buffer", 1);
 
 
-    virtual int process_config(ACE_Message_Block *mb);
+    virtual int process_config(const mrd::Header& header);
 
-    virtual int process(GadgetContainerMessage< ISMRMRD::AcquisitionHeader > *m1,        // header
-			GadgetContainerMessage< hoNDArray< std::complex<float> > > *m2,  // data
-			GadgetContainerMessage< hoNDArray<float> > *m3 );                // traj/dcw
+    virtual int process(GadgetContainerMessage< mrd::Acquisition > *m1);
 
   private:
-
-    inline bool vec_equal(float *in1, float *in2) {
-      for (unsigned int i = 0; i < 3; i++) {
-	if (in1[i] != in2[i]) return false;
-      }
-      return true;
+    inline bool vec_equal(float* in1, float* in2) {
+        for (unsigned int i = 0; i < 3; i++) {
+            if (in1[i] != in2[i])
+                return false;
+        }
+        return true;
     }
-    
+
     boost::shared_array<bool> reconfigure_;
     virtual void reconfigure(unsigned int set, unsigned int slice);
 
     template<class T> GadgetContainerMessage< hoNDArray<T> >* 
-      duplicate_array( GadgetContainerMessage< hoNDArray<T> > *array );
+      duplicate_array( const hoNDArray<T>& array );
     
     boost::shared_ptr< hoNDArray<float_complext> > 
       extract_samples_from_queue ( std::queue<std::unique_ptr<ReadoutMessage>> &queue,

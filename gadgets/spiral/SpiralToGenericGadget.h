@@ -4,20 +4,17 @@
 
 #include "../../toolboxes/mri/spiral/TrajectoryParameters.h"
 #include "Gadget.h"
-#include "GadgetMRIHeaders.h"
 #include "gadgetron_spiral_export.h"
 #include "hoNDArray.h"
 
-#include <ismrmrd/ismrmrd.h>
 #include <complex>
 #include <boost/shared_ptr.hpp>
-#include <ismrmrd/xml.h>
 #include <boost/optional.hpp>
 
 namespace Gadgetron {
 
     class EXPORTGADGETS_SPIRAL SpiralToGenericGadget :
-            public Gadget2<ISMRMRD::AcquisitionHeader, hoNDArray<std::complex<float> > > {
+            public Gadget1<mrd::Acquisition> {
 
     public:
         GADGET_DECLARE(SpiralToGenericGadget);
@@ -28,10 +25,9 @@ namespace Gadgetron {
 
     protected:
 
-        virtual int process_config(ACE_Message_Block *mb);
+        virtual int process_config(const mrd::Header& header);
 
-        virtual int process(GadgetContainerMessage<ISMRMRD::AcquisitionHeader> *m1,
-                            GadgetContainerMessage<hoNDArray<std::complex<float> > > *m2);
+        virtual int process(GadgetContainerMessage<mrd::Acquisition> *m1);
 
     private:
 
@@ -39,9 +35,9 @@ namespace Gadgetron {
 
         int samples_to_skip_start_;
         int samples_to_skip_end_;
-        hoNDArray<float> trajectory_and_weights;
-        Spiral::TrajectoryParameters trajectory_parameters;
-        void prepare_trajectory(const ISMRMRD::AcquisitionHeader &acq_header);
+        hoNDArray<float> trajectory_and_weights_;
+        Spiral::TrajectoryParameters trajectory_parameters_;
+        void prepare_trajectory(const mrd::Acquisition &acq);
 
     };
 }

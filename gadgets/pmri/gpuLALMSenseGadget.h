@@ -7,14 +7,12 @@
 #include <complex>
 #include "Gadget.h"
 #include "GenericReconJob.h"
-#include "GadgetMRIHeaders.h"
 #include "cuNlcgSolver.h"
 #include "cuNonCartesianSenseOperator.h"
 #include "cuCgPreconditioner.h"
 #include "cuPartialDerivativeOperator.h"
 #include "cuNFFT.h"
 #include "cuImageOperator.h"
-#include "ismrmrd/ismrmrd.h"
 #include "cuTvOperator.h"
 #include "cuTvPicsOperator.h"
 #include "osSenseOperator.h"
@@ -44,8 +42,8 @@ namespace Gadgetron{
     GADGET_PROPERTY(tau,float,"Acceleration of nonlinear terms. Set as high as possible",0.1);
     GADGET_PROPERTY(use_preconditioner,bool,"Sets the use of a preconditioner",false);
     
-    virtual int process( GadgetContainerMessage< ISMRMRD::ImageHeader >* m1, GadgetContainerMessage< GenericReconJob > * m2 );
-    virtual int process_config( ACE_Message_Block* mb );
+    virtual int process( GadgetContainerMessage< mrd::ImageHeader >* m1, GadgetContainerMessage< GenericReconJob > * m2 );
+    virtual int process_config(const mrd::Header& header);
 
     int coils_per_subset_;
 

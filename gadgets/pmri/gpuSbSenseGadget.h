@@ -5,7 +5,6 @@
 #include "gadgetron_gpupmri_export.h"
 #include "Gadget.h"
 #include "GenericReconJob.h"
-#include "GadgetMRIHeaders.h"
 #include "cuSbcCgSolver.h"
 #include "cuNonCartesianSenseOperator.h"
 #include "cuCgPreconditioner.h"
@@ -13,7 +12,6 @@
 #include "cuPartialDerivativeOperator2.h"
 #include "cuNFFT.h"
 #include "cuImageOperator.h"
-#include "ismrmrd/ismrmrd.h"
 #include "gpuSenseGadget.h"
 #include <complex>
 #include "cuDWTOperator.h"
@@ -42,8 +40,8 @@ namespace Gadgetron{
     GADGET_PROPERTY(is_cyclic, bool, "Is cyclic", true);
     GADGET_PROPERTY(exclusive_access, bool, "Exclusive access to solver", false);
 
-    virtual int process( GadgetContainerMessage< ISMRMRD::ImageHeader >* m1, GadgetContainerMessage< GenericReconJob > * m2 );
-    virtual int process_config( ACE_Message_Block* mb );
+    virtual int process( GadgetContainerMessage< mrd::ImageHeader >* m1, GadgetContainerMessage< GenericReconJob > * m2 );
+    virtual int process_config(const mrd::Header& header);
 
 
     unsigned int number_of_cg_iterations_;

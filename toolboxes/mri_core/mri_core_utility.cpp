@@ -1248,6 +1248,7 @@ namespace Gadgetron
         }
     }
 
+    /** TODO Joe: Delete these vvvvv */
     std::map<std::string, std::int64_t> to_map(const std::vector<ISMRMRD::UserParameterLong> & userparameters) {
         return to_map_internal(userparameters);
     }
@@ -1257,6 +1258,18 @@ namespace Gadgetron
     }
 
     std::map<std::string, std::string> to_map(const std::vector<ISMRMRD::UserParameterString> & userparameters) {
+        return to_map_internal(userparameters);
+    }
+
+    std::map<std::string, std::int64_t> to_map(const std::vector<mrd::UserParameterLongType> & userparameters) {
+        return to_map_internal(userparameters);
+    }
+
+    std::map<std::string, double> to_map(const std::vector<mrd::UserParameterDoubleType> & userparameters) {
+        return to_map_internal(userparameters);
+    }
+
+    std::map<std::string, std::string> to_map(const std::vector<mrd::UserParameterStringType> & userparameters) {
         return to_map_internal(userparameters);
     }
 

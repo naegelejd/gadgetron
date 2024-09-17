@@ -9,7 +9,6 @@
 #include "GPUTimer.h"
 #include "check_CUDA.h"
 #include "hoNDArray_fileio.h"
-#include "ismrmrd/xml.h"
 
 #include <boost/make_shared.hpp>
 #include <algorithm>
@@ -29,7 +28,7 @@ namespace Gadgetron{
   
   gpuGenericSensePrepGadget::~gpuGenericSensePrepGadget() {}
   
-  int gpuGenericSensePrepGadget::process_config(ACE_Message_Block* mb)
+  int gpuGenericSensePrepGadget::process_config(const mrd::Header& header)
   {
     // Get configuration values from config file
     //
@@ -113,30 +112,25 @@ namespace Gadgetron{
     kernel_width_ = buffer_convolution_kernel_width.value();
     oversampling_factor_ = buffer_convolution_oversampling_factor.value();
 
-    // Get the Ismrmrd header
-    //
-    ISMRMRD::IsmrmrdHeader h;
-    ISMRMRD::deserialize(mb->rd_ptr(),h);
-    
-    
+    auto& h = header; 
     if (h.encoding.size() != 1) {
       GDEBUG("This Gadget only supports one encoding space\n");
       return GADGET_FAIL;
     }
     
     // Get the encoding space and trajectory description
-    ISMRMRD::EncodingSpace e_space = h.encoding[0].encodedSpace;
-    ISMRMRD::EncodingSpace r_space = h.encoding[0].reconSpace;
-    ISMRMRD::EncodingLimits e_limits = h.encoding[0].encodingLimits;
+    mrd::EncodingSpaceType e_space = h.encoding[0].encoded_space;
+    mrd::EncodingSpaceType r_space = h.encoding[0].recon_space;
+    mrd::EncodingLimitsType e_limits = h.encoding[0].encoding_limits;
 
     // Matrix sizes (as a multiple of the GPU's warp size)
     //
     
-    image_dimensions_.push_back(((e_space.matrixSize.x+warp_size-1)/warp_size)*warp_size);
-    image_dimensions_.push_back(((e_space.matrixSize.y+warp_size-1)/warp_size)*warp_size);
+    image_dimensions_.push_back(((e_space.matrix_size.x+warp_size-1)/warp_size)*warp_size);
+    image_dimensions_.push_back(((e_space.matrix_size.y+warp_size-1)/warp_size)*warp_size);
 
-    image_dimensions_recon_.push_back(((static_cast<unsigned int>(std::ceil(e_space.matrixSize.x*reconstruction_os_factor_x.value()))+warp_size-1)/warp_size)*warp_size);  
-    image_dimensions_recon_.push_back(((static_cast<unsigned int>(std::ceil(e_space.matrixSize.y*reconstruction_os_factor_y.value()))+warp_size-1)/warp_size)*warp_size);
+    image_dimensions_recon_.push_back(((static_cast<unsigned int>(std::ceil(e_space.matrix_size.x*reconstruction_os_factor_x.value()))+warp_size-1)/warp_size)*warp_size);  
+    image_dimensions_recon_.push_back(((static_cast<unsigned int>(std::ceil(e_space.matrix_size.y*reconstruction_os_factor_y.value()))+warp_size-1)/warp_size)*warp_size);
     
     image_dimensions_recon_os_ = uint64d2
       (((static_cast<unsigned int>(std::ceil(image_dimensions_recon_[0]*oversampling_factor_))+warp_size-1)/warp_size)*warp_size,
@@ -151,9 +145,9 @@ namespace Gadgetron{
     GDEBUG("matrix_size_y : %d, recon: %d, recon_os: %d\n", 
                   image_dimensions_[1], image_dimensions_recon_[1], image_dimensions_recon_os_[1]);
     
-    fov_.push_back(r_space.fieldOfView_mm.x);
-    fov_.push_back(r_space.fieldOfView_mm.y);
-    fov_.push_back(r_space.fieldOfView_mm.z);
+    fov_.push_back(r_space.field_of_view_mm.x);
+    fov_.push_back(r_space.field_of_view_mm.y);
+    fov_.push_back(r_space.field_of_view_mm.z);
 
     slices_ = e_limits.slice ? e_limits.slice->maximum + 1 : 1;
     sets_ = e_limits.set ? e_limits.set->maximum + 1 : 1;
@@ -243,15 +237,12 @@ namespace Gadgetron{
     return GADGET_OK;
   }
 
-  int gpuGenericSensePrepGadget::
-  process(GadgetContainerMessage<ISMRMRD::AcquisitionHeader> *m1,           // header
-          GadgetContainerMessage< hoNDArray< std::complex<float> > > *m2,   // data
-          GadgetContainerMessage< hoNDArray<float> > *m3)                   // traj/dcw
+  int gpuGenericSensePrepGadget::process(GadgetContainerMessage<mrd::Acquisition> *m1)
   {
     // Noise should have been consumed by the noise adjust (if in the gadget chain)
     //
     
-    bool is_noise = m1->getObjectPtr()->isFlagSet(ISMRMRD::ISMRMRD_ACQ_IS_NOISE_MEASUREMENT);
+    bool is_noise = m1->getObjectPtr()->head.flags.HasFlags(mrd::AcquisitionFlags::kIsNoiseMeasurement);
     if (is_noise) { 
       m1->release();
       return GADGET_OK;
@@ -267,9 +258,9 @@ namespace Gadgetron{
     // Some convenient utility variables
     //
 
-    unsigned int set = m1->getObjectPtr()->idx.set;
-    unsigned int slice = m1->getObjectPtr()->idx.slice;
-    unsigned int readout = m1->getObjectPtr()->idx.kspace_encode_step_1;
+    unsigned int set = m1->getObjectPtr()->head.idx.set.value_or(0);
+    unsigned int slice = m1->getObjectPtr()->head.idx.slice.value_or(0);
+    unsigned int readout = m1->getObjectPtr()->head.idx.kspace_encode_step_1.value_or(0);
     unsigned int idx = set*slices_+slice;
 
     // Get a pointer to the accumulation buffer. 
@@ -281,10 +272,10 @@ namespace Gadgetron{
     // Have the imaging plane changed?
     //
 
-    if( !vec_equal(position_[idx], m1->getObjectPtr()->position) ||
-        !vec_equal(read_dir_[idx], m1->getObjectPtr()->read_dir) || 
-        !vec_equal(phase_dir_[idx], m1->getObjectPtr()->phase_dir) ||
-        !vec_equal(slice_dir_[idx], m1->getObjectPtr()->slice_dir) ){
+    if( !vec_equal(position_[idx], m1->getObjectPtr()->head.position.data()) ||
+        !vec_equal(read_dir_[idx], m1->getObjectPtr()->head.read_dir.data()) ||
+        !vec_equal(phase_dir_[idx], m1->getObjectPtr()->head.phase_dir.data()) ||
+        !vec_equal(slice_dir_[idx], m1->getObjectPtr()->head.slice_dir.data()) ){
       
       // Yes indeed, clear the accumulation buffer and update structs
       //
@@ -292,19 +283,19 @@ namespace Gadgetron{
       acc_buffer->clear();
       buffer_update_needed_[idx] = true;
       
-      memcpy(position_[idx],m1->getObjectPtr()->position,3*sizeof(float));
-      memcpy(read_dir_[idx],m1->getObjectPtr()->read_dir,3*sizeof(float));
-      memcpy(phase_dir_[idx],m1->getObjectPtr()->phase_dir,3*sizeof(float));
-      memcpy(slice_dir_[idx],m1->getObjectPtr()->slice_dir,3*sizeof(float));
+      memcpy(position_[idx],m1->getObjectPtr()->head.position.data(),3*sizeof(float));
+      memcpy(read_dir_[idx],m1->getObjectPtr()->head.read_dir.data(),3*sizeof(float));
+      memcpy(phase_dir_[idx],m1->getObjectPtr()->head.phase_dir.data(),3*sizeof(float));
+      memcpy(slice_dir_[idx],m1->getObjectPtr()->head.slice_dir.data(),3*sizeof(float));
     }
     
     // Only when the first readout arrives, do we know the #samples/readout
     //
 
     if( samples_per_readout_ == -1 )      
-      samples_per_readout_ = m1->getObjectPtr()->number_of_samples;
+      samples_per_readout_ = m1->getObjectPtr()->Samples();
     
-    if( samples_per_readout_ != m1->getObjectPtr()->number_of_samples ){
+    if( samples_per_readout_ != m1->getObjectPtr()->Samples() ){
       GDEBUG("Unexpected change in the readout length\n");
       return GADGET_FAIL;
     }
@@ -315,9 +306,9 @@ namespace Gadgetron{
     // - or if the number of coil changes
     // - or if the reconfigure_ flag is set
 
-    if( num_coils_[idx] != m1->getObjectPtr()->active_channels ){
+    if( num_coils_[idx] != m1->getObjectPtr()->Coils() ){
       GDEBUG("Reconfiguring (the number of coils changed)\n");
-      num_coils_[idx] = m1->getObjectPtr()->active_channels;
+      num_coils_[idx] = m1->getObjectPtr()->Coils();
       reconfigure(set, slice);
     }
 
@@ -381,10 +372,10 @@ namespace Gadgetron{
     if( !new_frame_detected ) {
       
       // Memory handling is easier if we make copies for our internal queues
-      frame_readout_queue_[idx].push(std::unique_ptr<ReadoutMessage>(duplicate_array(m2)));
-      recon_readout_queue_[idx].push(std::unique_ptr<ReadoutMessage>(duplicate_array(m2)));
-      frame_traj_queue_[idx].push(std::unique_ptr<TrajectoryMessage>(duplicate_array(m3)));
-      recon_traj_queue_[idx].push(std::unique_ptr<TrajectoryMessage>(duplicate_array(m3)));
+      frame_readout_queue_[idx].push(std::unique_ptr<ReadoutMessage>(duplicate_array(m1->getObjectPtr()->data)));
+      recon_readout_queue_[idx].push(std::unique_ptr<ReadoutMessage>(duplicate_array(m1->getObjectPtr()->data)));
+      frame_traj_queue_[idx].push(std::unique_ptr<TrajectoryMessage>(duplicate_array(m1->getObjectPtr()->trajectory)));
+      frame_traj_queue_[idx].push(std::unique_ptr<TrajectoryMessage>(duplicate_array(m1->getObjectPtr()->trajectory)));
     }
 
     // If the readout is the last of a "true frame" (ignoring any sliding window readouts)
@@ -444,42 +435,33 @@ namespace Gadgetron{
     if( is_last_readout_in_frame || 
         (is_last_readout_in_reconstruction && image_headers_queue_[idx].empty()) ){
       
-      GadgetContainerMessage<ISMRMRD::ImageHeader> *header = new GadgetContainerMessage<ISMRMRD::ImageHeader>();
-      ISMRMRD::AcquisitionHeader *base_head = m1->getObjectPtr();
+      GadgetContainerMessage<mrd::ImageHeader> *header = new GadgetContainerMessage<mrd::ImageHeader>();
+      mrd::AcquisitionHeader& base_head = m1->getObjectPtr()->head;
 
       {
         // Initialize header to all zeroes (there is a few fields we do not set yet)
-        ISMRMRD::ImageHeader tmp;
+        mrd::ImageHeader tmp{};
         *(header->getObjectPtr()) = tmp;
       }
-
-      header->getObjectPtr()->version = base_head->version;
-
-      header->getObjectPtr()->matrix_size[0] = image_dimensions_recon_[0];
-      header->getObjectPtr()->matrix_size[1] = image_dimensions_recon_[1];
-      header->getObjectPtr()->matrix_size[2] = std::max(1L,frames_per_rotation_[idx]*rotations_per_reconstruction_);
 
       header->getObjectPtr()->field_of_view[0] = fov_[0];
       header->getObjectPtr()->field_of_view[1] = fov_[1];
       header->getObjectPtr()->field_of_view[2] = fov_[2];
 
-      header->getObjectPtr()->channels = num_coils_[idx];
-      header->getObjectPtr()->slice = base_head->idx.slice;
-      header->getObjectPtr()->set = base_head->idx.set;
+      header->getObjectPtr()->slice = base_head.idx.slice.value_or(0);
+      header->getObjectPtr()->set = base_head.idx.set.value_or(0);
 
-      header->getObjectPtr()->acquisition_time_stamp = base_head->acquisition_time_stamp;
-      memcpy(header->getObjectPtr()->physiology_time_stamp, base_head->physiology_time_stamp, sizeof(uint32_t)*ISMRMRD::ISMRMRD_PHYS_STAMPS);
+      header->getObjectPtr()->acquisition_time_stamp = base_head.acquisition_time_stamp;
+      header->getObjectPtr()->physiology_time_stamp = base_head.physiology_time_stamp;
 
-      memcpy(header->getObjectPtr()->position, base_head->position, sizeof(float)*3);
-      memcpy(header->getObjectPtr()->read_dir, base_head->read_dir, sizeof(float)*3);
-      memcpy(header->getObjectPtr()->phase_dir, base_head->phase_dir, sizeof(float)*3);
-      memcpy(header->getObjectPtr()->slice_dir, base_head->slice_dir, sizeof(float)*3);
-      memcpy(header->getObjectPtr()->patient_table_position, base_head->patient_table_position, sizeof(float)*3);
+      header->getObjectPtr()->position = base_head.position;
+      header->getObjectPtr()->col_dir = base_head.read_dir;
+      header->getObjectPtr()->line_dir = base_head.phase_dir;
+      header->getObjectPtr()->slice_dir = base_head.slice_dir;
+      header->getObjectPtr()->patient_table_position = base_head.patient_table_position;
 
-      header->getObjectPtr()->data_type = ISMRMRD::ISMRMRD_CXFLOAT;
-      header->getObjectPtr()->image_index = image_counter_[idx]++; 
+      header->getObjectPtr()->image_index = image_counter_[idx]++;
       header->getObjectPtr()->image_series_index = idx;
-
       image_headers_queue_[idx].push(std::unique_ptr<ImageHeaderMessage>(header));
     }
     
@@ -607,14 +589,14 @@ namespace Gadgetron{
       }
       
       sj->getObjectPtr()->image_headers_ =
-        boost::shared_array<ISMRMRD::ImageHeader>( new ISMRMRD::ImageHeader[frames_per_reconstruction] );
+        boost::shared_array<mrd::ImageHeader>( new mrd::ImageHeader[frames_per_reconstruction] );
       
       for( unsigned int i=0; i<frames_per_reconstruction; i++ ){	
 
         ImageHeaderMessage *mbq = image_headers_queue_[idx].front().release();
         image_headers_queue_[idx].pop();
 
-        GadgetContainerMessage<ISMRMRD::ImageHeader> *m = AsContainerMessage<ISMRMRD::ImageHeader>(mbq);
+        GadgetContainerMessage<mrd::ImageHeader> *m = AsContainerMessage<mrd::ImageHeader>(mbq);
         sj->getObjectPtr()->image_headers_[i] = *m->getObjectPtr();
 
         // In sliding window mode the header might need to go back at the end of the queue for reuse
@@ -631,7 +613,7 @@ namespace Gadgetron{
       // The Sense Job needs an image header as well. 
       // Let us just copy the initial one...
 
-      GadgetContainerMessage<ISMRMRD::ImageHeader> *m4 = new GadgetContainerMessage<ISMRMRD::ImageHeader>;
+      GadgetContainerMessage<mrd::ImageHeader> *m4 = new GadgetContainerMessage<mrd::ImageHeader>;
 
       *m4->getObjectPtr() = sj->getObjectPtr()->image_headers_[0];
       m4->cont(sj);
@@ -657,10 +639,10 @@ namespace Gadgetron{
       // The incoming profile was actually the first readout of the next frame, enqueue.
       //
 
-      frame_readout_queue_[idx].push(std::unique_ptr<ReadoutMessage>(duplicate_array(m2)));
-      recon_readout_queue_[idx].push(std::unique_ptr<ReadoutMessage>(duplicate_array(m2)));
-      frame_traj_queue_[idx].push(std::unique_ptr<TrajectoryMessage>(duplicate_array(m3)));
-      recon_traj_queue_[idx].push(std::unique_ptr<TrajectoryMessage>(duplicate_array(m3)));
+      frame_readout_queue_[idx].push(std::unique_ptr<ReadoutMessage>(duplicate_array(m1->getObjectPtr()->data)));
+      recon_readout_queue_[idx].push(std::unique_ptr<ReadoutMessage>(duplicate_array(m1->getObjectPtr()->data)));
+      frame_traj_queue_[idx].push(std::unique_ptr<TrajectoryMessage>(duplicate_array(m1->getObjectPtr()->trajectory)));
+      recon_traj_queue_[idx].push(std::unique_ptr<TrajectoryMessage>(duplicate_array(m1->getObjectPtr()->trajectory)));
 
       readout_counter_frame_[idx]++;
     }
@@ -834,10 +816,10 @@ namespace Gadgetron{
   }
 
   template<class T> GadgetContainerMessage< hoNDArray<T> >*
-  gpuGenericSensePrepGadget::duplicate_array( GadgetContainerMessage< hoNDArray<T> > *array )
+  gpuGenericSensePrepGadget::duplicate_array( const hoNDArray<T>& array )
   {
     GadgetContainerMessage< hoNDArray<T> > *copy = new GadgetContainerMessage< hoNDArray<T> >();   
-    *(copy->getObjectPtr()) = *(array->getObjectPtr());
+    *(copy->getObjectPtr()) = array;
     return copy;
   }
 

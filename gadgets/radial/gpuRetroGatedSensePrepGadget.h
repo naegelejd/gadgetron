@@ -2,14 +2,12 @@
 
 #include "gadgetron_radial_export.h"
 #include "Gadget.h"
-#include "GadgetMRIHeaders.h"
 #include "hoNDArray.h"
 #include "vector_td.h"
 #include "cuNFFT.h"
 #include "cuCgPreconditioner.h"
 #include "cuSenseBufferCg.h"
 
-#include <ismrmrd/ismrmrd.h>
 #include <complex>
 #include <queue>
 #include <map>
@@ -24,7 +22,7 @@
 namespace Gadgetron{
 
   class EXPORTGADGETS_RADIAL gpuRetroGatedSensePrepGadget :
-    public Gadget2< ISMRMRD::AcquisitionHeader, hoNDArray< std::complex<float> > >
+    public Gadget1< mrd::Acquisition >
   {
 
   public:
@@ -49,10 +47,9 @@ namespace Gadgetron{
     GADGET_PROPERTY(reconstruction_os_factor_y, float, "Oversampling for reconstruction in y-direction", 1.0);
 
 
-    virtual int process_config(ACE_Message_Block *mb);
+    virtual int process_config(const mrd::Header& header);
 
-    virtual int process(GadgetContainerMessage< ISMRMRD::AcquisitionHeader > *m1,
-			GadgetContainerMessage< hoNDArray< std::complex<float> > > *m2);
+    virtual int process(GadgetContainerMessage< mrd::Acquisition > *m1);
 
   private:
 
@@ -67,7 +64,7 @@ namespace Gadgetron{
     virtual void reconfigure(unsigned int set, unsigned int slice);
 
     GadgetContainerMessage< hoNDArray< std::complex<float> > >*
-      duplicate_profile( GadgetContainerMessage< hoNDArray< std::complex<float> > > *profile );
+      duplicate_profile( const hoNDArray< std::complex<float> >& profile );
 
     boost::shared_ptr< hoNDArray<float_complext> > extract_samples_from_buffer_queue( unsigned int set, unsigned int slice );
 

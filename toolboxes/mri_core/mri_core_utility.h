@@ -99,9 +99,14 @@ namespace Gadgetron
     // // given the name, get the ismrmrd dim
     // IsmrmrdDIM EXPORTMRICORE get_ismrmrd_dim_from_name(const std::string& name);
 
+    /** TODO Joe: Remove these vvvvv */
     EXPORTMRICORE std::map<std::string,std::int64_t> to_map(const std::vector<ISMRMRD::UserParameterLong>&);
     EXPORTMRICORE std::map<std::string,double> to_map(const std::vector<ISMRMRD::UserParameterDouble>&);
     EXPORTMRICORE std::map<std::string,std::string> to_map(const std::vector<ISMRMRD::UserParameterString>&);
+
+    EXPORTMRICORE std::map<std::string,std::int64_t> to_map(const std::vector<mrd::UserParameterLongType>&);
+    EXPORTMRICORE std::map<std::string,double> to_map(const std::vector<mrd::UserParameterDoubleType>&);
+    EXPORTMRICORE std::map<std::string,std::string> to_map(const std::vector<mrd::UserParameterStringType>&);
 
     ISMRMRD::ImageHeader image_header_from_acquisition(const ISMRMRD::AcquisitionHeader& acq_header,const ISMRMRD::IsmrmrdHeader& header, const hoNDArray<std::complex<float>>& data );
 

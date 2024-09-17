@@ -182,13 +182,14 @@ namespace Gadgetron {
 
         // Allocate the array for the headers
         buffer.headers = hoNDArray<mrd::AcquisitionHeader>(NE1, NE2, NN, NS, NLOC);
-
+        /** NOTE: Can't "clear" the Headers array because it will erase the yardl::FixedNDArray (hoNDArray) members */
+        // clear(&buffer.headers);
 
         // Allocate the array for the trajectories
         if (acq.TrajectoryDimensions() > 0 && acq.TrajectorySamples() > 0) {
             auto basis = acq.TrajectoryDimensions();
             auto samples = acq.TrajectorySamples();
-            buffer.trajectory = hoNDArray<float>(basis, samples, NE1, NE2, NN, NS, NLOC);
+            buffer.trajectory = hoNDArray<float>(samples, basis, NE1, NE2, NN, NS, NLOC);
             clear(&buffer.trajectory);
         }
         return buffer;
@@ -533,9 +534,8 @@ namespace Gadgetron {
 
         if (acq.TrajectoryDimensions() > 0 && acq.TrajectorySamples() > 0) {
             // Stuff the trajectory
-            /** TODO Joe: I don't know if this is correct... */
-            float* trajptr = &dataBuffer.trajectory(0, offset, e1, e2, NUsed, SUsed, slice_loc);
-            auto* fromptr  = &acq.trajectory(0, acq.head.discard_pre.value_or(0));
+            float* trajptr = &dataBuffer.trajectory(offset, 0, e1, e2, NUsed, SUsed, slice_loc);
+            auto* fromptr  = &acq.trajectory(acq.head.discard_pre.value_or(0), 0);
             std::copy(fromptr, fromptr + npts_to_copy * acq.TrajectoryDimensions(), trajptr);
         }
     }
