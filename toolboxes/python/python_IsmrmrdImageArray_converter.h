@@ -20,12 +20,12 @@ namespace Gadgetron {
     class IsmrmrdImageArray_to_python_object
     {
     public:
-        static PyObject* convert(const IsmrmrdImageArray & arrayData)
+        static PyObject* convert(const mrd::ImageArray& arrayData)
         {
             GILLock lock;
             bp::object pygadgetron = bp::import("gadgetron");
 
-            auto data = bp::object(arrayData.data_);
+            auto data = bp::object(arrayData.data);
             /*auto pyHeaders = bp::list();
 
             size_t n;
@@ -42,17 +42,15 @@ namespace Gadgetron {
                 pyMeta.append(meta);
             }*/
 
-            auto pyHeaders = boost::python::object(arrayData.headers_);
-            auto pyMeta = boost::python::object(arrayData.meta_);
-            auto pyWav = arrayData.waveform_ ? boost::python::object(*arrayData.waveform_) : boost::python::object();
-            auto pyAcqHeaders = arrayData.acq_headers_ ? boost::python::object(*arrayData.acq_headers_) : boost::python::object();
+            auto pyHeaders = boost::python::object(arrayData.headers);
+            auto pyMeta = boost::python::object(arrayData.meta);
+            auto pyWav = boost::python::object(arrayData.waveforms);
 
             bp::incref(data.ptr());
             bp::incref(pyHeaders.ptr());
             bp::incref(pyMeta.ptr());
             bp::incref(pyWav.ptr());
-            bp::incref(pyAcqHeaders.ptr());
-            auto buffer = pygadgetron.attr("IsmrmrdImageArray")(data, pyHeaders, pyMeta, pyWav, pyAcqHeaders);
+            auto buffer = pygadgetron.attr("ImageArray")(data, pyHeaders, pyMeta, pyWav);
 
             // increment the reference count so it exists after `return`
             return bp::incref(buffer.ptr());
@@ -68,7 +66,7 @@ namespace Gadgetron {
             bp::converter::registry::push_back(
                 &convertible,
                 &construct,
-                bp::type_id<IsmrmrdImageArray>());
+                bp::type_id<mrd::ImageArray>());
         }
 
         /// Returns NULL if the object is not convertible. Or well.... it should
@@ -81,23 +79,20 @@ namespace Gadgetron {
         static void construct(PyObject* obj, bp::converter::rvalue_from_python_stage1_data* data)
         {
 
-            void* storage = ((bp::converter::rvalue_from_python_storage<IsmrmrdImageArray >*)data)->storage.bytes;
-            IsmrmrdImageArray* reconData = new (storage) IsmrmrdImageArray;
+            void* storage = ((bp::converter::rvalue_from_python_storage<mrd::ImageArray >*)data)->storage.bytes;
+            mrd::ImageArray* reconData = new (storage) mrd::ImageArray;
             data->convertible = storage;
 
             try
             {
                 bp::object pyImageArray((bp::handle<>(bp::borrowed(obj))));
 
-                reconData->data_ = bp::extract<hoNDArray<std::complex<float>>>(pyImageArray.attr("data"));
-                reconData->headers_ = bp::extract<hoNDArray<ISMRMRD::ImageHeader>>(pyImageArray.attr("headers"));
-                reconData->meta_ = bp::extract<std::vector<ISMRMRD::MetaContainer>>(pyImageArray.attr("meta"));
+                reconData->data = bp::extract<hoNDArray<std::complex<float>>>(pyImageArray.attr("data"))();
+                reconData->headers = bp::extract<hoNDArray<mrd::ImageHeader>>(pyImageArray.attr("headers"))();
+                reconData->meta = bp::extract<hoNDArray<mrd::ImageMeta>>(pyImageArray.attr("meta"))();
 
                 if (PyObject_HasAttrString(pyImageArray.ptr(), "waveform"))
-                    reconData->waveform_ = bp::extract<std::vector<ISMRMRD::Waveform>>(pyImageArray.attr("waveform"));
-
-                if (PyObject_HasAttrString(pyImageArray.ptr(), "acq_headers"))
-                    reconData->acq_headers_ = bp::extract<hoNDArray<ISMRMRD::AcquisitionHeader>>(pyImageArray.attr("acq_headers"));
+                    reconData->waveforms = bp::extract<std::vector<mrd::WaveformUint32>>(pyImageArray.attr("waveform"));
             }
             catch (const bp::error_already_set&)
             {
@@ -109,16 +104,16 @@ namespace Gadgetron {
     };
 
     // ------------------------------------------------------------------------
-    template<> struct python_converter<IsmrmrdImageArray>
+    template<> struct python_converter<mrd::ImageArray>
     {
         static void create()
         {
-            bp::type_info info = bp::type_id<IsmrmrdImageArray >();
+            bp::type_info info = bp::type_id<mrd::ImageArray >();
             const bp::converter::registration* reg = bp::converter::registry::query(info);
             // only register if not already registered!
             if (nullptr == reg || nullptr == (*reg).m_to_python)
             {
-                bp::to_python_converter<IsmrmrdImageArray, IsmrmrdImageArray_to_python_object >();
+                bp::to_python_converter<mrd::ImageArray, IsmrmrdImageArray_to_python_object >();
                 IsmrmrdImageArray_from_python_object();
             }
 

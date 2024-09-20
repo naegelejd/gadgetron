@@ -13,15 +13,15 @@ namespace Gadgetron {
 
 class IsmrmrdReconData_to_python_object {
 public:
-  static PyObject* convert(const IsmrmrdReconData & reconData) {
+  static PyObject* convert(const mrd::ReconData & reconData) {
 //      initialize_python();
       GILLock lock;
     bp::object pygadgetron = bp::import("gadgetron");
 
     auto pyReconData = bp::list();
-    for (auto & reconBit : reconData.rbit_ ){
-      auto data = DataBufferedToPython(reconBit.data_);
-      auto ref = 	reconBit.ref_ ? DataBufferedToPython(*reconBit.ref_) : bp::object();
+    for (auto & reconBit : reconData.rbits ){
+      auto data = DataBufferedToPython(reconBit.data);
+      auto ref = 	reconBit.ref ? DataBufferedToPython(*reconBit.ref) : bp::object();
 
       auto pyReconBit = pygadgetron.attr("IsmrmrdReconBit")(data,ref);
       pyReconData.append(pyReconBit);
@@ -32,13 +32,13 @@ public:
   }
 
 private:
-  static bp::object DataBufferedToPython( const IsmrmrdDataBuffered & dataBuffer){
+  static bp::object DataBufferedToPython( const mrd::BufferedData & dataBuffer){
     bp::object pygadgetron = bp::import("gadgetron");
-    auto data = bp::object(dataBuffer.data_);
-    auto headers = boost::python::object(dataBuffer.headers_);
-    auto trajectory = dataBuffer.trajectory_ ? bp::object(*dataBuffer.trajectory_) : bp::object();
-    auto sampling = SamplingDescriptionToPython(dataBuffer.sampling_);
-    auto buffer = pygadgetron.attr("IsmrmrdDataBuffered")(data,headers,sampling,trajectory);
+    auto data = bp::object(dataBuffer.data);
+    auto headers = boost::python::object(dataBuffer.headers);
+    auto trajectory = bp::object(dataBuffer.trajectory);
+    auto sampling = SamplingDescriptionToPython(dataBuffer.sampling);
+    auto buffer = pygadgetron.attr("BufferedData")(data,headers,sampling,trajectory);
 
     bp::incref(data.ptr());
     bp::incref(headers.ptr());
@@ -48,32 +48,44 @@ private:
     return buffer;
   }
 
-  static bp::object SamplingDescriptionToPython(const SamplingDescription & sD){
+  static bp::object SamplingDescriptionToPython(const mrd::SamplingDescription & sD){
     bp::object pygadgetron = bp::import("gadgetron");
     bp::object result;
     try {
      auto tmp = pygadgetron.attr("SamplingDescription");
      result = tmp();
-    result.attr("encoded_FOV") = bp::make_tuple(sD.encoded_FOV_[0],sD.encoded_FOV_[1],sD.encoded_FOV_[2]);
-    result.attr("encoded_matrix") = bp::make_tuple(sD.encoded_matrix_[0],sD.encoded_matrix_[1],sD.encoded_matrix_[2]);
-    result.attr("recon_FOV") = bp::make_tuple(sD.recon_FOV_[0],sD.recon_FOV_[1],sD.recon_FOV_[2]);
-    result.attr("recon_matrix") = bp::make_tuple(sD.recon_matrix_[0],sD.recon_matrix_[1],sD.recon_matrix_[2]);
+     result.attr("encoded_FOV") = bp::make_tuple(sD.encoded_fov.x, sD.encoded_fov.y, sD.encoded_fov.z);
+     result.attr("encoded_matrix") = bp::make_tuple(sD.encoded_matrix.x, sD.encoded_matrix.y, sD.encoded_matrix.z);
+     result.attr("recon_FOV") = bp::make_tuple(sD.recon_fov.x, sD.recon_fov.y, sD.recon_fov.z);
+     result.attr("recon_matrix") = bp::make_tuple(sD.recon_matrix.x, sD.recon_matrix.y, sD.recon_matrix.z);
  } catch (bp::error_already_set const &){
         std::string err = pyerr_to_string();
         GERROR(err.c_str());
         throw std::runtime_error(err);
     }
      std::vector<bp::object> SL;
-      for (int i = 0; i < 3; i++){
-        auto sampling_limit = pygadgetron.attr("SamplingLimit")();
-        sampling_limit.attr("min") = sD.sampling_limits_[i].min_;
-        sampling_limit.attr("max") = sD.sampling_limits_[i].max_;
-        sampling_limit.attr("center") = sD.sampling_limits_[i].center_;
-        SL.push_back(sampling_limit);
-      }
-      result.attr("sampling_limits") = bp::make_tuple(SL[0],SL[1],SL[2]);
 
-    return result;
+        auto sampling_limit_ro = pygadgetron.attr("SamplingLimit")();
+        sampling_limit_ro.attr("min") = sD.sampling_limits.ro.minimum;
+        sampling_limit_ro.attr("max") = sD.sampling_limits.ro.maximum;
+        sampling_limit_ro.attr("center") = sD.sampling_limits.ro.center;
+        SL.push_back(sampling_limit_ro);
+
+        auto sampling_limit_e1 = pygadgetron.attr("SamplingLimit")();
+        sampling_limit_e1.attr("min") = sD.sampling_limits.e1.minimum;
+        sampling_limit_e1.attr("max") = sD.sampling_limits.e1.maximum;
+        sampling_limit_e1.attr("center") = sD.sampling_limits.e1.center;
+        SL.push_back(sampling_limit_e1);
+
+        auto sampling_limit_e2 = pygadgetron.attr("SamplingLimit")();
+        sampling_limit_e2.attr("min") = sD.sampling_limits.e2.minimum;
+        sampling_limit_e2.attr("max") = sD.sampling_limits.e2.maximum;
+        sampling_limit_e2.attr("center") = sD.sampling_limits.e2.center;
+        SL.push_back(sampling_limit_e2);
+
+      result.attr("sampling_limits") = bp::make_tuple(SL[0], SL[1], SL[2]);
+
+      return result;
   }
 };
 
@@ -85,7 +97,7 @@ struct IsmrmrdReconData_from_python_object {
     bp::converter::registry::push_back(
         &convertible,
         &construct,
-        bp::type_id<IsmrmrdReconData>());
+        bp::type_id<mrd::ReconData>());
   }
 
   /// Returns NULL if the object is not convertible. Or well.... it should
@@ -95,8 +107,8 @@ struct IsmrmrdReconData_from_python_object {
 
   /// Construct an hoNDArray in-place
   static void construct(PyObject* obj, bp::converter::rvalue_from_python_stage1_data* data) {
-    void* storage = ((bp::converter::rvalue_from_python_storage<IsmrmrdReconData >*)data)->storage.bytes;
-    IsmrmrdReconData* reconData = new (storage) IsmrmrdReconData;
+    void* storage = ((bp::converter::rvalue_from_python_storage<mrd::ReconData >*)data)->storage.bytes;
+    mrd::ReconData* reconData = new (storage) mrd::ReconData;
     data->convertible = storage;
 
 
@@ -106,12 +118,12 @@ struct IsmrmrdReconData_from_python_object {
       GDEBUG("Recon data length: %i\n",length);
       for (int i = 0; i < length; i++){
         bp::object reconBit = pyRecondata[i];
-        IsmrmrdReconBit rBit;
-        rBit.data_ = extractDataBuffered(reconBit.attr("data"));
+        mrd::ReconBit rBit;
+        rBit.data = extractDataBuffered(reconBit.attr("data"));
         if (PyObject_HasAttrString(reconBit.ptr(),"ref")){
-          rBit.ref_ = extractDataBuffered(reconBit.attr("ref"));
+          rBit.ref = extractDataBuffered(reconBit.attr("ref"));
         }
-        reconData->rbit_.push_back(rBit);
+        reconData->rbits.push_back(rBit);
       }
 
     }catch (const bp::error_already_set&) {
@@ -120,32 +132,44 @@ struct IsmrmrdReconData_from_python_object {
       throw std::runtime_error(err);
     }
   }
-  static IsmrmrdDataBuffered extractDataBuffered(bp::object pyDataBuffered){
-    IsmrmrdDataBuffered result;
+  static mrd::BufferedData extractDataBuffered(bp::object pyDataBuffered){
+    mrd::BufferedData result;
 
-    result.data_ = bp::extract<hoNDArray<std::complex<float>>>(pyDataBuffered.attr("data"));
+    result.data = bp::extract<hoNDArray<std::complex<float>>>(pyDataBuffered.attr("data"))();
     if (PyObject_HasAttrString(pyDataBuffered.ptr(),"trajectory"))
-      result.trajectory_ = bp::extract<hoNDArray<float>>(pyDataBuffered.attr("trajectory"));
+      result.trajectory = bp::extract<hoNDArray<float>>(pyDataBuffered.attr("trajectory"))();
 
-    result.headers_ = bp::extract<hoNDArray<ISMRMRD::AcquisitionHeader>>(pyDataBuffered.attr("headers"));
+    result.headers = bp::extract<hoNDArray<mrd::AcquisitionHeader>>(pyDataBuffered.attr("headers"))();
 
     auto pySampling = pyDataBuffered.attr("sampling");
-    SamplingDescription sampling;
-    for (int i = 0; i < 3; i++)
-      sampling.encoded_FOV_[i] = bp::extract<float>(pySampling.attr("encoded_FOV")[i]);
-    for (int i = 0; i < 3; i++)
-      sampling.encoded_matrix_[i] = bp::extract<uint16_t>(pySampling.attr("encoded_matrix")[i]);
-    for (int i = 0; i < 3; i++)
-      sampling.recon_FOV_[i] = bp::extract<float>(pySampling.attr("recon_FOV")[i]);
-    for (int i = 0; i < 3; i++)
-      sampling.recon_matrix_[i] = bp::extract<uint16_t>(pySampling.attr("recon_matrix")[i]);
-    for (int i = 0; i < 3; i++){
-      auto pySL = pySampling.attr("sampling_limits")[i];
-      sampling.sampling_limits_[i].min_ = bp::extract<uint16_t>(pySL.attr("min"));
-      sampling.sampling_limits_[i].center_ = bp::extract<uint16_t>(pySL.attr("center"));
-      sampling.sampling_limits_[i].max_ = bp::extract<uint16_t>(pySL.attr("max"));
-    }
-    result.sampling_ = sampling;
+    mrd::SamplingDescription sampling;
+    sampling.encoded_fov.x = bp::extract<float>(pySampling.attr("encoded_FOV")[0]);
+    sampling.encoded_fov.y = bp::extract<float>(pySampling.attr("encoded_FOV")[1]);
+    sampling.encoded_fov.z = bp::extract<float>(pySampling.attr("encoded_FOV")[2]);
+    sampling.encoded_matrix.x = bp::extract<uint32_t>(pySampling.attr("encoded_matrix")[0]);
+    sampling.encoded_matrix.y = bp::extract<uint32_t>(pySampling.attr("encoded_matrix")[1]);
+    sampling.encoded_matrix.z = bp::extract<uint32_t>(pySampling.attr("encoded_matrix")[2]);
+    sampling.recon_fov.x = bp::extract<float>(pySampling.attr("recon_FOV")[0]);
+    sampling.recon_fov.y = bp::extract<float>(pySampling.attr("recon_FOV")[1]);
+    sampling.recon_fov.z = bp::extract<float>(pySampling.attr("recon_FOV")[2]);
+    sampling.recon_matrix.x = bp::extract<uint32_t>(pySampling.attr("recon_matrix")[0]);
+    sampling.recon_matrix.y = bp::extract<uint32_t>(pySampling.attr("recon_matrix")[1]);
+    sampling.recon_matrix.z = bp::extract<uint32_t>(pySampling.attr("recon_matrix")[2]);
+
+    auto pySLro = pySampling.attr("sampling_limits")[0];
+    sampling.sampling_limits.ro.minimum = bp::extract<uint32_t>(pySLro.attr("min"));
+    sampling.sampling_limits.ro.center = bp::extract<uint32_t>(pySLro.attr("center"));
+    sampling.sampling_limits.ro.maximum = bp::extract<uint32_t>(pySLro.attr("max"));
+    auto pySLe1 = pySampling.attr("sampling_limits")[0];
+    sampling.sampling_limits.e1.minimum = bp::extract<uint32_t>(pySLe1.attr("min"));
+    sampling.sampling_limits.e1.center = bp::extract<uint32_t>(pySLe1.attr("center"));
+    sampling.sampling_limits.e1.maximum = bp::extract<uint32_t>(pySLe1.attr("max"));
+    auto pySLe2 = pySampling.attr("sampling_limits")[0];
+    sampling.sampling_limits.e2.minimum = bp::extract<uint32_t>(pySLe2.attr("min"));
+    sampling.sampling_limits.e2.center = bp::extract<uint32_t>(pySLe2.attr("center"));
+    sampling.sampling_limits.e2.maximum = bp::extract<uint32_t>(pySLe2.attr("max"));
+
+    result.sampling = sampling;
     return result;
   }
 
@@ -154,15 +178,15 @@ struct IsmrmrdReconData_from_python_object {
 
 
 /// Partial specialization of `python_converter` for hoNDArray
-template<> struct python_converter<IsmrmrdReconData> {
+template<> struct python_converter<mrd::ReconData> {
   static void create()
   {
     // register hoNDArray converter
-    bp::type_info info = bp::type_id<IsmrmrdReconData >();
+    bp::type_info info = bp::type_id<mrd::ReconData >();
     const bp::converter::registration* reg = bp::converter::registry::query(info);
     // only register if not already registered!
     if (nullptr == reg || nullptr == (*reg).m_to_python) {
-      bp::to_python_converter<IsmrmrdReconData, IsmrmrdReconData_to_python_object >();
+      bp::to_python_converter<mrd::ReconData, IsmrmrdReconData_to_python_object >();
       IsmrmrdReconData_from_python_object();
     }
 

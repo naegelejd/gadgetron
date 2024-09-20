@@ -5,9 +5,6 @@
 #include "python_numpy_wrappers.h"
 #include "log.h"
 
-#include "ismrmrd/ismrmrd.h"
-#include "ismrmrd/meta.h"
-
 #include <vector>
 
 #include <boost/python.hpp>
@@ -145,9 +142,9 @@ struct vector_from_numpy_array<std::string>
 // -----------------------------------------------------------------------------------
 
 template <>
-struct vector_to_numpy_array<ISMRMRD::MetaContainer>
+struct vector_to_numpy_array<mrd::ImageMeta>
 {
-    static PyObject* convert(const std::vector<ISMRMRD::MetaContainer>& vec)
+    static PyObject* convert(const std::vector<mrd::ImageMeta>& vec)
     {
         try
         {
@@ -158,7 +155,8 @@ struct vector_to_numpy_array<ISMRMRD::MetaContainer>
             for (size_t n = 0; n<vec.size(); n++)
             {
                 std::stringstream str;
-                ISMRMRD::serialize( const_cast<ISMRMRD::MetaContainer&>(vec[n]), str);
+                /** TODO Joe: Implement */
+                // ISMRMRD::serialize( const_cast<ISMRMRD::MetaContainer&>(vec[n]), str);
                 auto curr_str = bp::object(str.str());
                 pyVecStr.append(curr_str);
 
@@ -170,21 +168,21 @@ struct vector_to_numpy_array<ISMRMRD::MetaContainer>
         {
             std::string err = pyerr_to_string();
             GERROR(err.c_str());
-            GERROR_STREAM("Exceptions happened in vector_to_numpy_array<ISMRMRD::MetaContainer> ... ");
+            GERROR_STREAM("Exceptions happened in vector_to_numpy_array<mrd::ImageMeta> ... ");
             throw std::runtime_error(err);
         }
     }
 };
 
 template <>
-struct vector_from_numpy_array<ISMRMRD::MetaContainer>
+struct vector_from_numpy_array<mrd::ImageMeta>
 {
     vector_from_numpy_array()
     {
         bp::converter::registry::push_back(
             &convertible,
             &construct,
-            bp::type_id<std::vector<ISMRMRD::MetaContainer> >());
+            bp::type_id<std::vector<mrd::ImageMeta> >());
     }
 
     static void* convertible(PyObject* obj)
@@ -196,25 +194,26 @@ struct vector_from_numpy_array<ISMRMRD::MetaContainer>
     {
         try
         {
-            void* storage = ((bp::converter::rvalue_from_python_storage<std::vector<ISMRMRD::MetaContainer> >*)data)->storage.bytes;
+            void* storage = ((bp::converter::rvalue_from_python_storage<std::vector<mrd::ImageMeta> >*)data)->storage.bytes;
             data->convertible = storage;
 
             bp::list pyVecStr((bp::handle<>(bp::borrowed(obj))));
             auto length = bp::len(pyVecStr);
 
-            std::vector<ISMRMRD::MetaContainer>* vec = new (storage) std::vector<ISMRMRD::MetaContainer>(length);
+            std::vector<mrd::ImageMeta>* vec = new (storage) std::vector<mrd::ImageMeta>(length);
             for (size_t n = 0; n<length; n++)
             {
                 bp::object curr_str = pyVecStr[n];
                 std::string str = bp::extract<std::string>(curr_str);
-                ISMRMRD::deserialize(str.c_str(), (*vec)[n]);
+                /** TODO Joe: Implement */
+                // ISMRMRD::deserialize(str.c_str(), (*vec)[n]);
             }
         }
         catch (const bp::error_already_set&)
         {
             std::string err = pyerr_to_string();
             GERROR(err.c_str());
-            GERROR_STREAM("Exceptions happened in vector_from_numpy_array<ISMRMRD::MetaContainer> ... ");
+            GERROR_STREAM("Exceptions happened in vector_from_numpy_array<mrd::ImageMeta> ... ");
             throw std::runtime_error(err);
         }
     }
@@ -223,9 +222,9 @@ struct vector_from_numpy_array<ISMRMRD::MetaContainer>
 // -----------------------------------------------------------------------------------
 
 template <>
-struct vector_to_numpy_array<ISMRMRD::Waveform>
+struct vector_to_numpy_array<mrd::WaveformUint32>
 {
-    static PyObject* convert(const std::vector<ISMRMRD::Waveform>& vec)
+    static PyObject* convert(const std::vector<mrd::WaveformUint32>& vec)
     {
         try
         {
@@ -247,21 +246,21 @@ struct vector_to_numpy_array<ISMRMRD::Waveform>
         {
             std::string err = pyerr_to_string();
             GERROR(err.c_str());
-            GERROR_STREAM("Exceptions happened in vector_to_numpy_array<ISMRMRD::Waveform> ... ");
+            GERROR_STREAM("Exceptions happened in vector_to_numpy_array<mrd::WaveformUint32> ... ");
             throw std::runtime_error(err);
         }
     }
 };
 
 template <>
-struct vector_from_numpy_array<ISMRMRD::Waveform>
+struct vector_from_numpy_array<mrd::WaveformUint32>
 {
     vector_from_numpy_array()
     {
         bp::converter::registry::push_back(
             &convertible,
             &construct,
-            bp::type_id<std::vector<ISMRMRD::Waveform> >());
+            bp::type_id<std::vector<mrd::WaveformUint32> >());
     }
 
     static void* convertible(PyObject* obj)
@@ -273,17 +272,17 @@ struct vector_from_numpy_array<ISMRMRD::Waveform>
     {
         try
         {
-            void* storage = ((bp::converter::rvalue_from_python_storage<std::vector<ISMRMRD::Waveform> >*)data)->storage.bytes;
+            void* storage = ((bp::converter::rvalue_from_python_storage<std::vector<mrd::WaveformUint32> >*)data)->storage.bytes;
             data->convertible = storage;
 
             bp::list pyVecWav((bp::handle<>(bp::borrowed(obj))));
             auto length = bp::len(pyVecWav);
 
-            std::vector<ISMRMRD::Waveform>* vec = new (storage) std::vector<ISMRMRD::Waveform>(length);
+            std::vector<mrd::WaveformUint32>* vec = new (storage) std::vector<mrd::WaveformUint32>(length);
             for (size_t n = 0; n<length; n++)
             {
                 bp::object curr_wav = pyVecWav[n];
-                ISMRMRD::Waveform wav = bp::extract<ISMRMRD::Waveform>(curr_wav);
+                mrd::WaveformUint32 wav = bp::extract<mrd::WaveformUint32>(curr_wav);
                 (*vec)[n] = wav;
             }
         }
@@ -291,7 +290,7 @@ struct vector_from_numpy_array<ISMRMRD::Waveform>
         {
             std::string err = pyerr_to_string();
             GERROR(err.c_str());
-            GERROR_STREAM("Exceptions happened in vector_from_numpy_array<ISMRMRD::Waveform> ... ");
+            GERROR_STREAM("Exceptions happened in vector_from_numpy_array<mrd::WaveformUint32> ... ");
             throw std::runtime_error(err);
         }
     }
@@ -331,20 +330,20 @@ struct python_converter<std::vector<std::string> >
 };
 
 template <>
-struct python_converter<std::vector<ISMRMRD::MetaContainer> >
+struct python_converter<std::vector<mrd::ImageMeta> >
 {
     static void create()
     {
-        create_vector_converter<ISMRMRD::MetaContainer>();
+        create_vector_converter<mrd::ImageMeta>();
     }
 };
 
 template <>
-struct python_converter<std::vector<ISMRMRD::Waveform> >
+struct python_converter<std::vector<mrd::WaveformUint32> >
 {
     static void create()
     {
-        create_vector_converter<ISMRMRD::Waveform>();
+        create_vector_converter<mrd::WaveformUint32>();
     }
 };
 

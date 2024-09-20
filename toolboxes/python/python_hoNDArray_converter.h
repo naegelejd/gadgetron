@@ -45,14 +45,14 @@ struct hoNDArray_to_numpy_array {
 // -------------------------------------------------------------------------------
 /// ISMRMRD::AcquisitionHeader
 template <>
-struct hoNDArray_to_numpy_array<ISMRMRD::AcquisitionHeader> {
-    static PyObject* convert(const hoNDArray<ISMRMRD::AcquisitionHeader>& arr) {
+struct hoNDArray_to_numpy_array<mrd::AcquisitionHeader> {
+    static PyObject* convert(const hoNDArray<mrd::AcquisitionHeader>& arr) {
         size_t ndim = arr.get_number_of_dimensions();
         std::vector<npy_intp> dims2(ndim);
         for (size_t i = 0; i < ndim; i++) {
             dims2[i] = static_cast<npy_intp>(arr.get_size(i));
         }
-        PyObject *obj = NumPyArray_EMPTY(dims2.size(), dims2.data(), get_numpy_type<ISMRMRD::AcquisitionHeader>(),1);
+        PyObject *obj = NumPyArray_EMPTY(dims2.size(), dims2.data(), get_numpy_type<mrd::AcquisitionHeader>(),1);
 
         std::vector<PyObject*> pyobjects;
         for (auto & acq : arr){
@@ -71,9 +71,9 @@ struct hoNDArray_to_numpy_array<ISMRMRD::AcquisitionHeader> {
 // -------------------------------------------------------------------------------
 /// ISMRMRD::ImageHeader
 template <>
-struct hoNDArray_to_numpy_array<ISMRMRD::ImageHeader>
+struct hoNDArray_to_numpy_array<mrd::ImageHeader>
 {
-    static PyObject* convert(const hoNDArray<ISMRMRD::ImageHeader>& arr)
+    static PyObject* convert(const hoNDArray<mrd::ImageHeader>& arr)
     {
         size_t ndim = arr.get_number_of_dimensions();
         std::vector<npy_intp> dims2(ndim);
@@ -81,7 +81,7 @@ struct hoNDArray_to_numpy_array<ISMRMRD::ImageHeader>
         {
             dims2[i] = static_cast<npy_intp>(arr.get_size(i));
         }
-        PyObject *obj = NumPyArray_EMPTY(dims2.size(), dims2.data(), get_numpy_type<ISMRMRD::ImageHeader>(), 1);
+        PyObject *obj = NumPyArray_EMPTY(dims2.size(), dims2.data(), get_numpy_type<mrd::ImageHeader>(), 1);
 
         std::vector<PyObject*> pyobjects;
         for (auto & acq : arr)
@@ -143,13 +143,13 @@ struct hoNDArray_from_numpy_array {
 // --------------------------------------------------------------------------------
 /// Used for making an hoNDArray from a NumPy array
 template <>
-struct hoNDArray_from_numpy_array<ISMRMRD::AcquisitionHeader> {
+struct hoNDArray_from_numpy_array<mrd::AcquisitionHeader> {
     hoNDArray_from_numpy_array() {
         // actually register this converter with Boost
         bp::converter::registry::push_back(
                 &convertible,
                 &construct,
-                bp::type_id<hoNDArray<ISMRMRD::AcquisitionHeader> >());
+                bp::type_id<hoNDArray<mrd::AcquisitionHeader> >());
     }
 
     /// Returns NULL if the NumPy array is not convertible.
@@ -160,7 +160,7 @@ struct hoNDArray_from_numpy_array<ISMRMRD::AcquisitionHeader> {
 
     /// Construct an hoNDArray in-place
     static void construct(PyObject* obj_orig, bp::converter::rvalue_from_python_stage1_data* data) {
-        void* storage = ((bp::converter::rvalue_from_python_storage<hoNDArray<ISMRMRD::AcquisitionHeader> >*)data)->storage.bytes;
+        void* storage = ((bp::converter::rvalue_from_python_storage<hoNDArray<mrd::AcquisitionHeader> >*)data)->storage.bytes;
         data->convertible = storage;
         //Ensure fortran byte order
         PyObject* obj =  NumPyArray_FromAny(obj_orig, nullptr, 1, 36,  NPY_ARRAY_IN_FARRAY, nullptr);
@@ -171,14 +171,14 @@ struct hoNDArray_from_numpy_array<ISMRMRD::AcquisitionHeader> {
         }
 
         // Placement-new of hoNDArray in memory provided by Boost
-        hoNDArray<ISMRMRD::AcquisitionHeader>* arr = new (storage) hoNDArray<ISMRMRD::AcquisitionHeader>(dims);
+        hoNDArray<mrd::AcquisitionHeader>* arr = new (storage) hoNDArray<mrd::AcquisitionHeader>(dims);
 
         size_t elements = arr->get_number_of_elements();
         auto data_ptr = arr->get_data_ptr();
         PyObject** pyobjects = (PyObject**) NumPyArray_DATA(obj);
 
         for (size_t i = 0; i < elements; i++){
-          data_ptr[i] = bp::extract<ISMRMRD::AcquisitionHeader>(bp::object(bp::borrowed(pyobjects[i])));
+          data_ptr[i] = bp::extract<mrd::AcquisitionHeader>(bp::object(bp::borrowed(pyobjects[i])));
         }
 
         bp::decref(obj);
@@ -188,14 +188,14 @@ struct hoNDArray_from_numpy_array<ISMRMRD::AcquisitionHeader> {
 
 // --------------------------------------------------------------------------------
 template <>
-struct hoNDArray_from_numpy_array<ISMRMRD::ImageHeader>
+struct hoNDArray_from_numpy_array<mrd::ImageHeader>
 {
     hoNDArray_from_numpy_array()
     {
         bp::converter::registry::push_back(
             &convertible,
             &construct,
-            bp::type_id<hoNDArray<ISMRMRD::ImageHeader> >());
+            bp::type_id<hoNDArray<mrd::ImageHeader> >());
     }
 
     static void* convertible(PyObject* obj) {
@@ -204,7 +204,7 @@ struct hoNDArray_from_numpy_array<ISMRMRD::ImageHeader>
 
     static void construct(PyObject* obj_orig, bp::converter::rvalue_from_python_stage1_data* data)
     {
-        void* storage = ((bp::converter::rvalue_from_python_storage<hoNDArray<ISMRMRD::ImageHeader> >*)data)->storage.bytes;
+        void* storage = ((bp::converter::rvalue_from_python_storage<hoNDArray<mrd::ImageHeader> >*)data)->storage.bytes;
         data->convertible = storage;
         //Ensure fortran byte order
         PyObject* obj = NumPyArray_FromAny(obj_orig, nullptr, 1, 36, NPY_ARRAY_IN_FARRAY, nullptr);
@@ -215,7 +215,7 @@ struct hoNDArray_from_numpy_array<ISMRMRD::ImageHeader>
             dims[i] = NumPyArray_DIM(obj, i);
         }
 
-        hoNDArray<ISMRMRD::ImageHeader>* arr = new (storage) hoNDArray<ISMRMRD::ImageHeader>(dims);
+        hoNDArray<mrd::ImageHeader>* arr = new (storage) hoNDArray<mrd::ImageHeader>(dims);
 
         size_t elements = arr->get_number_of_elements();
         auto data_ptr = arr->get_data_ptr();
@@ -223,7 +223,7 @@ struct hoNDArray_from_numpy_array<ISMRMRD::ImageHeader>
 
         for (size_t i = 0; i < elements; i++)
         {
-            data_ptr[i] = bp::extract<ISMRMRD::ImageHeader>(bp::object(bp::borrowed(pyobjects[i])));
+            data_ptr[i] = bp::extract<mrd::ImageHeader>(bp::object(bp::borrowed(pyobjects[i])));
         }
 
         bp::decref(obj);
