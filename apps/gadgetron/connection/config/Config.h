@@ -11,12 +11,9 @@ namespace Gadgetron::Server::Connection {
     struct Config {
 
         struct Gadget;
-        struct External;
         struct Parallel;
-        struct Distributed;
         struct ParallelProcess;
-        struct PureDistributed;
-        using Node = Core::variant<Gadget, External, Parallel, Distributed, ParallelProcess, PureDistributed>;
+        using Node = Core::variant<Gadget, Parallel, ParallelProcess>;
 
         template<class CONFIG>
         static std::string name(CONFIG config) {
@@ -51,27 +48,6 @@ namespace Gadgetron::Server::Connection {
             }
         };
 
-        struct Execute {
-            std::string name, type;
-            Core::optional<std::string> target;
-        };
-
-        struct Connect {
-            std::string address, port;
-        };
-
-        using Action = Core::variant<Execute, Connect>;
-
-        struct External {
-            Action action;
-
-            struct Configuration;
-            std::shared_ptr<Configuration> configuration;
-
-            std::vector<Reader> readers;
-            std::vector<Writer> writers;
-        };
-
         struct Branch : Gadget { using Gadget::Gadget;};
         struct Merge : Gadget { using Gadget::Gadget;};
 
@@ -81,24 +57,9 @@ namespace Gadgetron::Server::Connection {
             std::vector<Stream> streams;
         };
 
-        struct PureDistributed {
-            std::vector<Reader> readers;
-            std::vector<Writer> writers;
-            PureStream stream;
-        };
-
         struct ParallelProcess {
             size_t workers = 0;
             PureStream stream;
-        };
-
-        struct Distributor : Gadget { using Gadget::Gadget;};
-
-        struct Distributed {
-            std::vector<Reader> readers;
-            std::vector<Writer> writers;
-            Distributor distributor;
-            Stream stream;
         };
 
         std::vector<Reader> readers;
@@ -108,5 +69,4 @@ namespace Gadgetron::Server::Connection {
 
     Config parse_config(std::istream &stream);
     std::string serialize_config(const Config& config);
-    std::string serialize_config(const Config::External& external_config);
 }

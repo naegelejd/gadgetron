@@ -16,58 +16,58 @@
 namespace Gadgetron
 {
 
-ISMRMRDKSPACEFILTER get_kspace_filter_type(const std::string& name)
+MRDKSPACEFILTER get_kspace_filter_type(const std::string& name)
 {
     std::string name_lower(name);
     boost::algorithm::to_lower(name_lower);
 
     if (name_lower == "gaussian")
     {
-        return ISMRMRD_FILTER_GAUSSIAN;
+        return MRD_FILTER_GAUSSIAN;
     }
     else if (name_lower == "hanning")
     {
-        return ISMRMRD_FILTER_HANNING;
+        return MRD_FILTER_HANNING;
     }
     else if (name_lower == "taperedhanning")
     {
-        return ISMRMRD_FILTER_TAPERED_HANNING;
+        return MRD_FILTER_TAPERED_HANNING;
     }
     else if (name_lower == "none")
     {
-        return ISMRMRD_FILTER_NONE;
+        return MRD_FILTER_NONE;
     }
 
     GERROR_STREAM("Unrecognized kspace filter name : " << name);
 
-    return ISMRMRD_FILTER_NONE;
+    return MRD_FILTER_NONE;
 }
 
-std::string get_kspace_filter_name(ISMRMRDKSPACEFILTER v)
+std::string get_kspace_filter_name(MRDKSPACEFILTER v)
 {
     std::string name;
 
     switch (v)
     {
-        case ISMRMRD_FILTER_GAUSSIAN:
+        case MRD_FILTER_GAUSSIAN:
         {
             name = "Gaussian";
             break;
         }
 
-        case ISMRMRD_FILTER_HANNING:
+        case MRD_FILTER_HANNING:
         {
             name = "Hanning";
             break;
         }
 
-        case ISMRMRD_FILTER_TAPERED_HANNING:
+        case MRD_FILTER_TAPERED_HANNING:
         {
             name = "TaperedHanning";
             break;
         }
 
-        case ISMRMRD_FILTER_NONE:
+        case MRD_FILTER_NONE:
         {
             name = "none";
             break;
@@ -84,7 +84,7 @@ std::string get_kspace_filter_name(ISMRMRDKSPACEFILTER v)
 }
 
 template<typename T>
-void generate_symmetric_filter(size_t len, hoNDArray<T>& filter, ISMRMRDKSPACEFILTER filterType, double sigma, size_t width)
+void generate_symmetric_filter(size_t len, hoNDArray<T>& filter, MRDKSPACEFILTER filterType, double sigma, size_t width)
 {
     try
     {
@@ -95,7 +95,7 @@ void generate_symmetric_filter(size_t len, hoNDArray<T>& filter, ISMRMRDKSPACEFI
         if (width == 0 || width >= len) width = 1;
 
         size_t ii;
-        if (filterType == ISMRMRD_FILTER_GAUSSIAN)
+        if (filterType == MRD_FILTER_GAUSSIAN)
         {
             double r = -1.0*sigma*sigma / 2;
 
@@ -133,7 +133,7 @@ void generate_symmetric_filter(size_t len, hoNDArray<T>& filter, ISMRMRDKSPACEFI
                 }
             }
         }
-        else if (filterType == ISMRMRD_FILTER_TAPERED_HANNING)
+        else if (filterType == MRD_FILTER_TAPERED_HANNING)
         {
             hoNDArray<T> w(width);
 
@@ -164,7 +164,7 @@ void generate_symmetric_filter(size_t len, hoNDArray<T>& filter, ISMRMRDKSPACEFI
                 }
             }
         }
-        else if (filterType == ISMRMRD_FILTER_HANNING)
+        else if (filterType == MRD_FILTER_HANNING)
         {
             if (len % 2 == 0)
             {
@@ -196,7 +196,7 @@ void generate_symmetric_filter(size_t len, hoNDArray<T>& filter, ISMRMRDKSPACEFI
                 }
             }
         }
-        else if (filterType == ISMRMRD_FILTER_NONE)
+        else if (filterType == MRD_FILTER_NONE)
         {
             Gadgetron::fill(filter, T(1.0));
         }
@@ -223,15 +223,15 @@ void generate_symmetric_filter(size_t len, hoNDArray<T>& filter, ISMRMRDKSPACEFI
     }
 }
 
-template EXPORTMRICORE void generate_symmetric_filter(size_t len, hoNDArray<float>& filter, ISMRMRDKSPACEFILTER filterType, double sigma, size_t width);
-template EXPORTMRICORE void generate_symmetric_filter(size_t len, hoNDArray<double>& filter, ISMRMRDKSPACEFILTER filterType, double sigma, size_t width);
-template EXPORTMRICORE void generate_symmetric_filter(size_t len, hoNDArray< std::complex<float> >& filter, ISMRMRDKSPACEFILTER filterType, double sigma, size_t width);
-template EXPORTMRICORE void generate_symmetric_filter(size_t len, hoNDArray< std::complex<double> >& filter, ISMRMRDKSPACEFILTER filterType, double sigma, size_t width);
+template EXPORTMRICORE void generate_symmetric_filter(size_t len, hoNDArray<float>& filter, MRDKSPACEFILTER filterType, double sigma, size_t width);
+template EXPORTMRICORE void generate_symmetric_filter(size_t len, hoNDArray<double>& filter, MRDKSPACEFILTER filterType, double sigma, size_t width);
+template EXPORTMRICORE void generate_symmetric_filter(size_t len, hoNDArray< std::complex<float> >& filter, MRDKSPACEFILTER filterType, double sigma, size_t width);
+template EXPORTMRICORE void generate_symmetric_filter(size_t len, hoNDArray< std::complex<double> >& filter, MRDKSPACEFILTER filterType, double sigma, size_t width);
 
 // ------------------------------------------------------------------------
 
 template<typename T>
-void generate_asymmetric_filter(size_t len, size_t start, size_t end, hoNDArray<T>& filter, ISMRMRDKSPACEFILTER filterType, size_t width, bool densityComp)
+void generate_asymmetric_filter(size_t len, size_t start, size_t end, hoNDArray<T>& filter, MRDKSPACEFILTER filterType, size_t width, bool densityComp)
 {
     try
     {
@@ -259,14 +259,14 @@ void generate_asymmetric_filter(size_t len, size_t start, size_t end, hoNDArray<
 
         hoNDArray<T> w(width);
 
-        if (filterType == ISMRMRD_FILTER_TAPERED_HANNING)
+        if (filterType == MRD_FILTER_TAPERED_HANNING)
         {
             for (ii = 1; ii <= width; ii++)
             {
                 w(ii - 1) = T((0.5 * (1 - std::cos(2.0*M_PI*ii / (2 * width + 1)))));
             }
         }
-        else if (filterType == ISMRMRD_FILTER_NONE)
+        else if (filterType == MRD_FILTER_NONE)
         {
             Gadgetron::fill(w, T(1.0));
         }
@@ -420,10 +420,10 @@ void generate_asymmetric_filter(size_t len, size_t start, size_t end, hoNDArray<
     }
 }
 
-template EXPORTMRICORE void generate_asymmetric_filter(size_t len, size_t start, size_t end, hoNDArray<float>& filter, ISMRMRDKSPACEFILTER filterType, size_t width, bool densityComp);
-template EXPORTMRICORE void generate_asymmetric_filter(size_t len, size_t start, size_t end, hoNDArray<double>& filter, ISMRMRDKSPACEFILTER filterType, size_t width, bool densityComp);
-template EXPORTMRICORE void generate_asymmetric_filter(size_t len, size_t start, size_t end, hoNDArray< std::complex<float> >& filter, ISMRMRDKSPACEFILTER filterType, size_t width, bool densityComp);
-template EXPORTMRICORE void generate_asymmetric_filter(size_t len, size_t start, size_t end, hoNDArray< std::complex<double> >& filter, ISMRMRDKSPACEFILTER filterType, size_t width, bool densityComp);
+template EXPORTMRICORE void generate_asymmetric_filter(size_t len, size_t start, size_t end, hoNDArray<float>& filter, MRDKSPACEFILTER filterType, size_t width, bool densityComp);
+template EXPORTMRICORE void generate_asymmetric_filter(size_t len, size_t start, size_t end, hoNDArray<double>& filter, MRDKSPACEFILTER filterType, size_t width, bool densityComp);
+template EXPORTMRICORE void generate_asymmetric_filter(size_t len, size_t start, size_t end, hoNDArray< std::complex<float> >& filter, MRDKSPACEFILTER filterType, size_t width, bool densityComp);
+template EXPORTMRICORE void generate_asymmetric_filter(size_t len, size_t start, size_t end, hoNDArray< std::complex<double> >& filter, MRDKSPACEFILTER filterType, size_t width, bool densityComp);
 
 // ------------------------------------------------------------------------
 
@@ -437,7 +437,7 @@ void generate_symmetric_filter_ref(size_t len, size_t start, size_t end, hoNDArr
 
         if (start == 0 && end == len - 1)
         {
-            generate_symmetric_filter(len, filter, ISMRMRD_FILTER_HANNING);
+            generate_symmetric_filter(len, filter, MRD_FILTER_HANNING);
             return;
         }
 
@@ -468,7 +468,7 @@ void generate_symmetric_filter_ref(size_t len, size_t start, size_t end, hoNDArr
         GADGET_CHECK_THROW(lenFilter>0);
 
         hoNDArray<T> filterSym(lenFilter);
-        generate_symmetric_filter(lenFilter, filterSym, ISMRMRD_FILTER_HANNING);
+        generate_symmetric_filter(lenFilter, filterSym, MRD_FILTER_HANNING);
 
         filter.create(len);
         Gadgetron::clear(&filter);

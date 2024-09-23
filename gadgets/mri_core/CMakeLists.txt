@@ -15,7 +15,6 @@ endif()
 
 
 set(gadgetron_mricore_header_files 
-        # GadgetMRIHeaders.h
         AugmentImageMetadataGadget.h
         NoiseAdjustGadget.h
         PCACoilGadget.h
@@ -23,8 +22,6 @@ set(gadgetron_mricore_header_files
         FFTGadget.h
         CombineGadget.h
         # CropAndCombineGadget.h
-        # writers/MRIImageWriter.h
-        # readers/MRIImageReader.h
         # NoiseAdjustGadget_unoptimized.h
         ExtractGadget.h
         FloatToFixPointGadget.h
@@ -32,12 +29,9 @@ set(gadgetron_mricore_header_files
         CoilReductionGadget.h
         # ScaleGadget.h
         FlowPhaseSubtractionGadget.h
-        # readers/GadgetIsmrmrdReader.h
         PhysioInterpolationGadget.h
         AsymmetricEchoAdjustROGadget.h
         MaxwellCorrectionGadget.h
-        # dependencyquery/DependencyQueryGadget.h
-        # dependencyquery/DependencyQueryWriter.h
         ComplexToFloatGadget.h
         AcquisitionAccumulateTriggerGadget.h
         BucketToBufferGadget.h
@@ -45,11 +39,9 @@ set(gadgetron_mricore_header_files
         SimpleReconGadget.h
         ImageSortGadget.h
         ImageFinishGadget.h
-        # dependencyquery/NoiseSummaryGadget.h
         NHLBICompression.h
         cpuisa.h
         # ImageAccumulatorGadget.h
-        # writers/GadgetIsmrmrdWriter.h
         # ImageResizingGadget.h
         ImageArraySendMixin.h
         ImageArraySendMixin.hpp
@@ -71,8 +63,6 @@ set(gadgetron_mricore_src_files
         CombineGadget.cpp
         # CropAndCombineGadget.cpp
         ImageFinishGadget.cpp
-        # writers/MRIImageWriter.cpp
-        # readers/MRIImageReader.cpp
         # NoiseAdjustGadget_unoptimized.cpp
         ExtractGadget.cpp
         FloatToFixPointGadget.cpp
@@ -80,12 +70,9 @@ set(gadgetron_mricore_src_files
         CoilReductionGadget.cpp
         # ScaleGadget.cpp
         FlowPhaseSubtractionGadget.cpp
-        # readers/GadgetIsmrmrdReader.cpp
         PhysioInterpolationGadget.cpp
         AsymmetricEchoAdjustROGadget.cpp
         MaxwellCorrectionGadget.cpp
-        # dependencyquery/DependencyQueryGadget.cpp
-        # dependencyquery/DependencyQueryWriter.cpp
         ComplexToFloatGadget.cpp
         AcquisitionAccumulateTriggerGadget.cpp
         BucketToBufferGadget.cpp
@@ -96,9 +83,7 @@ set(gadgetron_mricore_src_files
         CompressedFloatBufferSse41.cpp
         CompressedFloatBufferAvx2.cpp
         cpuisa.cpp
-        # dependencyquery/NoiseSummaryGadget.cpp
         # ImageAccumulatorGadget.cpp
-        # writers/GadgetIsmrmrdWriter.cpp
         # ImageResizingGadget.cpp
         AutoScaleGadget.cpp
         DenoiseGadget.cpp
@@ -114,10 +99,7 @@ set(gadgetron_mricore_config_files
         config/default_short.xml
         config/default_optimized.xml
         config/default_measurement_dependencies.xml
-        config/default_measurement_dependencies_ismrmrd_storage.xml
         config/isalive.xml
-        config/gtquery.xml
-        config/NoiseSummary.xml
         )
 set(gadgetron_mricore_generic_recon_gadgets_header_files 
         generic_recon_gadgets/GenericReconBase.h
@@ -219,7 +201,6 @@ set_target_properties(gadgetron_mricore PROPERTIES VERSION ${GADGETRON_VERSION_S
 
 target_link_libraries(gadgetron_mricore
         gadgetron_core
-        # gadgetron_core_writers
         gadgetron_toolbox_log
         gadgetron_toolbox_cpucore
         gadgetron_toolbox_cpufft

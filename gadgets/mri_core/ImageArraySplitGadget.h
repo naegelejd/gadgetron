@@ -7,10 +7,9 @@
 
 #include "Gadget.h"
 #include "hoNDArray.h"
-#include "GadgetMRIHeaders.h"
 #include "Node.h"
 #include "Types.h"
-#include <mri_core_data.h>
+#include "mri_core_data.h"
 #include "hoNDArray_math.h"
 
 namespace Gadgetron{

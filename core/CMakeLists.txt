@@ -3,19 +3,14 @@ if (WIN32)
 endif ()
 
 add_compile_options(-Wall -Werror)
-# add_subdirectory(readers)
-# add_subdirectory(writers)
 add_subdirectory(parallel)
-# add_subdirectory(distributed)
 
 add_library(gadgetron_core SHARED
         Channel.cpp
         Gadget.cpp
-        IsmrmrdContextVariables.cpp
         LegacyACE.cpp
         Message.cpp
         Response.cpp
-        Storage.cpp
         Process.cpp
         gadgetron_paths.cpp
         io/from_string.cpp)
@@ -70,9 +65,6 @@ install(FILES
         GadgetContainerMessage.h
         ChannelAlgorithms.h
         variant.hpp
-        MessageID.h
-        StorageSetup.h
-        IsmrmrdContextVariables.h
         Process.h
         DESTINATION ${GADGETRON_INSTALL_INCLUDE_PATH} COMPONENT main)
 

@@ -1,81 +1,33 @@
 configure_file(gadgetron_config.in gadgetron_config.h)
 
-# if (BUILD_TESTING)
-#   add_subdirectory(test)
-# endif()
-
 add_executable(gadgetron
         main.cpp
-        # Server.cpp
-        # Server.h
-        # Connection.cpp
-        # Connection.h
         initialization.cpp
         initialization.h
         system_info.cpp
-        connection/config/Config.cpp
-        connection/config/Config.h
-        # connection/ConfigConnection.cpp
-        # connection/ConfigConnection.h
-        # connection/StreamConnection.cpp
-        # connection/StreamConnection.h
-        # connection/Handlers.cpp
-        # connection/Handlers.h
-        # connection/Writers.cpp
-        # connection/Writers.h
-        # connection/VoidConnection.cpp
-        # connection/VoidConnection.h
-        # connection/HeaderConnection.cpp
-        # connection/HeaderConnection.h
+
+        connection/Core.h
         connection/Loader.cpp
         connection/Loader.h
-        connection/Core.cpp
-        connection/Core.h
-        connection/SocketStreamBuf.cpp
-        connection/SocketStreamBuf.h
+
+        connection/config/Config.cpp
+        connection/config/Config.h
+
+        connection/core/Processable.h
+        connection/core/Processable.cpp
+
         connection/nodes/Stream.cpp
         connection/nodes/Stream.h
         connection/nodes/Parallel.cpp
         connection/nodes/Parallel.h
-        connection/nodes/Distributed.cpp
-        connection/nodes/Distributed.h
-        connection/nodes/External.cpp
-        connection/nodes/External.h
-        connection/core/Processable.h
-        connection/nodes/common/ExternalChannel.cpp
-        connection/nodes/common/ExternalChannel.h
-        connection/nodes/external/Matlab.cpp
-        connection/nodes/external/Matlab.h
-        connection/nodes/external/Julia.cpp
-        connection/nodes/external/Julia.h
-        connection/nodes/external/Python.cpp
-        connection/nodes/external/Python.h
-        connection/nodes/common/Discovery.cpp
         connection/nodes/ParallelProcess.cpp
         connection/nodes/ParallelProcess.h
         connection/nodes/PureStream.cpp
         connection/nodes/PureStream.h
-        connection/nodes/PureDistributed.cpp
-        connection/nodes/PureDistributed.h
-        connection/nodes/common/External.h
-        connection/nodes/common/External.cpp
-        connection/nodes/common/Serialization.cpp
-        connection/nodes/common/Serialization.h
-        connection/nodes/common/Configuration.cpp
-        connection/nodes/common/Configuration.h
-        connection/nodes/distributed/Pool.h
-        connection/nodes/distributed/Worker.cpp
-        connection/nodes/distributed/Worker.h
-        connection/nodes/common/Closer.h
-        connection/nodes/distributed/Pool.cpp
-        connection/core/Processable.cpp
-        storage.h
-        storage.cpp)
+        )
 
 target_link_libraries(gadgetron
         gadgetron_core
-        # gadgetron_core_writers
-        # gadgetron_core_readers
         gadgetron_toolbox_log
         gadgetron_toolbox_mri_core
         Boost::system

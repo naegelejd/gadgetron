@@ -1,7 +1,5 @@
 #pragma once
 #include "Gadget.h"
-#include "GadgetMRIHeaders.h"
-#include "gadgetron_mricore_export.h"
 #include "hoNDArray.h"
 
 #include <bitset>

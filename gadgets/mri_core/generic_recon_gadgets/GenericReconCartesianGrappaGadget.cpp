@@ -4,7 +4,7 @@
 #include "hoNDArray_reductions.h"
 
 /*
-    The input is mrd::ReconData and output is single 2D or 3D ISMRMRD images
+    The input is mrd::ReconData and output is single 2D or 3D mrd images
 
     If required, the gfactor map can be sent out
 

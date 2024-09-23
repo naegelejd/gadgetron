@@ -1,10 +1,7 @@
 #include "Stream.h"
 
-#include "Distributed.h"
-#include "External.h"
 #include "Parallel.h"
 #include "ParallelProcess.h"
-#include "PureDistributed.h"
 #include "connection/core/Processable.h"
 
 #include "connection/Loader.h"
@@ -16,18 +13,6 @@ namespace {
     using namespace Gadgetron::Server::Connection;
     using namespace Gadgetron::Server::Connection::Nodes;
     using namespace std::string_literals;
-
-    std::string print_action(const Config::Execute& execute){
-        return "Execute block with name "s + execute.name + " of type " + execute.type;
-    }
-
-    std::string print_action(const Config::Connect& connect){
-        return "Connect block on port "s + connect.port;
-    }
-
-    std::string print_action(const Config::Action& action){
-        return visit([](auto& ac){return print_action(ac);}, action);
-    }
 
     class NodeProcessable : public Processable {
     public:
@@ -67,24 +52,9 @@ namespace {
         return std::make_shared<Nodes::Parallel>(conf, context, loader);
     }
 
-    std::shared_ptr<Processable> load_node(const Config::External &conf, const StreamContext &context, Loader &loader) {
-        GDEBUG("Loading External %s \n", print_action(conf.action).c_str());
-        return std::make_shared<Nodes::External>(conf, context, loader);
-    }
-
-    std::shared_ptr<Processable> load_node(const Config::Distributed &conf, const StreamContext &context, Loader &loader) {
-        GDEBUG("Loading Distributed block\n");
-        return std::make_shared<Nodes::Distributed>(conf, context, loader);
-    }
-
     std::shared_ptr<Processable> load_node(const Config::ParallelProcess& conf, const StreamContext& context, Loader& loader){
         GDEBUG("Loading ParalleProcess block\n");
         return std::make_shared<Nodes::ParallelProcess>(conf,context,loader);
-    }
-
-    std::shared_ptr<Processable> load_node(const Config::PureDistributed& conf, const StreamContext& context, Loader& loader){
-        GDEBUG("Loading PureDistributed block\n");
-        return std::make_shared<Nodes::PureDistributed>(conf,context,loader);
     }
 }
 

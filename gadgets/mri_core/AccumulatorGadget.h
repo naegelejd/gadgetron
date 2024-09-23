@@ -7,7 +7,6 @@
 
 #include "Gadget.h"
 #include "hoNDArray.h"
-#include "GadgetMRIHeaders.h"
 #include "Node.h"
 #include "Types.h"
 

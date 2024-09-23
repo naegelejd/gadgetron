@@ -3,7 +3,6 @@
 #include <boost/program_options.hpp>
 
 #include <mrd/types.h>
-#include "StorageSetup.h"
 
 namespace Gadgetron::Core {
 
@@ -17,32 +16,25 @@ namespace Gadgetron::Core {
 
         Header header;
         Paths  paths;
-        StorageSpaces storage;
         std::map<std::string, std::string> parameters;
     };
 
     struct StreamContext : Context {
         using Args = boost::program_options::variables_map;
-        using StorageAddress = std::string;
 
         StreamContext(
             mrd::Header header,
             const Paths paths,
-            const Args args,
-            const StorageAddress storage_address,
-            StorageSpaces storage
+            const Args args
         ) : Context{
                 std::move(header),
                 paths,
-                storage,
                 GetParameters(args)
             },
-            args{args},
-            storage_address{storage_address} {}
+            args{args} {}
 
     
         Args args;
-        StorageAddress storage_address;
 
         private:
         static std::map<std::string, std::string> GetParameters(const boost::program_options::variables_map& args) {

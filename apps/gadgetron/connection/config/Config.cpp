@@ -18,15 +18,6 @@
 using namespace Gadgetron::Server::Connection;
 using namespace Gadgetron::Core;
 
-namespace Gadgetron::Server::Connection {
-    struct Config::External::Configuration {
-        pugi::xml_document document;
-
-        explicit Configuration(const pugi::xml_node &configuration_node) : document() {
-            document.append_copy(configuration_node);
-        }
-    };
-}
 
 namespace {
 
@@ -61,9 +52,6 @@ namespace {
 
     template<>
     constexpr const char *xml_name<Config::Merge>() { return "merge"; }
-
-    template<>
-    constexpr const char *xml_name<Config::Distributor>() { return "distributor"; }
 
     struct XMLSerializer {
 
@@ -120,44 +108,6 @@ namespace {
             return parallel_node;
         }
 
-        static pugi::xml_node add_node(const Config::Distributed &distributed, pugi::xml_node &node) {
-            auto distributed_node = node.append_child("distributed");
-            add_readers(distributed.readers, distributed_node);
-            add_writers(distributed.writers, distributed_node);
-            add_node(distributed.distributor, distributed_node);
-            add_node(distributed.stream, distributed_node);
-
-            return distributed_node;
-        }
-
-        static pugi::xml_node add_node(const Config::Execute &execute, pugi::xml_node &node) {
-            auto execute_node = node.append_child("execute");
-            execute_node.append_attribute("name").set_value(execute.name.c_str());
-            execute_node.append_attribute("type").set_value(execute.type.c_str());
-            return execute_node;
-        }
-
-        static pugi::xml_node add_node(const Config::Connect &connect, pugi::xml_node &node) {
-            auto connect_node = node.append_child("connect");
-            connect_node.append_attribute("port").set_value(connect.port.c_str());
-            return connect_node;
-        }
-
-        static pugi::xml_node add_node(const Config::External &external, pugi::xml_node &node) {
-
-            auto external_node = node.append_child("external");
-
-            add_readers(external.readers, external_node);
-            add_writers(external.writers, external_node);
-            visit(
-                    [&](auto action) { add_node(action, external_node); },
-                    external.action
-            );
-            external_node.append_copy(external.configuration->document);
-
-            return external_node;
-        }
-
         static pugi::xml_node add_node(const Config::Stream &stream, pugi::xml_node &node) {
             auto stream_node = node.append_child("stream");
             stream_node.append_attribute("key").set_value(stream.key.c_str());
@@ -180,14 +130,6 @@ namespace {
                 add_node(gadget,purestream_node);
             }
             return purestream_node;
-        }
-
-        static pugi::xml_node add_node(const Config::PureDistributed& distributed, pugi::xml_node& node){
-            auto puredistributed_node = node.append_child("puredistributed");
-            add_readers(distributed.readers,puredistributed_node);
-            add_writers(distributed.writers,puredistributed_node);
-            add_node(distributed.stream,puredistributed_node);
-            return puredistributed_node;
         }
     };
 
@@ -370,33 +312,6 @@ namespace {
         }
     };
 
-    bool is_legacy_python_gadget(const Config::Gadget &gadget) {
-        return gadget.dll == "gadgetron_python" && gadget.classname == "PythonGadget";
-    }
-
-    Config::Node transform_legacy_python_gadget(Config::Gadget gadget) {
-        GDEBUG_STREAM("Legacy Python Gadget detected: " << gadget.name)
-
-        pugi::xml_document document;
-        auto configuration = document.append_child("configuration");
-
-        for (auto &property : gadget.properties) {
-            GDEBUG_STREAM("Appending property to configuration: " << property.first << ": " << property.second)
-            XMLSerializer::add_property(property, configuration);
-        }
-
-        return Config::External{
-            Config::Execute{
-                    gadget.properties.at("python_module"),
-                    "python",
-                    gadget.properties.at("python_class")
-            },
-            std::make_shared<Config::External::Configuration>(configuration),
-            std::vector<Config::Reader>(),
-            std::vector<Config::Writer>()
-        };
-    }
-
     class Legacy : public Parser<LegacySource> {
     public:
 
@@ -421,7 +336,6 @@ namespace {
 
         const std::list<std::pair<std::function<bool(const Config::Gadget &)>,
                                   std::function<Config::Node(Config::Gadget)>>> node_transformations{
-            std::make_pair(is_legacy_python_gadget, transform_legacy_python_gadget),
             std::make_pair([](auto _) { return true; }, [=](auto c) { return Config::Node(c); })
         };
 
@@ -480,10 +394,7 @@ namespace {
         explicit V2(const pugi::xml_document &doc) : Parser<V2Source, LegacySource>(doc) {
             node_parsers["gadget"] = [&](const pugi::xml_node &n) { return this->parse_node<Config::Gadget>(n); };
             node_parsers["parallel"] = [&](const pugi::xml_node &n) { return this->parse_parallel(n); };
-            node_parsers["external"] = [&](const pugi::xml_node &n) { return this->parse_external(n); };
-            node_parsers["distributed"] = [&](const pugi::xml_node &n) { return this->parse_distributed(n); };
             node_parsers["parallelprocess"] = [&](const pugi::xml_node &n) { return this->parse_parallelprocess(n); };
-            node_parsers["puredistributed"] = [&](const pugi::xml_node &n) { return this->parse_puredistributed(n); };
         }
 
         std::unordered_map<std::string, std::function<Config::Node(const pugi::xml_node &)>> node_parsers;
@@ -498,24 +409,6 @@ namespace {
                 streams.push_back(parse_stream(stream_node));
             }
             return Config::Parallel{branch, merge, streams};
-        }
-
-        Config::External parse_external(const pugi::xml_node &external_node) {
-
-            return Config::External{
-                parse_action(external_node),
-                parse_action_configuration(external_node),
-                parse_readers(external_node.child("readers")),
-                parse_writers(external_node.child("writers"))
-            };
-        }
-
-        Config::Distributed parse_distributed(const pugi::xml_node &distributed_node) {
-            auto distributor = parse_node<Config::Distributor>(distributed_node.child("distributor"));
-            auto stream = parse_stream(distributed_node.child("stream"));
-            auto readers = parse_readers(distributed_node.child("readers"));
-            auto writers = parse_writers(distributed_node.child("writers"));
-            return {readers,writers,distributor,stream};
         }
 
         Config::Stream parse_stream(const pugi::xml_node &stream_node) {
@@ -539,58 +432,6 @@ namespace {
             return Config::ParallelProcess{workers,parse_purestream(parallelprocess_node.child("purestream"))};
         }
 
-        Config::PureDistributed parse_puredistributed(const pugi::xml_node& puredistributedprocess_node){
-
-            auto purestream = parse_purestream(puredistributedprocess_node.child("purestream"));
-            auto readers = parse_readers(puredistributedprocess_node.child("readers"));
-            auto writers = parse_writers(puredistributedprocess_node.child("writers"));
-            return {readers,writers,purestream};
-        }
-
-        static optional<std::string> parse_target(std::string s) {
-            if (s.empty()) return none;
-            return s;
-        }
-
-        static Config::Execute parse_execute(const pugi::xml_node &execute_node) {
-            return Config::Execute {
-                execute_node.attribute("name").value(),
-                execute_node.attribute("type").value(),
-                parse_target(execute_node.attribute("target").value())
-            };
-        }
-
-        static std::string address_or_localhost(const std::string &s) {
-            return s.empty() ? "localhost" : s;
-        }
-
-        static Config::Connect parse_connect(const pugi::xml_node &connect_node) {
-            return Config::Connect {
-                address_or_localhost(connect_node.attribute("address").value()),
-                connect_node.attribute("port").value()
-            };
-        }
-
-        std::map<std::string, std::function<Config::Action(const pugi::xml_node &)>> action_parsers {
-                {"execute", parse_execute},
-                {"connect", parse_connect}
-        };
-
-        Config::Action parse_action(const pugi::xml_node &external_node) {
-
-            for (pugi::xml_node child : external_node) {
-                if (action_parsers.count(child.name())) {
-                    return action_parsers.at(child.name())(child);
-                }
-            }
-
-            throw ConfigNodeError("Unable to parse valid action for external node", external_node);
-        }
-
-        std::shared_ptr<Config::External::Configuration>
-        parse_action_configuration(const pugi::xml_node &external_node) {
-            return std::make_shared<Config::External::Configuration>(external_node.child("configuration"));
-        }
     };
 }
 
@@ -626,12 +467,6 @@ namespace Gadgetron::Server::Connection {
 
         std::stringstream stream;
         doc.save(stream);
-        return stream.str();
-    }
-
-    std::string serialize_config(const Config::External& external_config) {
-        std::stringstream stream;
-        external_config.configuration->document.save(stream);
         return stream.str();
     }
 }

@@ -73,7 +73,6 @@ set(GADGETRON_INSTALL_CONFIG_PATH share/gadgetron/config)
 set(GADGETRON_INSTALL_PYTHON_MODULE_PATH share/gadgetron/python)
 set(GADGETRON_INSTALL_SCHEMA_PATH share/gadgetron/schema)
 set(GADGETRON_INSTALL_INCLUDE_PATH include/gadgetron)
-set(GADGETRON_INSTALL_CHROOT_SCRIPTS_PATH share/gadgetron/chroot)
 if (WIN32)
     set(GADGETRON_VAR_DIR $ENV{APPDATA}/gadgetron CACHE PATH "Path where Gadgetron will store calibration data, etc" FORCE)
 else ()
@@ -411,7 +410,6 @@ if (BUILD_WITH_GPERFTOOLS_PROFILER)
 endif()
 
 
-add_subdirectory(chroot)
 add_subdirectory(cmake)
 
 option(BUILD_DOCUMENTATION "Build Gadgetron documentation." Off)

@@ -10,14 +10,11 @@ set(test_src_files
         hoNDArray_blas_test.cpp
         hoNDArray_utils_test.cpp
         hoNDArray_reductions_test.cpp
-        #read_writer_test.cpp
         hoNDFFT_test.cpp
         hoNFFT_test.cpp
         hoNDWavelet_test.cpp
         curveFitting_test.cpp
         image_morphology_test.cpp
-        IsmrmrdContextVariables_test.cpp
-        StorageSpaces_test.cpp
         pattern_recognition_test.cpp
         cmr_mapping_test.cpp
         hoNDArray_linalg_test.cpp

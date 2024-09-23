@@ -6,12 +6,10 @@
 #pragma once
 
 #include "Gadget.h"
-#include "GadgetMRIHeaders.h"
 #include "Node.h"
 #include "Types.h"
 #include "hoNDArray.h"
 #include "hoNDFFT.h"
-#include "ismrmrd/xml.h"
 #ifdef USE_OMP // TODO: Should this be removed? Its from the old version
 #include "omp.h"
 #endif // USE_OMP

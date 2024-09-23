@@ -110,6 +110,10 @@ namespace Gadgetron
 
     ISMRMRD::ImageHeader image_header_from_acquisition(const ISMRMRD::AcquisitionHeader& acq_header,const ISMRMRD::IsmrmrdHeader& header, const hoNDArray<std::complex<float>>& data );
 
+
+    void add_stats_to_bucket(mrd::AcquisitionBucketStats& stats, const mrd::AcquisitionHeader& header);
+    void add_acquisition_to_bucket(mrd::AcquisitionBucket& bucket, mrd::Acquisition acq);
+
     /** TODO Joe: Remove these now vvvvv */
 
     // template <typename T, size_t N>

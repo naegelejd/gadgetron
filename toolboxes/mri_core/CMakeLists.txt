@@ -12,20 +12,17 @@ set(mri_core_header_files
         mri_core_grappa.h
         mri_core_spirit.h
         mri_core_coil_map_estimation.h
-        mri_core_dependencies.h
         mri_core_girf_correction.h
         mri_core_partial_fourier.h
         mri_core_stream.h
         )
 
 set(mri_core_source_files
-        mri_core_data.cpp
         mri_core_utility.cpp
         mri_core_grappa.cpp
         mri_core_spirit.cpp
         mri_core_kspace_filter.cpp
         mri_core_coil_map_estimation.cpp
-        mri_core_dependencies.cpp
         mri_core_girf_correction.cpp
         mri_core_partial_fourier.cpp
         mri_core_stream.cpp

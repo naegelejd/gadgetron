@@ -6,12 +6,10 @@
 #include "log.h"
 #include "gadgetron_paths.h"
 #include "initialization.h"
-#include "storage.h"
 
 #include "system_info.h"
 #include "gadgetron_config.h"
 
-#include "Server.h"
 #include "StreamConsumer.h"
 
 
@@ -71,30 +69,8 @@ int main(int argc, char *argv[]) {
                 "Parameter to be passed to the gadgetron reconstruction config. Multiple parameters can be passed."
                 "Format: --parameter <name>=<value> --parameter <name>=<value> ...");
 
-
-    options_description storage_options("Storage options");
-    storage_options.add_options()
-            ("disable_storage,d",
-                value<bool>()->default_value(false),
-                "Disable storage server access. Used for testing cases where storage is not available.")
-            ("storage_address,E",
-                value<std::string>(),
-                "External address of a storage server. If not provided, a storage server will be started.")
-            ("storage_port,s",
-                value<unsigned short>(),
-                "Port on which to run the storage server. "
-                "If no port is provided, a port offset from the port argument (-p) is selected.")
-            ("database_dir,D",
-                value<path>()->default_value(default_database_folder()),
-                "Directory in which to store the storage server database.")
-            ("storage_dir,S",
-                value<path>()->default_value(default_storage_folder()),
-                "Directory in which to store data blobs.");
-
     options_description desc;
-    desc
-        .add(gadgetron_options)
-        .add(storage_options);
+    desc.add(gadgetron_options);
 
     variables_map args;
     store(parse_command_line(argc, argv, desc), args);
@@ -128,17 +104,8 @@ int main(int argc, char *argv[]) {
             return 1;
         }
 
-        auto [storage_address, storage_server] = ensure_storage_server(args);
-
         if(!args.count("from_stream"))
         {
-            /** TODO Joe
-             * 
-             * This is going away. Gadgetron will become a streaming tool only, no longer a socket server.
-             */
-            // GINFO("Running on port %d\n", args["port"].as<unsigned short>());
-            // Server server(args, storage_address);
-            // server.serve();
             GERROR_STREAM("Gadgetron only supports streaming mode. Use --from_stream/-s");
             return 1;
         }
@@ -151,7 +118,7 @@ int main(int argc, char *argv[]) {
             }
 
             auto cfg = args["config_name"].as<std::string>();
-            StreamConsumer consumer(args, storage_address);
+            StreamConsumer consumer(args);
 
             if(args.count("input_path") && args.count("output_path"))
             {

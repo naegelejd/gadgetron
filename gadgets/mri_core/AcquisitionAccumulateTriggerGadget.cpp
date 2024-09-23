@@ -1,5 +1,6 @@
 #include "AcquisitionAccumulateTriggerGadget.h"
 #include "log.h"
+#include "mri_core_utility.h"
 #include <boost/algorithm/string.hpp>
 
 namespace Gadgetron {

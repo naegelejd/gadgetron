@@ -47,8 +47,8 @@ std::filesystem::path find_config_path(const std::string& home_dir, const std::s
 class StreamConsumer
 {
 public:
-    StreamConsumer(const boost::program_options::variables_map& args, std::string storage_address)
-        : args_(args), storage_address_(storage_address) {}
+    StreamConsumer(const boost::program_options::variables_map& args)
+        : args_(args) {}
     ~StreamConsumer() {}
 
     void consume(std::istream& input_stream, std::ostream& output_stream, std::string config_xml_name)
@@ -61,9 +61,8 @@ public:
         mrd::binary::MrdWriter mrd_writer(output_stream);
 
         mrd::Header hdr = consume_mrd_header(mrd_reader, mrd_writer);
-        auto storage_spaces = setup_storage_spaces(storage_address_, hdr);
 
-        auto context = StreamContext(hdr, paths, args_, storage_address_, storage_spaces);
+        auto context = StreamContext(hdr, paths, args_);
         auto loader = Connection::Loader(context);
         auto config_path = find_config_path(args_["home"].as<boost::filesystem::path>().string(), config_xml_name);
 
@@ -205,5 +204,4 @@ public:
     }
 
     boost::program_options::variables_map args_;
-    std::string storage_address_;
 };
