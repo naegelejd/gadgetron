@@ -5,236 +5,52 @@ import os
 import glob
 import pytest
 import hashlib
+import itertools
 import subprocess
 import yaml
 
-import h5py
+import mrd
+
 import numpy
+import numpy.typing as npt
 
 import socket
 import urllib.error
 import urllib.request
 
 from dataclasses import dataclass, field
-from typing import Dict, List, Callable, Set
+from typing import Dict, List, Callable, Set, Any
 
 
 all_test_specs = []
 gadgetron_capabilities = None
 
-SPEC_FILENAME_KEY = 'spec_filename'
-
-
-@dataclass
-class Spec():
-
-    @dataclass
-    class Job():
-        name: str
-        datafile: str
-        checksum: str
-        configurations: List[str]
-        args: List[str]
-
-        output_group: str = None
-
-        measurement: str = None
-        data_conversion_flag: str = None
-        parameter_xml: str = None
-        parameter_xsl: str = None
-
-        @staticmethod
-        def fromdict(config: Dict[str, str], name: str) -> Spec.Job:
-            if not config:
-                return None
-
-            datafile = config['data']
-            if not datafile:
-                raise ValueError("Missing 'data' key in job configuration")
-
-            checksum = config['checksum']
-            if not checksum:
-                raise ValueError("Missing 'checksum' key in job configuration")
-
-            if 'configuration' in config and 'stream' in config:
-                raise ValueError("Cannot have both 'configuration' and 'stream' in a job")
-            if 'configuration' in config:
-                configurations = [config['configuration']]
-                args = [config.get('args', '')]
-            elif 'stream' in config:
-                configurations = []
-                args = []
-                for stream in config['stream']:
-                    configurations.append(stream['configuration'])
-                    args.append(stream.get('args', ''))
-
-            output_group = config.get('output_group', None)
-
-            if 'measurement' in config:
-                measurement = str(config['measurement'])
-
-            return Spec.Job(name=name, datafile=datafile, checksum=checksum,
-                    configurations=configurations, args=args,
-                    output_group=output_group,
-                    measurement=measurement,
-                    data_conversion_flag=config.get('data_conversion_flag', ''),
-                    parameter_xml=config.get('parameter_xml', 'IsmrmrdParameterMap_Siemens.xml'),
-                    parameter_xsl=config.get('parameter_xsl', 'IsmrmrdParameterMap_Siemens.xsl')
-            )
-
-    @dataclass
-    class Validation():
-        reference: str
-        checksum: str
-        reference_image: str
-        output_image: str
-        scale_comparison_threshold: float
-        value_comparison_threshold: float
-        disable_image_header_test: bool = False
-
-        @staticmethod
-        def fromdict(config: Dict[str, str]) -> Spec.Validation:
-            if not config:
-                return None
-            reference = config['reference']
-            if not reference:
-                raise ValueError("Missing 'reference' key in job configuration")
-            checksum = config['checksum']
-            if not checksum:
-                raise ValueError("Missing 'checksum' key in job configuration")
-            reference_image = config['reference_image']
-            if not reference_image:
-                raise ValueError("Missing 'reference_image' key in job configuration")
-            output_image = config['output_image']
-            if not output_image:
-                raise ValueError("Missing 'output_image' key in job configuration")
-            scale_comparison_threshold = config['scale_comparison_threshold']
-            if not scale_comparison_threshold:
-                raise ValueError("Missing 'scale_comparison_threshold' key in job configuration")
-            value_comparison_threshold = config['value_comparison_threshold']
-            if not value_comparison_threshold:
-                raise ValueError("Missing 'value_comparison_threshold' key in job configuration")
-            disable_image_header_test = config.get('disable_image_header_test', False)
-
-            return Spec.Validation(reference=reference, checksum=checksum,
-                    reference_image=reference_image, output_image=output_image,
-                    scale_comparison_threshold=scale_comparison_threshold,
-                    value_comparison_threshold=value_comparison_threshold,
-                    disable_image_header_test=disable_image_header_test)
-
-    filename: str
-    name: str
-    tags: Set[str] = field(default_factory=set)
-    requirements: Dict[str, str] = field(default_factory=dict)
-
-    dependency: Spec.Job = None
-    reconstruction: Spec.Job = None
-    validations: List[Spec.Validation] = field(default_factory=list)
-
-    def id(self):
-        return f"{self.filename}::{self.name}"
-
-    @staticmethod
-    def fromfile(filename: str) -> Spec:
-        with open(filename, 'r') as file:
-            parsed = yaml.safe_load(file)
-            spec = Spec(filename=filename, name=parsed['name'])
-
-            tags = parsed.get('tags', None)
-            if not tags:
-                tags = []
-            if not isinstance(tags, list):
-                tags = [tags]
-            spec.tags = set(tags)
-
-            requirements = parsed.get('requirements', None)
-            if not requirements:
-                requirements = {}
-            if not isinstance(requirements, dict):
-                raise ValueError(f"Invalid requirements in {filename}")
-            spec.requirements = requirements
-
-            spec.dependency = Spec.Job.fromdict(parsed.get('dependency', None), 'dependency')
-            spec.reconstruction = Spec.Job.fromdict(parsed['reconstruction'], 'reconstruction')
-
-            validations = parsed['validation']
-            if not isinstance(validations, list):
-                validations = [validations]
-            spec.validations = [Spec.Validation.fromdict(v) for v in validations]
-
-            return spec
-
 
 def pytest_generate_tests(metafunc: pytest.Metafunc) -> None:
+    """Dynamically generates a test for each test case file"""
     global gadgetron_capabilities
     gadgetron_capabilities = load_gadgetron_capabilities()
-
-    # TODO: Only load if not already loaded
+    print(f"Gadgetron capabilities: {gadgetron_capabilities}")
     for spec in load_test_cases():
         all_test_specs.append(spec)
 
-def load_gadgetron_capabilities() -> Dict[str, str]:
-    command = ["gadgetron", "--info"]
-    res = subprocess.run(command, capture_output=True, text=True)
-    if res.returncode != 0:
-        pytest.fail(f"Failed to query Gadgetron capabilities... {res.args} return {res.returncode}")
 
-    gadgetron_info = res.stderr
-
-    value_pattern = r"(?:\s*):(?:\s+)(?P<value>.*)?"
-
-    capability_markers = {
-        'version': "Version",
-        'build': "Git SHA1",
-        'memory': "System Memory size",
-        'python': "Python Support",
-        'julia': "Julia Support",
-        'matlab': "Matlab Support",
-        'cuda': "CUDA Support"
-    }
-
-    plural_capability_markers = {
-        'cuda_memory': "Total amount of global GPU memory",
-        'cuda': "Number of CUDA capable devices"
-    }
-
-    def find_value(marker):
-        pattern = re.compile(marker + value_pattern, re.IGNORECASE)
-        match = pattern.search(gadgetron_info)
-
-        if not match:
-            pytest.fail(f"Failed to parse Gadgetron capability '{marker}' from {gadgetron_info}")
-
-        return match['value']
-
-    def find_plural_values(marker):
-        pattern = re.compile(marker + value_pattern, re.IGNORECASE)
-        return [match['value'] for match in pattern.finditer(gadgetron_info)]
-
-    capabilities = {key: find_value(marker) for key, marker in capability_markers.items()}
-    capabilities.update({key: find_plural_values(marker) for key, marker in plural_capability_markers.items()})
-
-    return capabilities
-
-
-def load_test_cases() -> List[Dict[str, str]]:
-    specs = []
-    for filename in glob.glob('cases/*.yml'):
-        spec = Spec.fromfile(filename)
-        specs.append(spec)
-    return sorted(specs, key=lambda s: s.id())
+@pytest.mark.parametrize('spec', all_test_specs, ids=lambda s: s.id())
+def test_e2e(spec, check_requirements, process_data, validate_output):
+    """The main test function for each test case"""
+    if spec.dependency is not None:
+        process_data(spec.dependency)
+    output_file = process_data(spec.reconstruction)
+    validate_output(spec.validation, output_file)
 
 
 @pytest.fixture
 def check_requirements(spec: Spec, ignore_requirements: Set[str], run_tags: Set[str]):
-    # print(f"Checking requirements for: {spec.name}")
+    """Checks whether each test case should be run based on Gadgetron capabilities and test tags"""
 
     # Check tags first
-    # The spec's tags must include at least one of the run_tags
-    # NOTE: This means the `--tags` option is an OR expression, not an AND expression
-    if len(run_tags) > 0 and len(spec.tags & run_tags) == 0:
-        print(run_tags)
-        pytest.skip("Test missing required tag.")
+    if len(run_tags) > 0 and spec.tags != run_tags:
+        pytest.skip("Test missing required tags")
     if 'skip' in spec.tags:
         pytest.skip("Test was marked as skipped")
 
@@ -265,12 +81,9 @@ def check_requirements(spec: Spec, ignore_requirements: Set[str], run_tags: Set[
             return lambda values: all([validator(value) for value in values])
 
         rules = [
-            ('matlab_support', lambda req: Rule('matlab', is_enabled, "MATLAB support required.")),
-            ('python_support', lambda req: Rule('python', is_enabled, "Python support required.")),
-            ('julia_support', lambda req: Rule('julia', is_enabled, "Julia support required.")),
             ('system_memory', lambda req: Rule('memory', has_more_than(req), "Not enough system memory.")),
             ('gpu_support', lambda req: Rule('cuda', is_enabled, "CUDA support required.")),
-            ('gpu_support', lambda req: Rule('cuda', each(has_more_than(req)), "Not enough CUDA devices.")),
+            ('gpu_devices', lambda req: Rule('cuda_devices', each(has_more_than(req)), "Not enough CUDA devices.")),
             ('gpu_memory', lambda req: Rule('cuda_memory', each(has_more_than(req)), "Not enough graphics memory."))
         ]
 
@@ -283,43 +96,12 @@ def check_requirements(spec: Spec, ignore_requirements: Set[str], run_tags: Set[
         if not rule.is_satisfied(gadgetron_capabilities):
             pytest.skip(rule.message)
 
-
-def calc_md5(file: Path) -> str:
-    md5 = hashlib.new('md5')
-    with open(file, 'rb') as f:
-        for chunk in iter(lambda: f.read(65536), b''):
-            md5.update(chunk)
-    return md5.hexdigest()
-
-def is_valid(file: Path, digest: str) -> bool:
-    if not os.path.isfile(file):
-        return False
-    return digest == calc_md5(file) 
-
-def urlretrieve(url: str, filename: str, retries: int = 5) -> str:
-    if retries <= 0:
-        pytest.fail("Download from {} failed".format(url))
-    try:
-        with urllib.request.urlopen(url, timeout=60) as connection:                        
-            with open(filename,'wb') as f:
-                for chunk in iter(lambda : connection.read(1024*1024), b''):
-                    f.write(chunk)
-            return connection.headers["Content-MD5"]
-    except (urllib.error.URLError, ConnectionResetError, socket.timeout) as exc:
-        print("Retrying connection for file {}, reason: {}".format(filename, str(exc)))
-        return urlretrieve(url, filename, retries=retries-1)
-
 @pytest.fixture
 def fetch_test_data(cache_path: Path, data_host_url: str, tmp_path: Path) -> Callable:
-    # print(f"Cache path: {cache_path}")
-
-    # TODO: yield nested function then perform cleanup afterwards if not caching
-
-    # TODO: Make it return a Path
+    """Fetches test data from the remote data host and caches it locally"""
+    # If cache_path is disabled, the fetched data will live in the test working directory (tmp_path)
+    # PyTest automatically cleans up these directories after 3 runs
     def _fetch_test_data(filename: str, checksum: str) -> str:
-        print(f"Fetching test data: {filename}")
-        url = f"{data_host_url}{filename}"
-
         if not cache_path:
             destination = os.path.join(tmp_path, filename)
         else:
@@ -336,7 +118,9 @@ def fetch_test_data(cache_path: Path, data_host_url: str, tmp_path: Path) -> Cal
                 need_to_fetch = False
 
         if need_to_fetch:
+            print(f"Fetching test data: {filename}")
             os.makedirs(os.path.dirname(destination), exist_ok=True)
+            url = f"{data_host_url}{filename}"
             urlretrieve(url, destination)
 
         if not is_valid(destination, checksum):
@@ -348,80 +132,30 @@ def fetch_test_data(cache_path: Path, data_host_url: str, tmp_path: Path) -> Cal
 
 
 @pytest.fixture
-def convert_data(tmp_path: Path, fetch_test_data: Callable) -> Callable:
-    def _convert_data(input_file: str, job: Spec.Job) -> str:
-
-        prefix = os.path.basename(input_file) + '_' + job.name
-
-        # Do siemens_to_ismrmrd conversion if needed
-        if job.measurement is not None:
-            output_file = os.path.join(tmp_path, prefix + ".h5")
-            command = ["siemens_to_ismrmrd", "-X",
-                    "-f", input_file, 
-                    "-m", job.parameter_xml,
-                    "-x", job.parameter_xsl,
-                    "-o", output_file,
-                    "-z", job.measurement,
-                    job.data_conversion_flag]
-
-            with open(os.path.join(tmp_path, os.path.basename(input_file) + "_" + job.name + '.log.out'), 'w') as log_stdout:
-                with open(os.path.join(tmp_path, os.path.basename(input_file) + "_" + job.name + '.log.err'), 'w') as log_stderr:
-                    result = subprocess.run(command, stdout=log_stdout, stderr=log_stderr, cwd=tmp_path)
-                    if result.returncode != 0:
-                        pytest.fail(f"siemens_to_ismrmrd failed with return code {result.returncode}")
-            input_file = output_file
-
-        # Do ISMRMRD HDF5 -> ISMRMRD Stream -> MRD2 conversion
-        output_file = os.path.join(tmp_path, prefix + ".mrd")
-        command = f"ismrmrd_hdf5_to_stream -i {input_file} --use-stdout | ismrmrd_to_mrd -o {output_file}"
-        command = ['bash', '-c', command]
-
-        result = subprocess.run(command, cwd=tmp_path)
-        if result.returncode != 0:
-            pytest.fail(f"ismrmrd to mrd conversion failed with return code {result.returncode}")
-
-        return output_file
-
-    return _convert_data
-
-@pytest.fixture
-def prepare_test_data(fetch_test_data, convert_data):
-    def _prepare_test_data(job: Spec.Job):
-        input_file = fetch_test_data(job.datafile, job.checksum)
-
-        input_file = convert_data(input_file, job)
-
-        return input_file
-            
-    return _prepare_test_data
-
-
-@pytest.fixture
-def process_data(prepare_test_data, tmp_path):
+def process_data(fetch_test_data, tmp_path):
+    """Runs the Gadgetron on the input test data, producing an output file."""
     def _process_data(job):
-        # print(f"Processing dependency for: {spec.name}")
-        input_file = prepare_test_data(job)
+        input_file = fetch_test_data(job.datafile, job.checksum)
         output_file = os.path.join(tmp_path, job.name + ".output.mrd")
 
         invocations = []
-        for config, args in zip(job.configurations, job.args):
-            invocations.append(f"gadgetron --from_stream -c {config} {args}")
-        invocations[0] += f" --input_path {input_file}"
-        # invocations[-1] += f" --output_path {output_file}"
+        for args in job.args:
+            invocations.append(f"gadgetron {args}")
+        invocations[0] += f" --input {input_file}"
+        invocations[-1] += f" --output {output_file}"
 
         command = " | ".join(invocations)
-
-        # Add MRD2 -> ISMRMRD Stream -> HDF5 conversion
-        command += f" | mrd_to_ismrmrd | ismrmrd_stream_to_hdf5 --use-stdin -o {output_file} -g {job.output_group}"
-
         command = ['bash', '-c', command]
-        print(f"Invoking Gadgetron: {command}")
 
-        with open(os.path.join(tmp_path, job.name + '_gadgetron.log.out'), 'w') as log_stdout:
-            with open(os.path.join(tmp_path, job.name + '_gadgetron.log.err'), 'w') as log_stderr:
+        print(f"Run: {command}")
+
+        log_stdout_filename = os.path.join(tmp_path, f"gadgetron_{job.name}.log.out")
+        log_stderr_filename = os.path.join(tmp_path, f"gadgetron_{job.name}.log.err")
+        with open(log_stdout_filename, 'w') as log_stdout:
+            with open(log_stderr_filename, 'w') as log_stderr:
                 result = subprocess.run(command, stdout=log_stdout, stderr=log_stderr, cwd=tmp_path)
                 if result.returncode != 0:
-                    pytest.fail(f"Gadgetron failed with return code {result.returncode}")
+                    pytest.fail(f"Gadgetron failed with return code {result.returncode}. See {log_stderr_filename} for details.")
 
         return output_file
 
@@ -429,60 +163,293 @@ def process_data(prepare_test_data, tmp_path):
 
 @pytest.fixture
 def validate_output(fetch_test_data):
-    def _validate_output(specs: List[Spec.Validation], output_file: str) -> None:
-        for spec in specs:
-            reference_file = fetch_test_data(spec.reference, spec.checksum)
+    """Validates each image (data and header) in the output file against the reference file."""
+    def _validate_output(spec: Spec.Validation, output_file: str) -> None:
+        reference_file = fetch_test_data(spec.reference, spec.checksum)
 
-            validate_data(output_file, spec.output_image, reference_file, spec.reference_image,
-                    spec.scale_comparison_threshold, spec.value_comparison_threshold)
+        reference_images = extract_image_data(reference_file)
+        output_images = extract_image_data(output_file)
 
-            if not spec.disable_image_header_test:
-                validate_header(output_file, spec.output_image, reference_file, spec.reference_image)
+        for test in spec.image_series_tests:
+            ref_data = reference_images[test.image_series]['data']
+            out_data = output_images[test.image_series]['data']
+            validate_image_data(out_data, ref_data, test.scale_comparison_threshold, test.value_comparison_threshold)
+
+            ref_headers = reference_images[test.image_series]['headers']
+            out_headers = output_images[test.image_series]['headers']
+            for ref, out in itertools.zip_longest(ref_headers, out_headers):
+                validate_image_header(out, ref)
 
     return _validate_output
 
-def validate_data(output_file: str, output_group: str, reference_file: str, reference_group: str,
-                scale_threshold: float, value_threshold: float):
+
+def load_gadgetron_capabilities() -> Dict[str, str]:
+    command = ["gadgetron", "--info"]
+    res = subprocess.run(command, capture_output=True, text=True)
+    if res.returncode != 0:
+        pytest.fail(f"Failed to query Gadgetron capabilities... {res.args} return {res.returncode}")
+
+    gadgetron_info = res.stderr
+
+    value_pattern = r"(?:\s*):(?:\s+)(?P<value>.*)?"
+
+    capability_markers = {
+        'version': "Version",
+        'build': "Git SHA1",
+        'memory': "System Memory size",
+        'cuda': "CUDA Support"
+    }
+
+    plural_capability_markers = {
+        'cuda_memory': "Total amount of global GPU memory",
+        'cuda_devices': "Number of CUDA capable devices"
+    }
+
+    def find_value(marker):
+        pattern = re.compile(marker + value_pattern, re.IGNORECASE)
+        match = pattern.search(gadgetron_info)
+
+        if not match:
+            pytest.fail(f"Failed to parse Gadgetron capability '{marker}' from {gadgetron_info}")
+
+        return match['value']
+
+    def find_plural_values(marker):
+        pattern = re.compile(marker + value_pattern, re.IGNORECASE)
+        return [match['value'] for match in pattern.finditer(gadgetron_info)]
+
+    capabilities = {key: find_value(marker) for key, marker in capability_markers.items()}
+    capabilities.update({key: find_plural_values(marker) for key, marker in plural_capability_markers.items()})
+
+    return capabilities
+
+
+def load_test_cases() -> List[Dict[str, str]]:
+    specs = []
+    for filename in glob.glob('cases/*.yml'):
+        spec = Spec.fromfile(filename)
+        specs.append(spec)
+    return sorted(specs, key=lambda s: s.id())
+
+
+def checksum(file: Path) -> str:
+    md5 = hashlib.new('md5')
+    with open(file, 'rb') as f:
+        for chunk in iter(lambda: f.read(65536), b''):
+            md5.update(chunk)
+    return md5.hexdigest()
+
+def is_valid(file: Path, digest: str) -> bool:
+    if not os.path.isfile(file):
+        return False
+    return digest == checksum(file) 
+
+def urlretrieve(url: str, filename: str, retries: int = 5) -> str:
+    if retries <= 0:
+        pytest.fail("Download from {} failed".format(url))
     try:
-        # The errors produced by h5py are not entirely excellent. We spend some code here to clear them up a bit.
-        def get_group_data(file, group):
-            with h5py.File(file, mode='r') as f:
-                try:
-                    group = group + '/data'
-                    return numpy.squeeze(f[group])
-                except KeyError:
-                    pytest.fail("Did not find group '{}' in file {}".format(group, file))
+        with urllib.request.urlopen(url, timeout=60) as connection:                        
+            with open(filename,'wb') as f:
+                for chunk in iter(lambda : connection.read(1024*1024), b''):
+                    f.write(chunk)
+            return connection.headers["Content-MD5"]
+    except (urllib.error.URLError, ConnectionResetError, socket.timeout) as exc:
+        print("Retrying connection for file {}, reason: {}".format(filename, str(exc)))
+        return urlretrieve(url, filename, retries=retries-1)
 
-        output_data = get_group_data(output_file, output_group)
-        reference_data = get_group_data(reference_file, reference_group)
-    except OSError as e:
-        pytest.fail(str(e))
-    except RuntimeError as e:
-        pytest.fail(str(e))
+def extract_image_data(filename: Path) -> Dict[int, Dict[str, Any]]:
+    dataset = {}
+    with mrd.BinaryMrdReader(filename) as reader:
+        _ = reader.read_header()
+        for item in reader.read_data():
+            if type(item.value).__name__ != "Image":
+                continue
+            head = item.value.head
+            if head.image_series_index not in dataset:
+                dataset[head.image_series_index] = []
+            dataset[head.image_series_index].append(item.value)
+    res = {}
+    for series, images in dataset.items():
+        res[series] = {}
+        res[series]['data'] = numpy.stack([img.data for img in images])
+        res[series]['headers'] = map(lambda img: img.head, images)
+        res[series]['meta'] = map(lambda img: img.meta, images)
+    return res
 
-    output = output_data[...].flatten().astype('float32')
-    reference = reference_data[...].flatten().astype('float32')
+def validate_image_data(output_data: npt.ArrayLike, reference_data: npt.ArrayLike,
+                scale_threshold: float, value_threshold: float) -> None:
+    assert output_data.shape == reference_data.shape
+    assert output_data.dtype == reference_data.dtype
 
-    norm_diff = numpy.linalg.norm(output - reference) / numpy.linalg.norm(reference)
-    scale = numpy.dot(output, output) / numpy.dot(output, reference)
+    ref_data = reference_data.flatten().astype('float32')
+    out_data = output_data.flatten().astype('float32')
+
+    norm_diff = numpy.linalg.norm(out_data - ref_data) / numpy.linalg.norm(ref_data)
+    scale = numpy.dot(out_data, out_data) / numpy.dot(out_data, ref_data)
 
     if value_threshold < norm_diff:
         pytest.fail("Comparing values, norm diff: {} (threshold: {})".format(norm_diff, value_threshold))
 
-    if value_threshold < abs(1 - scale):
+    if scale_threshold < abs(1 - scale):
         pytest.fail("Comparing image scales, ratio: {} ({}) (threshold: {})".format(scale, abs(1 - scale),
                                                                                         scale_threshold))
 
-def validate_header(output_file: str, output_group: str, reference_file: str, reference_group: str):
-    # TODO: Implement after removing the ISMRMRD/HDF5 stuff
-    pass
+def validate_image_header(output_header: mrd.ImageHeader, reference_header: mrd.ImageHeader) -> None:
+    def equals():
+        # Account for *converted* reference data having value 0 instead of None
+        return lambda out, ref: out == ref or (out is None and ref == 0)
+
+    def approx(threshold=1e-6):
+        return lambda out, ref: abs(out - ref) <= threshold
+
+    def ignore():
+        return lambda out, ref: True
+
+    def each(rule):
+        return lambda out, ref: all(rule(out, ref) for out, ref in itertools.zip_longest(out, ref))
+
+    header_rules = {
+        'flags': equals(),
+        'measurement_uid': equals(),
+        'field_of_view': each(approx()),
+        'position': each(approx()),
+        'col_dir': each(approx()),
+        'line_dir': each(approx()),
+        'slice_dir': each(approx()),
+        'patient_table_position': each(approx()),
+        'average': equals(),
+        'slice': equals(),
+        'contrast': equals(),
+        'phase': equals(),
+        'repetition': equals(),
+        'set': equals(),
+        'acquisition_time_stamp': ignore(),
+        'physiology_time_stamp': each(ignore()),
+        'image_type': equals(),
+        'image_index': equals(),
+        'image_series_index': equals(),
+        # Ignore user values since ISMRMRD->MRD converted files always have user_int/user_float==[0,0,0,0,0,0,0,0]
+        'user_int': each(ignore()),
+        'user_float': each(ignore())
+    }
+
+    for attribute, rule in header_rules.items():
+        if not rule(getattr(output_header, attribute), getattr(reference_header, attribute)):
+            pytest.fail(f"Image header '{attribute}' does not match reference"
+                f" (series {output_header.image_series_index}, index {output_header.image_index})"
+                f" [{getattr(output_header, attribute)} != {getattr(reference_header, attribute)}]")
 
 
-@pytest.mark.parametrize('spec', all_test_specs, ids=lambda s: s.id())
-def test_e2e(spec, check_requirements, process_data, validate_output):
-    if spec.dependency is not None:
-        process_data(spec.dependency)
+@dataclass
+class Spec():
+    """Defines a test case specification"""
 
-    output_file = process_data(spec.reconstruction)
+    @dataclass
+    class Job():
+        """Defines a job to be run by Gadgetron"""
+        name: str
+        datafile: str
+        checksum: str
+        args: List[str]
 
-    validate_output(spec.validations, output_file)
+        @staticmethod
+        def fromdict(config: Dict[str, str], name: str) -> Spec.Job:
+            if not config:
+                return None
+
+            datafile = config['data']
+            if not datafile:
+                raise ValueError(f"Missing 'data' key in {name} configuration")
+
+            checksum = config['checksum']
+            if not checksum:
+                raise ValueError(f"Missing 'checksum' key in {name} configuration")
+
+            args = []
+            if 'run' in config:
+                for run in config['run']:
+                    args.append(run['args'])
+            else:
+                args.append(config['args'])
+
+            return Spec.Job(name=name, datafile=datafile, checksum=checksum, args=args)
+
+    @dataclass
+    class ImageSeriesTest():
+        """Defines a test for an image series comparison"""
+        image_series: int
+        scale_comparison_threshold: float
+        value_comparison_threshold: float
+
+    @dataclass
+    class Validation():
+        """Defines a validation test for the output of a job"""
+        reference: str
+        checksum: str
+        image_series_tests: List[ImageSeriesTest]
+
+        @staticmethod
+        def fromdict(config: Dict[str, str]) -> Spec.Validation:
+            if not config:
+                return None
+            reference = config['reference']
+            if not reference:
+                raise ValueError("Missing 'reference' key in validation configuration")
+            checksum = config['checksum']
+            if not checksum:
+                raise ValueError("Missing 'checksum' key in validation configuration")
+            tests = config['tests']
+            if not tests:
+                raise ValueError("Missing 'tests' key in validation configuration")
+            if not isinstance(tests, list):
+                raise ValueError("Key 'tests' should be a list in validation configuration")
+
+            image_series_tests = []
+            for test in tests:
+                num = test['image_series']
+                st = test.get('scale_comparison_threshold', 0.01)
+                vt = test.get('value_comparison_threshold', 0.01)
+                image_series_tests.append(
+                    Spec.ImageSeriesTest(image_series=num, scale_comparison_threshold=st, value_comparison_threshold=vt)
+                )
+
+            return Spec.Validation(reference=reference, checksum=checksum,
+                    image_series_tests=image_series_tests)
+
+    name: str
+    tags: Set[str] = field(default_factory=set)
+    requirements: Dict[str, str] = field(default_factory=dict)
+
+    dependency: Spec.Job = None
+    reconstruction: Spec.Job = None
+    validation: Spec.Validation = None
+
+    def id(self):
+        return f"{self.name}"
+
+    @staticmethod
+    def fromfile(filename: str) -> Spec:
+        with open(filename, 'r') as file:
+            parsed = yaml.safe_load(file)
+            name, _ = os.path.splitext(os.path.basename(filename))
+            spec = Spec(name=name)
+
+            tags = parsed.get('tags', None)
+            if not tags:
+                tags = []
+            if not isinstance(tags, list):
+                tags = [tags]
+            spec.tags = set(tags)
+
+            requirements = parsed.get('requirements', None)
+            if not requirements:
+                requirements = {}
+            if not isinstance(requirements, dict):
+                raise ValueError(f"Invalid requirements in {filename}")
+            spec.requirements = requirements
+
+            spec.dependency = Spec.Job.fromdict(parsed.get('dependency', None), 'dependency')
+            spec.reconstruction = Spec.Job.fromdict(parsed['reconstruction'], 'reconstruction')
+            spec.validation = Spec.Validation.fromdict(parsed.get('validation', None))
+
+            return spec

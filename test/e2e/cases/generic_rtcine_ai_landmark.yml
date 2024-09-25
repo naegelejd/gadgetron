@@ -1,0 +1,22 @@
+reconstruction:
+  data: cmr/RTCine/CH4/rtcine_R4_CH2.mrd
+  checksum: 308b1018a874c0b22435ac27c56e4a6e
+  run:
+  - args: --config CMR_RTCine_LAX_AI.xml
+validation:
+  reference: cmr/RTCine/CH4/ref_20220124_173736_CMR_RTCine_LAX_AI.xml.mrd
+  checksum: 068373f4bd98ed65cd92ca9fcc717169
+  tests:
+  - image_series: 1
+    value_comparison_threshold: 0.01
+    scale_comparison_threshold: 0.01
+  - image_series: 100
+    value_comparison_threshold: 0.01
+    scale_comparison_threshold: 0.01
+tags:
+- slow
+- generic
+- skip
+requirements:
+  system_memory: 4096
+  python_support: 1

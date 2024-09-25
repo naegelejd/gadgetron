@@ -1,0 +1,16 @@
+reconstruction:
+  data: radial_phantom/meas_MID00135_FID20082_CV_Radial_Golden_Angle_128_512_views_meas1.mrd
+  checksum: 02d76ad8a4d3bc792fa3b86e7295dba6
+  run:
+  - args: --config golden_radial_mode2_gpusense_sb.xml
+validation:
+  reference: radial_phantom/golden_radial_mode2_20210923_klk_sb.mrd
+  checksum: e6781ddd4970c3e8e4b569570b4cc949
+  tests:
+  - image_series: 0
+tags:
+- slow
+requirements:
+  system_memory: 2048
+  gpu_support: 1
+  gpu_memory: 2048

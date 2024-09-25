@@ -192,7 +192,7 @@ public:
                 } else if (convertible_to<mrd::ImageArray>(message) ) {
                     mrd_writer.WriteData(force_unpack<mrd::ImageArray>(std::move(message)));
                 } else {
-                    GERROR_STREAM("Unsupported Message type for MrdWriter");
+                    GADGET_THROW("Unsupported Message type for MrdWriter");
                 }
             } catch (const ChannelClosed& exc) {
                 break;

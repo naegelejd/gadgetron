@@ -1,0 +1,14 @@
+reconstruction:
+  data: cmr/CineBinning/meas_MID838_PK_rt_test_2slice_FID22519/meas_MID838_PK_rt_test_2slice_FID22519_meas2.mrd
+  checksum: 07ecc52f07ca7ca358f3e28b2ddae3eb
+  run:
+  - args: --config CMR_2DT_RTCine_KspaceBinning.xml
+validation:
+  reference: cmr/CineBinning/meas_MID838_PK_rt_test_2slice_FID22519/cmr_cine_binning_2slice_ref_20220817_CMR_2DT_RTCine_KspaceBinning.xml.mrd
+  checksum: 81c21694e75118af48507ac8f39b7957
+  tests:
+  - image_series: 2
+tags:
+- slow
+requirements:
+  system_memory: 8192

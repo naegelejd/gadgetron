@@ -1,0 +1,21 @@
+dependency:
+  data: cmr/T1SRmapping/meas_MID00613_FID40909_pre_SASHA_10pt_TS600_256/meas_MID00613_FID40909_pre_SASHA_10pt_TS600_256_meas1.mrd
+  checksum: a4bf942ec83f360ed38a229200af0216
+  args: --config default_measurement_dependencies.xml --parameter noisecovarianceout=./mycov.bin
+reconstruction:
+  data: cmr/T1SRmapping/meas_MID00613_FID40909_pre_SASHA_10pt_TS600_256/meas_MID00613_FID40909_pre_SASHA_10pt_TS600_256_meas2.mrd
+  checksum: ee3c912ccdf67218359d4ce04822066f
+  run:
+  - args: --config CMR_2DT_T1Mapping_SASHA.xml --parameter noisecovariancein=./mycov.bin
+validation:
+  reference: cmr/T1SRmapping/meas_MID00613_FID40909_pre_SASHA_10pt_TS600_256/ref_20170427_CMR_2DT_T1Mapping_SASHA.xml.mrd
+  checksum: b9c74673dbf38cde63384c0f6102cdee
+  tests:
+  - image_series: 1
+  - image_series: 12
+  - image_series: 11
+  - image_series: 20
+tags:
+- fast
+requirements:
+  system_memory: 16384

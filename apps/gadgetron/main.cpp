@@ -39,8 +39,6 @@ std::ostream& operator<<(std::ostream& out, const gadget_parameter& param) {
 
 int main(int argc, char *argv[]) {
     options_description gadgetron_options("Allowed options:");
-
-
     gadgetron_options.add_options()
             ("help,h", "Prints this help message.")
             ("info", "Prints build info about the Gadgetron.")
@@ -50,18 +48,13 @@ int main(int argc, char *argv[]) {
             ("home,G",
                 value<path>()->default_value(default_gadgetron_home()),
                 "Set the Gadgetron home directory.")
-            ("port,p",
-                value<unsigned short>()->default_value(9002),
-                "Listen for incoming connections on this port.")
-            ("from_stream, s",
-                "Perform reconstruction from a local data stream")
-            ("input_path,i",
+            ("input,i",
                 value<std::string>(),
                 "Input file for binary data to perform a local reconstruction with")
-            ("output_path,o",
+            ("output,o",
                 value<std::string>(),
                 "Output file for binary data as a result of a local reconstruction")
-            ("config_name,c",
+            ("config,c",
                 value<std::string>(),
                 "Filename of the desired gadgetron reconstruction config.")
             ("parameter",
@@ -98,70 +91,56 @@ int main(int argc, char *argv[]) {
         // Ensure working directory exists.
         create_directories(args["dir"].as<path>());
 
-        // We do not currently allow the user to specify parameters unless in streaming mode.
-        if (args.count("parameter") && !args.count("from_stream")) {
-            GERROR_STREAM("Parameters can only be specified in streaming mode.");
+        if (!args.count("config"))
+        {
+            GERROR_STREAM("No config file provided. Use --config/-c");
             return 1;
         }
 
-        if(!args.count("from_stream"))
+        auto cfg = args["config"].as<std::string>();
+        StreamConsumer consumer(args);
+
+        if(args.count("input") && args.count("output"))
         {
-            GERROR_STREAM("Gadgetron only supports streaming mode. Use --from_stream/-s");
-            return 1;
+            auto input_stream = std::ifstream(args["input"].as<std::string>());
+            if (!input_stream) {
+                GERROR_STREAM("Could not open input file: " << args["input"].as<std::string>());
+                return 1;
+            }
+            auto output_stream = std::ofstream(args["output"].as<std::string>());
+            if (!output_stream) {
+                GERROR_STREAM("Could not open output file: " << args["output"].as<std::string>());
+                return 1;
+            }
+            consumer.consume(input_stream, output_stream, cfg);
+            output_stream.close();
+        }
+        else if(args.count("input"))
+        {
+            auto input_stream = std::ifstream(args["input"].as<std::string>());
+            if (!input_stream) {
+                GERROR_STREAM("Could not open input file: " << args["input"].as<std::string>());
+                return 1;
+            }
+            consumer.consume(input_stream, std::cout, cfg);
+            std::flush(std::cout);
+        }
+        else if(args.count("output"))
+        {
+            auto output_stream = std::ofstream(args["output"].as<std::string>());
+            if (!output_stream) {
+                GERROR_STREAM("Could not open output file: " << args["output"].as<std::string>());
+                return 1;
+            }
+            consumer.consume(std::cin, output_stream, cfg);
+            output_stream.close();
         }
         else
         {
-            if (!args.count("config_name"))
-            {
-                GERROR_STREAM("No config file provided. Use --config_name/-c");
-                return 1;
-            }
-
-            auto cfg = args["config_name"].as<std::string>();
-            StreamConsumer consumer(args);
-
-            if(args.count("input_path") && args.count("output_path"))
-            {
-                auto input_stream = std::ifstream(args["input_path"].as<std::string>());
-                if (!input_stream) {
-                    GERROR_STREAM("Could not open input file: " << args["input_path"].as<std::string>());
-                    return 1;
-                }
-                auto output_stream = std::ofstream(args["output_path"].as<std::string>());
-                if (!output_stream) {
-                    GERROR_STREAM("Could not open output file: " << args["output_path"].as<std::string>());
-                    return 1;
-                }
-                consumer.consume(input_stream, output_stream, cfg);
-                output_stream.close();
-            }
-            else if(args.count("input_path"))
-            {
-                auto input_stream = std::ifstream(args["input_path"].as<std::string>());
-                if (!input_stream) {
-                    GERROR_STREAM("Could not open input file: " << args["input_path"].as<std::string>());
-                    return 1;
-                }
-                consumer.consume(input_stream, std::cout, cfg);
-                std::flush(std::cout);
-            }
-            else if(args.count("output_path"))
-            {
-                auto output_stream = std::ofstream(args["output_path"].as<std::string>());
-                if (!output_stream) {
-                    GERROR_STREAM("Could not open output file: " << args["output_path"].as<std::string>());
-                    return 1;
-                }
-                consumer.consume(std::cin, output_stream, cfg);
-                output_stream.close();
-            }
-            else
-            {
-                consumer.consume(std::cin, std::cout, cfg);
-                std::flush(std::cout);
-            }
-            GDEBUG_STREAM("Finished consuming stream");
+            consumer.consume(std::cin, std::cout, cfg);
+            std::flush(std::cout);
         }
+        GDEBUG_STREAM("Finished consuming stream");
     }
     catch (std::exception &e)
     {
