@@ -37,7 +37,6 @@ set_target_properties(gadgetron_debugging PROPERTIES VERSION ${GADGETRON_VERSION
 target_link_libraries(gadgetron_debugging
         gadgetron_core
         gadgetron_mricore
-        gadgetron_core_writers
         gadgetron_toolbox_log
         gadgetron_toolbox_cpucore
         gadgetron_toolbox_cpufft

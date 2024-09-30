@@ -133,13 +133,13 @@ namespace Gadgetron::Server::Info {
 
             os << "  -- CUDA Support       : YES" << std::endl;
             os << "  -- NVCC Flags         : " << GADGETRON_CUDA_NVCC_FLAGS << std::endl;
-            os << "    * Number of CUDA capable devices: " << device_count << std::endl;
+            os << "  -- CUDA Device count  : " << device_count << std::endl;
 
             for (int dev = 0; dev < device_count; dev++) {
               os << "      - Device " << dev << ": " << CUDA::cuda_device_name(dev) << std::endl;
               os << "         + CUDA Driver Version / Runtime Version: " << CUDA::cuda_driver_version() << "/" << CUDA::cuda_runtime_version() << std::endl;
               os << "         + CUDA Capability Major / Minor version number: " <<  CUDA::cuda_device_capabilities(dev) << std::endl;
-              os << "         + Total amount of global GPU memory: " << std::to_string(CUDA::cuda_device_memory(dev) / (1024 * 1024)) << " MB" << std::endl;
+              os << "         + CUDA Device Memory size: " << std::to_string(CUDA::cuda_device_memory(dev) / (1024 * 1024)) << " MB" << std::endl;
             }
         }
     }
@@ -188,35 +188,5 @@ namespace Gadgetron::Server::Info {
         CUDA::print_cuda_information(os);
         os << std::endl;
     }
-    namespace {
-        boost::asio::ip::tcp get_max_tcp_protocol(){
-#ifdef __linux__
-            std::future<std::string> output_stream;
 
-            // cat /sys/module/ipv6/parameters/disable
-            auto error = Gadgetron::Process::system(
-                boost::process::search_path("cat"),
-                boost::process::args={"/sys/module/ipv6/parameters/disable"},
-                boost::process::std_in.close(),
-                boost::process::std_out > output_stream,
-                boost::process::std_err > boost::process::null
-            );
-
-            if (!error) {
-                auto disabled = std::stoi(output_stream.get());
-
-                if (!disabled) {
-                    return boost::asio::ip::tcp::v6();
-                }
-            }
-
-            GWARN_STREAM("IPv6 not supported by operating system; falling back to IPv4.")
-            return boost::asio::ip::tcp::v4();
-#endif
-            return boost::asio::ip::tcp::v6();
-        }
-        const boost::asio::ip::tcp gadgetron_tcp_protocol = get_max_tcp_protocol();
-    }
-
-    boost::asio::ip::tcp tcp_protocol() { return gadgetron_tcp_protocol; }
-    }
+} // namespace

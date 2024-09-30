@@ -31,7 +31,7 @@ set(test_src_files
         nhlbi_compression_tests.cpp
         mri_core_stream_test.cpp
         gadgets/setup_gadget.h 
-        gadgets/AcquisitionAccumulateTrigget_test.cpp 
+        gadgets/AcquisitionAccumulateTrigger_test.cpp 
         #gadgets/FlagTriggerParsing_test.cpp   # TODO: Disabled because not integration tested
     )
 
@@ -45,7 +45,7 @@ set(test_src_files ${test_src_files}
         cuNDArray_operators_test.cpp
         cuNDArray_blas_test.cpp
         cuNDArray_utils_test.cpp
-        #        vector_td_test.cpp
+        #        vector_td_test.cpp     # TODO: Unsure why this was disabled
         cuVector_td_test_kernels.h
         cuVector_td_test_kernels.cu
         cuNDFFT_test.cpp
@@ -63,8 +63,6 @@ target_link_libraries(test_all gadgetron_toolbox_gpu)
 endif ()
 target_link_libraries(test_all
         gadgetron_core
-        #gadgetron_core_readers
-        #gadgetron_core_writers
         gadgetron_mricore
         gadgetron_toolbox_cpucore
         gadgetron_toolbox_cpucore_math

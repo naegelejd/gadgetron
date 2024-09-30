@@ -1,9 +1,11 @@
 #pragma once
 
-#include <array>
-#include <iostream> /** TODO: Delete */
-
 #include "hoNDArray.h"
+
+#include <array>
+
+#include <xtensor/xfixed.hpp>
+
 
 namespace yardl {
 
@@ -92,7 +94,6 @@ using nested_initializer_list_t = typename nested_initializer_list<T, I>::type;
 
 template <class T, class S>
 inline void nested_copy(T&& iter, S const& s) {
-  // std::cout << "Copying " << (&s) << " to " << iter << std::endl;
   *iter++ = s;
 }
 
@@ -112,39 +113,29 @@ inline void nested_copy(T&& iter, std::initializer_list<S> s) {
  * @tparam T the element type
  * @tparam Dims the array dimensions
  */
-// template <typename T, size_t... Dims>
-// using FixedNDArray = Gadgetron::hoNDArray<T>;
 template <typename T, size_t... Dims>
-class FixedNDArray : public Gadgetron::hoNDArray<T> {
-  using BaseType = Gadgetron::hoNDArray<T>;
+using FixedNDArray = xt::xtensor_fixed<T, xt::xshape<Dims...>,
+                                       xt::layout_type::row_major, false>;
 
- public:
-  FixedNDArray()
-      : BaseType() {
-    auto shape = std::vector<size_t>{Dims...};
-    this->create(shape);
-  }
+template <typename T, size_t... Dims>
+size_t size(FixedNDArray<T, Dims...> const& arr) { return arr.size(); }
 
-  FixedNDArray(detail::nested_initializer_list_t<T, sizeof...(Dims)> t)
-      : FixedNDArray() {
-    // if (!detail::check_initializer_list_shape<sizeof...(Dims)>::run(t, this->get_shape())) {
-    //   throw std::runtime_error("Initializer list shape does not match FixedNDArray shape");
-    // }
-    auto shape = detail::initialize_shape<std::vector<size_t>>(t);
-    if (shape != this->dimensions()) {
-      throw std::runtime_error("Initializer list shape does not match FixedNDArray shape");
-    }
-    detail::nested_copy(this->begin(), t);
-  }
+template <typename T, size_t... Dims>
+size_t dimension(FixedNDArray<T, Dims...> const& arr) { return arr.dimension(); }
 
-  bool operator==(FixedNDArray const& other) const {
-    return BaseType::operator==(other);
-  }
+template <typename T, size_t... Dims>
+std::vector<size_t> shape(FixedNDArray<T, Dims...> const& arr) { return arr.shape(); }
 
-  bool operator!=(FixedNDArray const& other) const {
-    return BaseType::operator!=(other);
-  }
-};
+template <typename T, size_t... Dims>
+size_t shape(FixedNDArray<T, Dims...> const& arr, size_t dim) { return arr.shape(dim); }
+
+template <typename T, size_t... Dims>
+T* dataptr(FixedNDArray<T, Dims...>& arr) { return arr.data(); }
+template <typename T, size_t... Dims>
+T const* dataptr(FixedNDArray<T, Dims...> const& arr) { return arr.data(); }
+
+template <typename T, size_t... Dims, class... Args>
+T const& at(FixedNDArray<T, Dims...> const& arr, Args... idx) { return arr.at(idx...); }
 
 /**
  * @brief  A multidimensional array where the number of dimensions
@@ -153,12 +144,9 @@ class FixedNDArray : public Gadgetron::hoNDArray<T> {
  * @tparam T the element type
  * @tparam N the number of dimensions
  */
-// template <typename T, size_t N>
-// using NDArray = Gadgetron::hoNDArray<T>;
 template <typename T, size_t N>
 class NDArray : public Gadgetron::hoNDArray<T> {
   using BaseType = Gadgetron::hoNDArray<T>;
-  // using Gadgetron::hoNDArray<T>::hoNDArray;
 
  public:
   NDArray()
@@ -197,8 +185,6 @@ class NDArray : public Gadgetron::hoNDArray<T> {
  *
  * @tparam T the element type
  */
-// template <typename T>
-// using DynamicNDArray = Gadgetron::hoNDArray<T>;
 template <typename T>
 class DynamicNDArray : public Gadgetron::hoNDArray<T> {
   using BaseType = Gadgetron::hoNDArray<T>;
@@ -207,16 +193,6 @@ class DynamicNDArray : public Gadgetron::hoNDArray<T> {
   DynamicNDArray()
       : BaseType() {}
 
-  // template <size_t N>
-  // DynamicNDArray(Gadgetron::detail::nested_initializer_list_t<T, N> t)
-  //     : BaseType() {
-  //   auto shape = Gadgetron::initialize_shape<std::vector<size_t>>(t);
-  //   this->create(shape);
-  //   Gadgetron::detail::nested_copy(this->begin(), t);
-  // }
-  /** TODO: There must be a way to simplify this... or perhaps not.
-   * Even xtensor implements the first FIVE of these constructors...
-   */
   DynamicNDArray(detail::nested_initializer_list_t<T, 1> t)
       : BaseType() {
     auto shape = detail::initialize_shape<std::vector<size_t>>(t);
@@ -275,7 +251,6 @@ std::vector<size_t> shape(Gadgetron::hoNDArray<T> const& arr) {
 
 template <typename T>
 size_t shape(Gadgetron::hoNDArray<T> const& arr, size_t dim) {
-  // return arr.get_size(dim);
   return arr.get_size(arr.get_number_of_dimensions() - 1 - dim);
 }
 

@@ -1,13 +1,10 @@
 #pragma once
 
 #include <ostream>
-#include <boost/asio/ip/tcp.hpp>
+
 namespace Gadgetron::Server::Info {
 
     void print_system_information(std::ostream &);
-
-
-    boost::asio::ip::tcp tcp_protocol();
 
     std::string gadgetron_version();
     std::string gadgetron_build();

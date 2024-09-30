@@ -77,13 +77,16 @@ def check_requirements(spec: Spec, ignore_requirements: Set[str], run_tags: Set[
         def has_more_than(target):
             return lambda value: parse_memory(str(target)) <= parse_memory(value)
 
+        def is_positive(value):
+            return int(value) > 0
+
         def each(validator):
             return lambda values: all([validator(value) for value in values])
 
         rules = [
             ('system_memory', lambda req: Rule('memory', has_more_than(req), "Not enough system memory.")),
-            ('gpu_support', lambda req: Rule('cuda', is_enabled, "CUDA support required.")),
-            ('gpu_devices', lambda req: Rule('cuda_devices', each(has_more_than(req)), "Not enough CUDA devices.")),
+            ('gpu_support', lambda req: Rule('cuda_support', is_enabled, "CUDA support required.")),
+            ('gpu_support', lambda req: Rule('cuda_devices', is_positive, "Not enough CUDA devices.")),
             ('gpu_memory', lambda req: Rule('cuda_memory', each(has_more_than(req)), "Not enough graphics memory."))
         ]
 
@@ -197,12 +200,12 @@ def load_gadgetron_capabilities() -> Dict[str, str]:
         'version': "Version",
         'build': "Git SHA1",
         'memory': "System Memory size",
-        'cuda': "CUDA Support"
+        'cuda_support': "CUDA Support",
+        'cuda_devices': "CUDA Device count"
     }
 
     plural_capability_markers = {
-        'cuda_memory': "Total amount of global GPU memory",
-        'cuda_devices': "Number of CUDA capable devices"
+        'cuda_memory': "CUDA Device Memory size",
     }
 
     def find_value(marker):
@@ -431,7 +434,7 @@ class Spec():
     def fromfile(filename: str) -> Spec:
         with open(filename, 'r') as file:
             parsed = yaml.safe_load(file)
-            name, _ = os.path.splitext(os.path.basename(filename))
+            name = os.path.relpath(filename)
             spec = Spec(name=name)
 
             tags = parsed.get('tags', None)
