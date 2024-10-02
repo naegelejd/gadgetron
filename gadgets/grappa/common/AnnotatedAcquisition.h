@@ -10,7 +10,7 @@ namespace Gadgetron::Grappa {
         std::vector<uint64_t> reordering;
     };
 
-    /** TODO Joe: The ChannelReorderer is no longer used, so all Gadgets using this
+    /** TODO: The ChannelReorderer is no longer used, so all Gadgets using this
      *      AnnotatedAcquisition can be updated to just use Core::Acquisition.
      */
     using AnnotatedAcquisition = Core::tuple<Core::Acquisition, Core::optional<ChannelAnnotation>>;

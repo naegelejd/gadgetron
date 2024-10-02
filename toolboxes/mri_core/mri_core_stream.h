@@ -1,15 +1,9 @@
-
-
 /** \file   mri_core_stream.h
     \brief  Implementation a class to help stream out the reconstruction intermediate data and results
 
-    The hoNDArray is streamed out as the IO class utility function does. 
+    The images, headers, and hoNDArrays are streamed out using the MRD protocol.
 
-    The images and headers are streamed out as  the ISMRMRD image and header.
-
-    ToBeImplemented: The waveforms are streamed out as the ISMRMRD waveform. 
-
-    All ismrmrd structures follow the convention to use the ISMRMRD::ProtocolSerializer and ProtocolDeserializer.
+    ToBeImplemented: The waveforms are streamed out as the MRD Waveform. 
 
     \author Hui Xue
 */
@@ -17,16 +11,14 @@
 #pragma once
 
 #include <fstream>
-#include "ismrmrd/ismrmrd.h"
-#include "ismrmrd/xml.h"
-#include "ismrmrd/meta.h"
-#include "ismrmrd/serialization.h"
-#include "ismrmrd/serialization_iostream.h"
+
 #include "hoNDArray.h"
 #include "mri_core_def.h"
 #include "mri_core_data.h"
 #include "io/primitives.h"
-#include "io/ismrmrd_types.h"
+
+#include "mrd/binary/protocols.h"
+
 
 namespace Gadgetron 
 {
@@ -46,7 +38,7 @@ namespace Gadgetron
 
         void close_stream_buffer();
 
-        void stream_ismrmrd_header(const ISMRMRD::IsmrmrdHeader& hdr);
+        void stream_mrd_header(const mrd::Header& hdr);
 
         // stream of ND array buffer
         template <typename DataType> 
@@ -59,20 +51,13 @@ namespace Gadgetron
                 if (!this->buffer_names_[name].second)
                 {
                     GDEBUG_STREAM("Generic recon, create the stream for the first time - " << buf_name);
-                    this->buffer_names_[name].second = std::make_shared<std::ofstream>(std::ofstream(buf_name, std::ios::out | std::ios::binary | std::ios::app));
+                    this->buffer_names_[name].second = std::make_shared<mrd::binary::MrdWriter>(buf_name);
+                    this->buffer_names_[name].second->WriteHeader(std::nullopt);
                 }
 
-                std::ofstream& os = *this->buffer_names_[name].second;
-                if (os.is_open())
-                {
-                    GDEBUG_STREAM("Generic recon, continue streaming the data to the buffer " << buf_name);
-                    Gadgetron::Core::IO::write(os, data);
-                    os.flush();
-                }
-                else
-                {
-                    GERROR_STREAM("Generic recon, already created stream is not in open status - " << buf_name << " ... ");
-                }
+                auto& writer = *this->buffer_names_[name].second;
+                GDEBUG_STREAM("Generic recon, continue streaming the data to the buffer " << buf_name);
+                writer.WriteData(mrd::ArrayComplexFloat(data));
             }
             else
             {
@@ -80,30 +65,16 @@ namespace Gadgetron
             }
         }
 
-        // stream to ismrmrd image stream, e.g. for coil maps, g-maps and reconed images
-
+        // stream to mrd image stream, e.g. for coil maps, g-maps and reconed images
         template <typename DataType> 
-        void stream_images(std::ofstream& os, const std::vector< ISMRMRD::Image<DataType> >& ismrmrd_images)
+        void stream_to_mrd_image_buffer(const std::string& name, const hoNDArray<DataType>& img, const hoNDArray< mrd::ImageHeader >& headers, const hoNDArray< mrd::ImageMeta >& meta)
         {
-            ISMRMRD::OStreamView ws(os);
-            ISMRMRD::ProtocolSerializer serializer(ws);
-
-            for (auto im : ismrmrd_images)
-            {
-                serializer.serialize(im);
-            }
-            os.flush();
-        }
-
-        template <typename DataType> 
-        void stream_to_ismrmrd_image_buffer(const std::string& name, const hoNDArray<DataType>& img, const hoNDArray< ISMRMRD::ImageHeader >& headers, const std::vector< ISMRMRD::MetaContainer >& meta)
-        {
-            if (this->buffer_names_.find(name)!=this->buffer_names_.end())
+            if (this->buffer_names_.find(name) != this->buffer_names_.end())
             {
                 std::string buf_name = this->buffer_names_[name].first;
 
-                // convert images to one or more ismrmrd images
-                std::vector< ISMRMRD::Image<DataType> > ismrmrd_images;
+                // convert images to one or more mrd Images
+                std::vector< mrd::Image<DataType> > mrd_images;
 
                 size_t RO = img.get_size(0);
                 size_t E1 = img.get_size(1);
@@ -114,9 +85,9 @@ namespace Gadgetron
                 size_t S = img.get_size(5);
                 size_t SLC = img.get_size(6);
 
-                GDEBUG_STREAM("Generic recon, convert recon images to ismrmd images for " << name << " [RO E1 E2 CHA N S SLC] = [" << RO << " " << E1 << " " << E2 << " " << CHA << " " << N << " " << S << " " << SLC << "] - " << buf_name);
+                GDEBUG_STREAM("Generic recon, convert recon images to mrd images for " << name << " [RO E1 E2 CHA N S SLC] = [" << RO << " " << E1 << " " << E2 << " " << CHA << " " << N << " " << S << " " << SLC << "] - " << buf_name);
 
-                ismrmrd_images.resize(N*S*SLC);
+                mrd_images.resize(N*S*SLC);
 
                 for (auto slc=0; slc<SLC; slc++)
                 {
@@ -126,36 +97,28 @@ namespace Gadgetron
                         {
                             size_t ind = n+s*N+slc*N*S;
 
-                            ISMRMRD::Image<DataType>& a_img = ismrmrd_images[ind];
+                            mrd::Image<DataType>& a_img = mrd_images[ind];
 
-                            a_img.resize(RO, E1, E2, CHA);
-                            memcpy(a_img.getDataPtr(), &img(0, 0, 0, 0, n, s, slc), sizeof(DataType)*RO*E1*E2*CHA);
+                            a_img.data.create(RO, E1, E2, CHA);
+                            memcpy(a_img.data.data(), &img(0, 0, 0, 0, n, s, slc), sizeof(DataType)*RO*E1*E2*CHA);
 
-                            ISMRMRD::ImageHeader hd = headers(n, s, slc);
-                            hd.data_type = Gadgetron::Core::IO::ismrmrd_data_type<DataType>();
-                            a_img.setHead(hd);
-
-                            std::ostringstream str;
-                            ISMRMRD::serialize(meta[ind], str);
-                            a_img.setAttributeString(str.str());
+                            a_img.head = headers(n, s, slc);
+                            a_img.meta = meta(n, s, slc);
                         }
                     }
                 }
 
                 if (!this->buffer_names_[name].second)
                 {
-                    GDEBUG_STREAM("Generic recon, create the ismrmrd image stream for the first time - " << buf_name);
-                    this->buffer_names_[name].second = std::make_shared<std::ofstream>(std::ofstream(buf_name, std::ios::out | std::ios::binary | std::ios::app));
+                    GDEBUG_STREAM("Generic recon, create the mrd image stream for the first time - " << buf_name);
+                    this->buffer_names_[name].second = std::make_shared<mrd::binary::MrdWriter>(buf_name);
+                    this->buffer_names_[name].second->WriteHeader(std::nullopt);
                 }
 
-                if (this->buffer_names_[name].second->is_open())
+                GDEBUG_STREAM("Generic recon, continue streaming the data to the mrd image buffer " << buf_name << " for " << mrd_images.size() << " images ...");
+                for (auto im : mrd_images)
                 {
-                    GDEBUG_STREAM("Generic recon, continue streaming the data to the ismrmrd image buffer " << buf_name << " for " << ismrmrd_images.size() << " images ...");
-                    stream_images(*this->buffer_names_[name].second, ismrmrd_images);
-                }
-                else
-                {
-                    GERROR_STREAM("Generic recon, already created ismrmrd image stream is not in open status - " << buf_name << " ... ");
+                    this->buffer_names_[name].second->WriteData(im);
                 }
             }
             else
@@ -165,6 +128,6 @@ namespace Gadgetron
         }
 
     protected:
-        std::map<std::string, std::pair<std::string, std::shared_ptr<std::ofstream> > > buffer_names_;
+        std::map<std::string, std::pair<std::string, std::shared_ptr<mrd::binary::MrdWriter> > > buffer_names_;
     };
 }

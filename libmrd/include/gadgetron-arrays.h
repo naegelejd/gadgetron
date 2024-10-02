@@ -118,24 +118,24 @@ using FixedNDArray = xt::xtensor_fixed<T, xt::xshape<Dims...>,
                                        xt::layout_type::row_major, false>;
 
 template <typename T, size_t... Dims>
-size_t size(FixedNDArray<T, Dims...> const& arr) { return arr.size(); }
+constexpr size_t size(FixedNDArray<T, Dims...> const& arr) { return arr.size(); }
 
 template <typename T, size_t... Dims>
-size_t dimension(FixedNDArray<T, Dims...> const& arr) { return arr.dimension(); }
+constexpr size_t dimension(FixedNDArray<T, Dims...> const& arr) { return arr.dimension(); }
 
 template <typename T, size_t... Dims>
-std::vector<size_t> shape(FixedNDArray<T, Dims...> const& arr) { return arr.shape(); }
+constexpr std::array<size_t, sizeof...(Dims)> shape(FixedNDArray<T, Dims...> const& arr) { return arr.shape(); }
 
 template <typename T, size_t... Dims>
-size_t shape(FixedNDArray<T, Dims...> const& arr, size_t dim) { return arr.shape(dim); }
+constexpr size_t shape(FixedNDArray<T, Dims...> const& arr, size_t dim) { return arr.shape(dim); }
 
 template <typename T, size_t... Dims>
-T* dataptr(FixedNDArray<T, Dims...>& arr) { return arr.data(); }
+constexpr T* dataptr(FixedNDArray<T, Dims...>& arr) { return arr.data(); }
 template <typename T, size_t... Dims>
-T const* dataptr(FixedNDArray<T, Dims...> const& arr) { return arr.data(); }
+constexpr T const* dataptr(FixedNDArray<T, Dims...> const& arr) { return arr.data(); }
 
 template <typename T, size_t... Dims, class... Args>
-T const& at(FixedNDArray<T, Dims...> const& arr, Args... idx) { return arr.at(idx...); }
+constexpr T const& at(FixedNDArray<T, Dims...> const& arr, Args... idx) { return arr.at(idx...); }
 
 /**
  * @brief  A multidimensional array where the number of dimensions
@@ -149,8 +149,7 @@ class NDArray : public Gadgetron::hoNDArray<T> {
   using BaseType = Gadgetron::hoNDArray<T>;
 
  public:
-  NDArray()
-      : BaseType() {}
+  NDArray() : BaseType() {}
 
   NDArray(BaseType const& other) : BaseType(other) {
       if (this->get_number_of_dimensions() != N) {
@@ -158,15 +157,13 @@ class NDArray : public Gadgetron::hoNDArray<T> {
       }
   }
 
-  NDArray(detail::nested_initializer_list_t<T, N> t)
-      : BaseType() {
+  NDArray(detail::nested_initializer_list_t<T, N> t) : BaseType() {
     auto shape = detail::initialize_shape<std::vector<size_t>>(t);
     this->create(detail::reversed(shape));
     detail::nested_copy(this->begin(), t);
   }
 
-  explicit NDArray(std::vector<size_t> const& shape)
-      : BaseType() {
+  explicit NDArray(std::vector<size_t> const& shape) : BaseType() {
     this->create(detail::reversed(shape));
   }
 
@@ -190,36 +187,32 @@ class DynamicNDArray : public Gadgetron::hoNDArray<T> {
   using BaseType = Gadgetron::hoNDArray<T>;
 
  public:
-  DynamicNDArray()
-      : BaseType() {}
+  DynamicNDArray() : BaseType() {}
 
-  DynamicNDArray(detail::nested_initializer_list_t<T, 1> t)
-      : BaseType() {
+  DynamicNDArray(BaseType const& other) : BaseType(other) {}
+
+  DynamicNDArray(detail::nested_initializer_list_t<T, 1> t) : BaseType() {
     auto shape = detail::initialize_shape<std::vector<size_t>>(t);
     this->create(detail::reversed(shape));
     detail::nested_copy(this->begin(), t);
   }
-  DynamicNDArray(detail::nested_initializer_list_t<T, 2> t)
-      : BaseType() {
+  DynamicNDArray(detail::nested_initializer_list_t<T, 2> t) : BaseType() {
     auto shape = detail::initialize_shape<std::vector<size_t>>(t);
     this->create(detail::reversed(shape));
     detail::nested_copy(this->begin(), t);
   }
-  DynamicNDArray(detail::nested_initializer_list_t<T, 3> t)
-      : BaseType() {
+  DynamicNDArray(detail::nested_initializer_list_t<T, 3> t) : BaseType() {
     auto shape = detail::initialize_shape<std::vector<size_t>>(t);
     this->create(detail::reversed(shape));
     detail::nested_copy(this->begin(), t);
   }
-  DynamicNDArray(detail::nested_initializer_list_t<T, 4> t)
-      : BaseType() {
+  DynamicNDArray(detail::nested_initializer_list_t<T, 4> t) : BaseType() {
     auto shape = detail::initialize_shape<std::vector<size_t>>(t);
     this->create(detail::reversed(shape));
     detail::nested_copy(this->begin(), t);
   }
 
-  explicit DynamicNDArray(std::vector<size_t> const& shape)
-      : BaseType() {
+  explicit DynamicNDArray(std::vector<size_t> const& shape) : BaseType() {
     this->create(detail::reversed(shape));
   }
 

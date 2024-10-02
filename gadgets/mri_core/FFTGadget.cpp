@@ -33,10 +33,10 @@ namespace Gadgetron{
         auto& imghdr = image.head;
         image.data.create(img_dims);
 
-        /** TODO Joe: At least leave a note here that this Gadget does NOT copy all header fields
+        /** TODO: This Gadget does NOT copy all Acquisition header fields to the Image header!
          *  e.g. measurement_uid and physiology_time_stamp are missing.
          * 
-         *  HOWEVER, the (single) integration test (epi_2d.cfg) using this Gadget expects these fields to be empty.
+         *  HOWEVER, the e2e test (epi_2d.yml) using this Gadget expects these fields to be empty.
          */
         imghdr.image_type = mrd::ImageType::kComplex;
 

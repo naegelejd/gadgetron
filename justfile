@@ -4,7 +4,7 @@ default: build
 configure:
     mkdir -p build/ ;\
     cd build/ ;\
-    cmake -GNinja -D CMAKE_BUILD_TYPE=Release -D USE_MKL=ON -D BUILD_DOCUMENTATION=On -D CMAKE_INSTALL_PREFIX=${CONDA_PREFIX} ../
+    cmake -GNinja -D CMAKE_BUILD_TYPE=Release -D USE_CUDA=ON -D USE_MKL=ON -D BUILD_DOCUMENTATION=OFF -D CMAKE_INSTALL_PREFIX=${CONDA_PREFIX} ../
 
 build: configure
     cd build && ninja

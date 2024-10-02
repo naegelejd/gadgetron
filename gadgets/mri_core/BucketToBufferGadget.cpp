@@ -53,10 +53,7 @@ namespace Gadgetron {
                 uint32_t espace       = acq.head.encoding_space_ref.value_or(0);
                 mrd::ReconBit& rbit = getRBit(recon_data_buffers, key, espace);
                 if (!rbit.ref) {
-                    /** TODO Joe: Combine makeDataBuffer and createSamplingDescription */
                     rbit.ref = makeDataBuffer(acq, header.encoding[espace], acq_bucket.refstats[espace], true);
-                    rbit.ref->sampling = createSamplingDescription(
-                        header.encoding[espace], acq_bucket.refstats[espace], acq, true);
                 }
 
                 add_acquisition(*rbit.ref, acq, header.encoding[espace], acq_bucket.refstats[espace], true);
@@ -68,10 +65,7 @@ namespace Gadgetron {
                 uint32_t espace       = acq.head.encoding_space_ref.value_or(0);
                 mrd::ReconBit& rbit = getRBit(recon_data_buffers, key, espace);
                 if (rbit.data.data.empty()) {
-                    /** TODO Joe: Combine makeDataBuffer and createSamplingDescription */
                     rbit.data = makeDataBuffer(acq, header.encoding[espace], acq_bucket.datastats[espace], false);
-                    rbit.data.sampling = createSamplingDescription(
-                        header.encoding[espace], acq_bucket.datastats[espace], acq, false);
                 }
 
                 add_acquisition(rbit.data, acq, header.encoding[espace], acq_bucket.datastats[espace], false);
@@ -147,7 +141,7 @@ namespace Gadgetron {
             case BucketToBufferGadget::Dimension::repetition:
                 return stats.repetition.maximum - stats.repetition.minimum + 1;
             case BucketToBufferGadget::Dimension::set: return stats.set.maximum - stats.set.minimum + 1;
-            case BucketToBufferGadget::Dimension::segment: // TODO Joe: Intentional fallthrough? See 3b643b814b3b9a88c7dbc48879471ce718c7ab56
+            case BucketToBufferGadget::Dimension::segment: // TODO: Is this an intentional fallthrough? See 3b643b814b3b9a88c7dbc48879471ce718c7ab56
             case BucketToBufferGadget::Dimension::average: return stats.average.maximum - stats.average.minimum + 1;
             case BucketToBufferGadget::Dimension::slice: return stats.slice.maximum - stats.slice.minimum + 1;
             case BucketToBufferGadget::Dimension::none:; return 1;
@@ -182,8 +176,6 @@ namespace Gadgetron {
 
         // Allocate the array for the headers
         buffer.headers = hoNDArray<mrd::AcquisitionHeader>(NE1, NE2, NN, NS, NLOC);
-        /** NOTE: Can't "clear" the Headers array because it will erase the yardl::FixedNDArray (hoNDArray) members */
-        // clear(&buffer.headers);
 
         // Allocate the array for the trajectories
         if (acq.TrajectoryDimensions() > 0 && acq.TrajectorySamples() > 0) {
@@ -192,6 +184,10 @@ namespace Gadgetron {
             buffer.trajectory = hoNDArray<float>(samples, basis, NE1, NE2, NN, NS, NLOC);
             clear(&buffer.trajectory);
         }
+
+        // Add the sampling description
+        buffer.sampling = createSamplingDescription(encoding, stats, acq, forref);
+
         return buffer;
     }
 
@@ -219,7 +215,7 @@ namespace Gadgetron {
         const mrd::EncodingType& encoding, const AcquisitionBucketStats& stats, bool forref) const {
         uint32_t NE2;
 
-        /** TODO Joe: This is ugly... */
+        /** TODO: This is ugly... */
 
         if (encoding.trajectory == mrd::Trajectory::kCartesian || encoding.trajectory == mrd::Trajectory::kEpi) {
             if (encoding.parallel_imaging) {
@@ -253,7 +249,7 @@ namespace Gadgetron {
         const mrd::EncodingType& encoding, const AcquisitionBucketStats& stats, bool forref) const {
         uint32_t NE1;
 
-        /** TODO Joe: This is also ugly... */
+        /** TODO: This is also ugly... */
 
         if (encoding.trajectory == mrd::Trajectory::kCartesian || encoding.trajectory == mrd::Trajectory::kEpi) {
             if (encoding.parallel_imaging) {

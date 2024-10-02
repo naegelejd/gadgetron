@@ -83,12 +83,10 @@ namespace Gadgetron {
         if (verbose.value())
         {
             GDEBUG_STREAM("----> GenericReconKSpaceFilteringGadget::process(...) has been called " << process_called_times_ << " times ...");
-            /** TODO Joe: Disabled this... do we really want to "print" the entire ImageArray data? */
-            // std::stringstream os;
-            // recon_res_->data_.print(os);
-            // GDEBUG_STREAM(os.str());
+            std::stringstream os;
+            recon_res_->data.print(os);
+            GDEBUG_STREAM(os.str());
         }
-        GDEBUG_CONDITION_STREAM(true, "Joe: ----> GenericReconKSpaceFilteringGadget::process(...) has been called " << process_called_times_ << " times ...");
 
         // some images do not need kspace filter
         if (recon_res_->meta[0].count(skip_processing_meta_field) && recon_res_->meta[0][skip_processing_meta_field].size() > 0)
@@ -138,8 +136,6 @@ namespace Gadgetron {
             sampling_limits.ro.maximum    = RO - 1;
         }
 
-        GDEBUG_CONDITION_STREAM(true, "Joe: Finished setting sampling_limits.ro");
-
         if (recon_res_->meta[0].count("sampling_limits_E1")) {
             auto& sl = recon_res_->meta[0]["sampling_limits_E1"];
             sampling_limits.e1.minimum = (uint32_t)std::get<long>(sl[0]);
@@ -154,8 +150,6 @@ namespace Gadgetron {
             sampling_limits.e1.maximum    = E1 - 1;
         }
 
-        GDEBUG_CONDITION_STREAM(true, "Joe: Finished setting sampling_limits.e1");
-
         if (recon_res_->meta[0].count("sampling_limits_E2")) {
             auto& sl = recon_res_->meta[0]["sampling_limits_E2"];
             sampling_limits.e2.minimum = (uint32_t)std::get<long>(sl[0]);
@@ -169,8 +163,6 @@ namespace Gadgetron {
             sampling_limits.e2.center = E2 / 2;
             sampling_limits.e2.maximum    = E2 - 1;
         }
-
-        GDEBUG_CONDITION_STREAM(true, "Joe: Finished setting sampling_limits.e2");
 
         // ----------------------------------------------------------
         // filter create if needed

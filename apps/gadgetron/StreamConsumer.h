@@ -145,16 +145,6 @@ public:
                 Message msg(std::move(arg));
                 input_channel.output.push_message(std::move(msg));
             }, stream_item);
-
-            /** TODO Joe: If we want to "check" that we're sending valid data types, we might need
-             *  to exhaust the variants of mrd::StreamItem... e.g.
-             * 
-            if (auto* v = std::get_if<mrd::Acquisition>(&stream_item)) {
-                Message msg(std::move(*v));
-                input_channel.output.push_message(std::move(msg));
-            } else if (...) {}
-             * 
-             */
         }
 
         mrd_reader.Close();

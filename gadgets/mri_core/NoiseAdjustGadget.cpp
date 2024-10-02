@@ -45,13 +45,6 @@ namespace Gadgetron {
             }
         }
 
-        std::string to_string(const std::vector<ISMRMRD::CoilLabel>& coils) {
-            std::stringstream sstream;
-            for (auto i = 0u; i < coils.size(); i++)
-                sstream << "Coil " << i << " - " << coils[i].coilNumber << " - " << coils[i].coilName << std::endl;
-            return sstream.str();
-        }
-
         // compare coil labels of noise and data
         // if number of channels are different, return false and order.size()==0
         // if any channels in noise cannot be found in data, return false and order.size()==0
@@ -212,12 +205,6 @@ namespace Gadgetron {
             noise_covariance_out = context.parameters.at("noisecovarianceout");
             GDEBUG_STREAM("Output noise covariance matrix is provided as a parameter: " << noise_covariance_out);
         }
-
-        /** TODO Joe: Since upgrading to MRDv2, this NoiseAdjustGadget no longer uses the MRD Storage Server
-         * Therefore, one of the following must be set as a parameter to Gadgetron:
-         *  1.  noise_covariance_in (path to previously-saved noise covariance matrix)
-         *  2.  noise_covariance_out (path to save computed noise covariance matrix)
-         */
         
         noisehandler = load_or_gather();
     }

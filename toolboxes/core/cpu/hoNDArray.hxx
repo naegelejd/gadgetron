@@ -720,58 +720,6 @@ namespace Gadgetron {
         }
     }
 
-    /** TODO Joe: Remove these two member functions vvvvv */
-    // template<typename T>
-    // bool hoNDArray<T>::serialize(char *&buf, size_t &len) const {
-    //     if (!Gadgetron::Core::is_trivially_copyable_v<T> ) throw std::runtime_error("Serialize only works for trivial types");
-
-    //     if (buf != NULL)
-    //         delete[] buf;
-
-    //     size_t NDim = dimensions_.size();
-
-    //     // number of dimensions + dimension vector + contents
-    //     len = sizeof(size_t) + sizeof(size_t) * NDim + sizeof(T) * elements_;
-
-    //     buf = new char[len];
-
-
-    //     memcpy(buf, &NDim, sizeof(size_t));
-    //     if (NDim > 0) {
-    //         memcpy(buf + sizeof(size_t), &(dimensions_[0]), sizeof(size_t) * NDim);
-    //         memcpy(buf + sizeof(size_t) + sizeof(size_t) * NDim, this->data_, sizeof(T) * elements_);
-    //     }
-
-    //     return true; // Temporary. Should not be a boolean function.
-    // }
-
-    // template<typename T>
-    // bool hoNDArray<T>::deserialize(char *buf, size_t &len) {
-    //     if constexpr (!Gadgetron::Core::is_trivially_copyable_v<T> ) {
-    //         throw std::runtime_error("deserialize only works for trivial types");
-    //         return false;
-    //     }
-
-    //     size_t NDim;
-    //     memcpy(&NDim, buf, sizeof(size_t));
-
-    //     if (NDim > 0) {
-    //         std::vector<size_t> dimensions(NDim);
-    //         memcpy(&dimensions[0], buf + sizeof(size_t), sizeof(size_t) * NDim);
-
-    //         // allocate memory
-    //         this->create(dimensions);
-
-    //         // copy the content
-    //         memcpy(this->data_, buf + sizeof(size_t) + sizeof(size_t) * NDim, sizeof(T) * elements_);
-    //     } else {
-    //         this->clear();
-    //     }
-
-    //     len = sizeof(size_t) + sizeof(size_t) * NDim + sizeof(T) * elements_;
-    //     return true; // Temporary. Should not be a boolean function.
-    // }
-
     template<typename T>
     bool hoNDArray<T>::operator==(const hoNDArray &rhs) const {
         auto result = this->dimensions_equal(rhs.dimensions());

@@ -37,10 +37,6 @@ AccumulatorGadget::AccumulatorGadget(const Core::Context& context, const Core::G
     mrd::EncodingSpaceType r_space = h.encoding[0].recon_space;
     mrd::EncodingLimitsType e_limits = h.encoding[0].encoding_limits;
 
-    /** TODO Joe: Dimensions are transposed here (and everywhere else in Gadgetron/mri_core??)
-     * 
-     * I think they need to be "reversed" to match the MRDv2 convention...
-     */
     GDEBUG("Matrix size: %d, %d, %d\n", r_space.matrix_size.x, e_space.matrix_size.y, e_space.matrix_size.z);
     dimensions_.push_back(r_space.matrix_size.x);
     dimensions_.push_back(e_space.matrix_size.y);

@@ -44,7 +44,7 @@ namespace Gadgetron {
             }
         }
 
-        /** TODO Joe:
+        /** NOTE:
          * 
          * This PCACoilGadget used to have a GADGET_PROPERTY "present_uncombined_channels" that was
          * updated here to `uncombined_channels_.size()`, then later referenced by the NoiseAdjustGadget

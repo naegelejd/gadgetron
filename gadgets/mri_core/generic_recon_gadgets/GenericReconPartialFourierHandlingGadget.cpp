@@ -89,8 +89,6 @@ namespace Gadgetron {
             sampling_limits.ro.maximum    = RO - 1;
         }
 
-        GDEBUG_CONDITION_STREAM(true, "Joe: Finished setting sampling_limits.ro");
-
         if (recon_res.meta[0].count("sampling_limits_E1")) {
             auto& sl = recon_res.meta[0]["sampling_limits_E1"];
             sampling_limits.e1.minimum = (uint32_t)std::get<long>(sl[0]);
@@ -104,8 +102,6 @@ namespace Gadgetron {
             sampling_limits.e1.center = E1 / 2;
             sampling_limits.e1.maximum    = E1 - 1;
         }
-
-        GDEBUG_CONDITION_STREAM(true, "Joe: Finished setting sampling_limits.e1");
 
         if (recon_res.meta[0].count("sampling_limits_E2")) {
             auto& sl = recon_res.meta[0]["sampling_limits_E2"];
@@ -121,7 +117,6 @@ namespace Gadgetron {
             sampling_limits.e2.maximum    = E2 - 1;
         }
 
-        GDEBUG_CONDITION_STREAM(true, "Joe: Finished setting sampling_limits.e2");
         // ----------------------------------------------------------
         // pf kspace sampling range
         // ----------------------------------------------------------
@@ -158,7 +153,6 @@ namespace Gadgetron {
             return recon_res;
         }
 
-        GDEBUG_CONDITION_STREAM(true, "Joe: Performing fft");
         // ----------------------------------------------------------
         // go to kspace
         // ----------------------------------------------------------
@@ -170,13 +164,11 @@ namespace Gadgetron {
             Gadgetron::hoNDFFT<typename realType<T>::Type>::instance()->fft2c(recon_res.data, kspace_buf);
         }
 
-        GDEBUG_CONDITION_STREAM(true, "Joe: Performing partial fourier handling");
         // ----------------------------------------------------------
         // pf handling
         // ----------------------------------------------------------
         auto pf_res = this->perform_partial_fourier_handling(kspace_buf, startRO_, endRO_, startE1_, endE1_, startE2_, endE2_);
 
-        GDEBUG_CONDITION_STREAM(true, "Joe: Performing ifft");
         // ----------------------------------------------------------
         // go back to image domain
         // ----------------------------------------------------------

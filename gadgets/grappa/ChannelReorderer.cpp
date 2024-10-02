@@ -23,14 +23,6 @@ namespace {
 
         for (uint16_t out_idx = 0; out_idx < reordering.size(); out_idx++) {
             auto in_idx = uint16_t(reordering[out_idx]);
-
-            /** TODO Joe: This is not how mrd::AcquisitionHeader channel_order works... */
-            // if (header.isChannelActive(in_idx)) {
-            //     reordered_header.setChannelActive(out_idx);
-            // }
-            // else {
-            //     reordered_header.setChannelNotActive(out_idx);
-            // }
         }
 
         return reordered_header;

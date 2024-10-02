@@ -246,7 +246,7 @@ void PureCmrCartesianKSpaceBinningCineGadget::set_image_header(
                 mrd::ImageHeader& im_header = res.headers(n, s, slc);
                 mrd::ImageMeta& meta    = res.meta(n, s, slc);
 
-                /** TODO Joe: mrd::ImageFlags != mrd::AcquisitionFlags... */
+                /** TODO: mrd::ImageFlags != mrd::AcquisitionFlags... */
                 // im_header.flags           = acq_header.flags;
                 im_header.measurement_uid = acq_header.measurement_uid;
 

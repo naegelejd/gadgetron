@@ -241,7 +241,6 @@ def compute_checksum(filename):
 
 def siemens_to_mrd(input_path, output_path, xml, xsl, meas, dcf):
     # print(f"Converting {input_path} to {output_path}")
-    os.makedirs(os.path.dirname(output_path), exist_ok=True)
 
     tmpfile = 'tmpfile.dat'
     if os.path.exists(tmpfile):

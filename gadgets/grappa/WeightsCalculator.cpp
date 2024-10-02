@@ -93,19 +93,6 @@ namespace {
 
             auto& [position, read_dir, slice_dir,phase_dir] = orientations.at(slice_of(acquisition));
 
-            /** TODO Joe: This no longer works with mrd::AcquisitionHeader */
-            // if (position == to_array<3>(header.position) &&
-            //     read_dir == to_array(header.read_dir) &&
-            //     phase_dir == to_array(header.phase_dir) &&
-            //     slice_dir == to_array(header.slice_dir)) {
-            //     return;
-            // }
-
-            // position = to_array(header.position);
-            // read_dir = to_array(header.read_dir);
-            // phase_dir = to_array(header.phase_dir);
-            // slice_dir = to_array(header.slice_dir);
-
             std::array<float, 3> header_position;
             std::copy(std::begin(header.position), std::end(header.position), std::begin(header_position));
             std::array<float, 3> header_read_dir;

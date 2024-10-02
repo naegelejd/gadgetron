@@ -87,10 +87,9 @@ namespace Gadgetron {
         if (verbose.value())
         {
             GDEBUG_STREAM("----> GenericReconFieldOfViewAdjustmentGadget::process(...) has been called " << process_called_times_ << " times ...");
-            /** TODO Joe: Disabled this... do we really want to "print" the entire ImageArray data? */
-            // std::stringstream os;
-            // recon_res_->data_.print(os);
-            // GDEBUG_STREAM(os.str());
+            std::stringstream os;
+            recon_res_->data.print(os);
+            GDEBUG_STREAM(os.str());
         }
 
         if (!debug_folder_full_path_.empty()) { gt_exporter_.export_array_complex(recon_res_->data, debug_folder_full_path_ + "data_before_FOV_adjustment"); }
@@ -103,8 +102,7 @@ namespace Gadgetron {
 
         if (!debug_folder_full_path_.empty()) { gt_exporter_.export_array_complex(recon_res_->data, debug_folder_full_path_ + "data_after_FOV_adjustment"); }
 
-        /** TODO Joe: Implement */
-        // this->gt_streamer_.stream_to_ismrmrd_image_buffer(GENERIC_RECON_STREAM_RECONED_COMPLEX_IMAGE_AFTER_POSTPROCESSING, recon_res_->data_, recon_res_->headers_, recon_res_->meta_);
+        this->gt_streamer_.stream_to_mrd_image_buffer(GENERIC_RECON_STREAM_RECONED_COMPLEX_IMAGE_AFTER_POSTPROCESSING, recon_res_->data, recon_res_->headers, recon_res_->meta);
 
         GDEBUG_CONDITION_STREAM(verbose.value(), "GenericReconFieldOfViewAdjustmentGadget::process(...) ends ... ");
 
@@ -193,20 +191,15 @@ namespace Gadgetron {
             // if encoded FOV are the same as recon FOV
             if ((std::abs(encodingFOV_RO / 2 - reconFOV_RO)<0.1) && (std::abs(encodingFOV_E1 - reconFOV_E1)<0.1) && (std::abs(encodingFOV_E2 - reconFOV_E2)<0.1))
             {
-                GDEBUG_STREAM("Joe: encoded FOV same as recon FOV...")
-
                 if (RO <= reconSizeRO && E1 <= reconSizeE1 && E2 <= reconSizeE2)
                 {
-                    GDEBUG_STREAM("Joe: incorrect zero_pad_resize...")
-                    /** BUG ALERT
-                     * TODO Joe: This is INCORRECT. The result is stored in `this->res_`, but never used again,
+                    /** BUG ALERT: This is INCORRECT. The result is stored in `this->res_`, but never used again,
                      * so in the end, `recon_res.data` is NOT adjusted
                      */
                     Gadgetron::zero_pad_resize(recon_res.data, reconSizeRO, reconSizeE1, reconSizeE2, res_);
                 }
                 else if (RO >= reconSizeRO && E1 >= reconSizeE1 && E2 >= reconSizeE2)
                 {
-                    GDEBUG_STREAM("Joe: fft, crop, ifft")
                     this->perform_fft(E2, recon_res.data, kspace_buf_);
                     Gadgetron::crop(reconSizeRO, reconSizeE1, reconSizeE2, kspace_buf_, res_);
                     this->perform_ifft(E2, res_, recon_res.data);
@@ -219,7 +212,6 @@ namespace Gadgetron {
             }
             else if ((encodingFOV_E1 >= reconFOV_E1) && (encodingFOV_E2 >= reconFOV_E2))
             {
-                GDEBUG_STREAM("Joe: encoded FOV not the same as recon FOV...")
                 size_t encodingE1 = reconSizeE1;
                 if (encodingFOV_E1 > reconFOV_E1)
                 {
@@ -283,7 +275,6 @@ namespace Gadgetron {
                     pTmp = pSrc; pSrc = pDst; pDst = pTmp;
                 }
 
-                GDEBUG_STREAM("Joe: Final crop to " << reconSizeRO << " " << reconSizeE1 << " " << reconSizeE2 << " - mean : " << Gadgetron::mean(*pSrc));
                 // final cut on image
                 Gadgetron::crop(reconSizeRO, reconSizeE1, reconSizeE2, *pSrc, *pDst);
 

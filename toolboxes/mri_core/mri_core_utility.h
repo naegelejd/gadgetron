@@ -9,9 +9,6 @@
 #include "mri_core_export.h"
 #include "hoNDArray.h"
 #include "mri_core_data.h"
-#include "ismrmrd/ismrmrd.h"
-#include "ismrmrd/xml.h"
-#include "ismrmrd/meta.h"
 #include "hoNDKLT.h"
 
 namespace Gadgetron
@@ -56,34 +53,26 @@ namespace Gadgetron
     // environmental variable GADGETRON_DEBUG_FOLDER is used 
     EXPORTMRICORE void get_debug_folder_path(const std::string& debugFolder, std::string& debugFolderPath);
 
-    /** TODO Joe: Remove this vvvvv */
-    // find the calibration mode from protocol
-    // void EXPORTMRICORE find_calib_mode(ISMRMRD::IsmrmrdHeader& h, Gadgetron::ismrmrdCALIBMODE& CalibMode, Gadgetron::IsmrmrdDIM& InterleaveDim, double& acceFactorE1, double& acceFactorE2, bool verbose = false);
-
     // find the encoding limits from protocol
-    void EXPORTMRICORE find_encoding_limits(ISMRMRD::IsmrmrdHeader& h, ISMRMRD::EncodingCounters& meas_max_idx, bool verbose = false);
+    void find_encoding_limits(mrd::Header& h, mrd::EncodingCounters& meas_max_idx, bool verbose);
 
     // find encoding matrix size and FOV
-    void EXPORTMRICORE find_matrix_size_encoding(ISMRMRD::IsmrmrdHeader& h, size_t matrix_size_encoding[3]);
-    void EXPORTMRICORE find_FOV_encoding(ISMRMRD::IsmrmrdHeader& h, float field_of_view_encoding[3]);
+    void EXPORTMRICORE find_matrix_size_encoding(mrd::Header& h, size_t matrix_size_encoding[3]);
+    void EXPORTMRICORE find_FOV_encoding(mrd::Header& h, float field_of_view_encoding[3]);
 
     // find recon matrix size and FOV
-    void EXPORTMRICORE find_matrix_size_recon(ISMRMRD::IsmrmrdHeader& h, size_t matrix_size_recon[3]);
-    void EXPORTMRICORE find_FOV_recon(ISMRMRD::IsmrmrdHeader& h, float field_of_view_recon[3]);
+    void EXPORTMRICORE find_matrix_size_recon(mrd::Header& h, size_t matrix_size_recon[3]);
+    void EXPORTMRICORE find_FOV_recon(mrd::Header& h, float field_of_view_recon[3]);
 
     // return the current moment as a string
     void EXPORTMRICORE get_current_moment(std::string& procTime);
 
     // get a vector of values from ismrmrd meta
-    void EXPORTMRICORE get_ismrmrd_meta_values(const ISMRMRD::MetaContainer& attrib, const std::string& name, std::vector<long>& v);
-    void EXPORTMRICORE get_ismrmrd_meta_values(const ISMRMRD::MetaContainer& attrib, const std::string& name, std::vector<double>& v);
-    void EXPORTMRICORE get_ismrmrd_meta_values(const ISMRMRD::MetaContainer& attrib, const std::string& name, std::vector<std::string>& v);
+    template <typename T> void get_mrd_meta_values(const mrd::ImageMeta& attrib, const std::string& name, std::vector<T>& v);
 
-    template <typename T> EXPORTMRICORE void set_ismrmrd_meta_values(ISMRMRD::MetaContainer& attrib, const std::string& name, const std::vector<T>& v);
-    void EXPORTMRICORE set_ismrmrd_meta_values(ISMRMRD::MetaContainer& attrib, const std::string& name, const std::vector<std::string>& v);
+    template <typename T> void set_mrd_meta_values(mrd::ImageMeta& attrib, const std::string& name, const std::vector<T>& v);
 
-    template <typename T> EXPORTMRICORE void append_ismrmrd_meta_values(ISMRMRD::MetaContainer& attrib, const std::string& name, const std::vector<T>& v);
-    void EXPORTMRICORE append_ismrmrd_meta_values(ISMRMRD::MetaContainer& attrib, const std::string& name, const std::vector<std::string>& v);
+    template <typename T> void append_mrd_meta_values(mrd::ImageMeta& attrib, const std::string& name, const std::vector<T>& v);
 
     // perform the patient to device coordinate transformation
     void EXPORTMRICORE PatientCoordinateSystem_to_DeviceCoordinateSystem(double& x, double& y, double& z, const std::string& position);
@@ -91,69 +80,14 @@ namespace Gadgetron
 
     // whether to images have identical slice prescription
     // if so, return true; otherwise, return false;
-    bool EXPORTMRICORE check_idential_slice_prescription(ISMRMRD::ISMRMRD_ImageHeader a, ISMRMRD::ISMRMRD_ImageHeader b);
-
-    /** TODO Joe: Remove these vvvvv */
-    // // get ismrmd dim name
-    // std::string EXPORTMRICORE get_ismrmrd_dim_name(const IsmrmrdDIM& dim);
-    // // given the name, get the ismrmrd dim
-    // IsmrmrdDIM EXPORTMRICORE get_ismrmrd_dim_from_name(const std::string& name);
-
-    /** TODO Joe: Remove these vvvvv */
-    EXPORTMRICORE std::map<std::string,std::int64_t> to_map(const std::vector<ISMRMRD::UserParameterLong>&);
-    EXPORTMRICORE std::map<std::string,double> to_map(const std::vector<ISMRMRD::UserParameterDouble>&);
-    EXPORTMRICORE std::map<std::string,std::string> to_map(const std::vector<ISMRMRD::UserParameterString>&);
+    bool check_idential_slice_prescription(mrd::ImageHeader a, mrd::ImageHeader b);
 
     EXPORTMRICORE std::map<std::string,std::int64_t> to_map(const std::vector<mrd::UserParameterLongType>&);
     EXPORTMRICORE std::map<std::string,double> to_map(const std::vector<mrd::UserParameterDoubleType>&);
     EXPORTMRICORE std::map<std::string,std::string> to_map(const std::vector<mrd::UserParameterStringType>&);
 
-    ISMRMRD::ImageHeader image_header_from_acquisition(const ISMRMRD::AcquisitionHeader& acq_header,const ISMRMRD::IsmrmrdHeader& header, const hoNDArray<std::complex<float>>& data );
-
+    mrd::ImageHeader image_header_from_acquisition(const mrd::AcquisitionHeader& acq_header, const mrd::Header& header);
 
     void add_stats_to_bucket(mrd::AcquisitionBucketStats& stats, const mrd::AcquisitionHeader& header);
     void add_acquisition_to_bucket(mrd::AcquisitionBucket& bucket, mrd::Acquisition acq);
-
-    /** TODO Joe: Remove these now vvvvv */
-
-    // template <typename T, size_t N>
-    // hoNDArray<T> adapt_mrd_to_hoNDArray(yardl::NDArray<T, N>& mrd_array)
-    // {
-    //     auto shape = mrd_array.shape();
-    //     std::vector<size_t> dims(shape.rbegin(), shape.rend());
-    //     hoNDArray<T> ho_array(dims, mrd_array.data());
-    //     return std::move(ho_array);
-    // }
-
-    // template <typename T, size_t N>
-    // hoNDArray<T> copy_mrd_to_hoNDArray(const yardl::NDArray<T, N>& mrd_array)
-    // {
-    //     auto shape = mrd_array.shape();
-    //     std::vector<size_t> dims(shape.rbegin(), shape.rend());
-    //     hoNDArray<T> ho_array(dims);
-    //     std::copy(mrd_array.data(), mrd_array.data() + mrd_array.size(), ho_array.data());
-    //     return std::move(ho_array);
-    // }
-
-    // template <typename T, size_t N>
-    // void copy_hoNDArray_to_mrd(const hoNDArray<T>& ho_array, yardl::NDArray<T, N>& mrd_array)
-    // {
-    //     std::vector<size_t> shape(ho_array.dimensions().rbegin(), ho_array.dimensions().rend());
-    //     for (auto s : shape) {
-    //         GDEBUG_STREAM("Joe: shape: " << s);
-    //     }
-    //     // mrd_array.resize(shape);
-    //     mrd_array.resize(shape, true);
-    //     GDEBUG_STREAM("Joe: mrd_array.size(): " << mrd_array.size() << " at " << mrd_array.data());
-    //     // std::copy(ho_array.data(), ho_array.data() + ho_array.size(), mrd_array.data());
-    //     std::copy(ho_array.begin(), ho_array.end(), mrd_array.begin());
-    // }
-
-    // template <typename T, size_t N>
-    // std::vector<size_t> mrd_shape_to_hoNDArray_shape(const yardl::NDArray<T, N>& mrd_array)
-    // {
-    //     auto shape = mrd_array.shape();
-    //     std::vector<size_t> dims(shape.rbegin(), shape.rend());
-    //     return std::move(dims);
-    // }
 }

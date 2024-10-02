@@ -39,8 +39,7 @@ namespace Gadgetron {
 
         GDEBUG("PATHNAME %s\n",this->context.paths.gadgetron_home.c_str());
 
-        /** TODO Joe: Upgrade Streamer... */
-        // this->gt_streamer_.stream_ismrmrd_header(h);
+        this->gt_streamer_.stream_mrd_header(h);
 
         return GADGET_OK;
     }
@@ -168,7 +167,6 @@ namespace Gadgetron {
 
                 // ---------------------------------------------------------------
 
-                /** TODO Joe: After adapting ref.data into an hoNDArray (ref_calib), ensure this line doesn't bork the underlying array */
                 recon_data->rbits[e].ref = Core::none;
             }
 
@@ -199,17 +197,14 @@ namespace Gadgetron {
                 if (perform_timing.value()) {
                     gt_timer_.start("GenericReconCartesianGrappaGadget::compute_image_header");
                 }
-                GDEBUG_STREAM("Joe: Computing Image header... ");
                 this->compute_image_header(recon_data->rbits[e], recon_obj_[e].recon_res_, e);
                 if (perform_timing.value()) { gt_timer_.stop(); }
 
-                GDEBUG_STREAM("Joe: Image header computed");
 
                 // ---------------------------------------------------------------
                 // pass down waveform
-                if (wav) this->set_wave_form_to_image_array(*wav->getObjectPtr(), recon_obj_[e].recon_res_);
+                if (wav) recon_obj_[e].recon_res_.waveforms = *wav->getObjectPtr();
 
-                GDEBUG_STREAM("Joe: Waveforms attached to ImageArray");
 
                 // ---------------------------------------------------------------
                 if (send_out_gfactor.value() && recon_obj_[e].gfactor_.get_number_of_elements() > 0 &&
@@ -230,8 +225,6 @@ namespace Gadgetron {
                     this->send_out_image_array(res, e, image_series.value() + 10 * ((int) e + 2),
                                                GADGETRON_IMAGE_GFACTOR);
                     if (perform_timing.value()) { gt_timer_.stop(); }
-
-                GDEBUG_STREAM("Joe: Sent out gfactor")
                 }
 
 
@@ -275,10 +268,9 @@ namespace Gadgetron {
                         debug_folder_full_path_ + "recon_res" + os.str());
                 }
 
-                /** TODO Joe: Implement */
-                // this->gt_streamer_.stream_to_ismrmrd_image_buffer(GENERIC_RECON_STREAM_COILMAP, recon_obj_[e].coil_map_, recon_obj_[e].recon_res_.headers, recon_obj_[e].recon_res_.meta);
-                // if (recon_obj_[e].gfactor_.get_number_of_elements() > 0) this->gt_streamer_.stream_to_ismrmrd_image_buffer(GENERIC_RECON_STREAM_GFACTOR_MAP, recon_obj_[e].gfactor_, recon_obj_[e].recon_res_.headers, recon_obj_[e].recon_res_.meta_);
-                // this->gt_streamer_.stream_to_ismrmrd_image_buffer(GENERIC_RECON_STREAM_RECONED_COMPLEX_IMAGE, recon_obj_[e].recon_res_.data, recon_obj_[e].recon_res_.headers, recon_obj_[e].recon_res_.meta);
+                this->gt_streamer_.stream_to_mrd_image_buffer(GENERIC_RECON_STREAM_COILMAP, recon_obj_[e].coil_map_, recon_obj_[e].recon_res_.headers, recon_obj_[e].recon_res_.meta);
+                if (recon_obj_[e].gfactor_.get_number_of_elements() > 0) this->gt_streamer_.stream_to_mrd_image_buffer(GENERIC_RECON_STREAM_GFACTOR_MAP, recon_obj_[e].gfactor_, recon_obj_[e].recon_res_.headers, recon_obj_[e].recon_res_.meta);
+                this->gt_streamer_.stream_to_mrd_image_buffer(GENERIC_RECON_STREAM_RECONED_COMPLEX_IMAGE, recon_obj_[e].recon_res_.data, recon_obj_[e].recon_res_.headers, recon_obj_[e].recon_res_.meta);
 
                 if (perform_timing.value()) {
                     gt_timer_.start("GenericReconCartesianGrappaGadget::send_out_image_array");
@@ -644,10 +636,6 @@ namespace Gadgetron {
 
         long long ii;
 
-        GDEBUG_STREAM("Joe: Performing unwrapping... ")
-/** TODO Joe: Cleanup after testing... */
-// #pragma omp parallel default(none) private(ii) shared(num, N, S, RO, E1, E2, srcCHA, convkRO, convkE1, convkE2, ref_N, ref_S, recon_obj, dstCHA, unmixingCoeff_CHA, e) if(num>1)
-// #pragma omp parallel default(none) private(ii) shared(num, N, S, RO, E1, E2, srcCHA, convkRO, convkE1, convkE2, ref_N, ref_S, recon_obj, dstCHA, unmixingCoeff_CHA, e, unwrapped_data) if(num>1)
 #pragma omp parallel default(none) private(ii) shared(num, N, S, RO, E1, E2, srcCHA, ref_N, ref_S, recon_obj, unmixingCoeff_CHA) if(num>1)
         {
 #pragma omp for
@@ -679,8 +667,6 @@ namespace Gadgetron {
                 Gadgetron::apply_unmix_coeff_aliased_image_3D(aliasedIm, unmixing, res);
             }
         }
-
-        GDEBUG_STREAM("Joe: Finished unwrapping... ")
 
         if (!debug_folder_full_path_.empty()) {
             std::stringstream os;

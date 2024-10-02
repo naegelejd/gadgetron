@@ -160,8 +160,8 @@ namespace Gadgetron {
                 // pass down waveform
                 if (wav)
                 {
-                    this->set_wave_form_to_image_array(*wav->getObjectPtr(), recon_obj_[e].recon_res_);
-                    this->set_wave_form_to_image_array(*wav->getObjectPtr(), this->recon_res_grappa_ai_[e]);
+                    recon_obj_[e].recon_res_.waveforms = *wav->getObjectPtr();
+                    this->recon_res_grappa_ai_[e].waveforms = *wav->getObjectPtr();
                 }
 
                 recon_obj_[e].recon_res_.acq_headers_ = recon_bit_->rbit_[e].data_.headers_;

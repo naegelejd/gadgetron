@@ -613,7 +613,6 @@ namespace Gadgetron {
                 }
             }
         }
-        GDEBUG_STREAM("Joe: Finished all ImageHeaders");
     }
 
     void GenericReconGadget::compute_snr_scaling_factor(ReconBit& recon_bit, float& effective_acce_factor, float& snr_scaling_ratio)
@@ -674,12 +673,6 @@ namespace Gadgetron {
     {
         this->prepare_image_array(res, encoding, series_num, data_role);
         this->next()->putq(new GadgetContainerMessage<ImageArray>(res));
-    }
-
-    void GenericReconGadget::set_wave_form_to_image_array(const std::vector<Core::Waveform>& w_in, ImageArray& res)
-    {
-        /** TODO Joe: This is now trivial, no need for function */
-        res.waveforms = w_in;
     }
 
     GADGET_FACTORY_DECLARE(GenericReconGadget)

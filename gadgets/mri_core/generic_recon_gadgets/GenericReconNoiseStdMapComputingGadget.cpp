@@ -54,10 +54,9 @@ namespace Gadgetron {
         if (verbose.value())
         {
             GDEBUG_STREAM("----> GenericReconNoiseStdMapComputingGadget::process(...) has been called " << process_called_times_ << " times ...");
-            /** TODO Joe: Disabled printing entire array... */
-            // std::stringstream os;
-            // recon_res_->data_.print(os);
-            // GDEBUG_STREAM(os.str());
+            std::stringstream os;
+            recon_res_->data.print(os);
+            GDEBUG_STREAM(os.str());
         }
 
         std::string dataRole = std::get<std::string>(recon_res_->meta[0][GADGETRON_DATA_ROLE].front());

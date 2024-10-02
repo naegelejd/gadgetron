@@ -117,9 +117,6 @@ namespace Gadgetron::Server::Connection {
         }
     }
 
-    /** TODO Joe: Remove this */
-    // std::vector<std::unique_ptr<Core::Writer>> default_writers();
-
     template<class F>
     std::thread start_input_thread(
             std::iostream &stream,
@@ -145,11 +142,4 @@ namespace Gadgetron::Server::Connection {
                 std::move(channel), writer_factory
         );
     }
-
-    /** TODO Joe: Remove this */
-    // void handle_connection(
-    //     std::unique_ptr<std::iostream> stream,
-    //     Core::StreamContext::Paths paths,
-    //     Core::StreamContext::Args args
-    // );
 }
