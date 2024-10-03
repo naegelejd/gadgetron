@@ -1,10 +1,4 @@
-if (WIN32)
-    add_definitions(-D__BUILD_GADGETRON_MRI_CORE__)
-endif ()
-
-
 set(mri_core_header_files
-        mri_core_export.h
         mri_core_def.h
         mri_core_data.h
         mri_core_utility.h
@@ -38,13 +32,13 @@ target_link_libraries(gadgetron_toolbox_mri_core
         gadgetron_core
         gadgetron_toolbox_cpucore
         gadgetron_toolbox_cpucore_math
-        ISMRMRD::ISMRMRD
         armadillo
         Boost::filesystem
         gadgetron_toolbox_cpufft
         gadgetron_toolbox_cpuklt
         gadgetron_toolbox_image_analyze_io
         gadgetron_toolbox_cpuklt)
+
 target_include_directories(
         gadgetron_toolbox_mri_core
         PUBLIC
@@ -84,10 +78,6 @@ if (Boost_PYTHON3_FOUND AND PYTHONLIBS_FOUND AND NUMPY_FOUND)
             gadgetron_toolbox_python
             gadgetron_toolbox_mri_core
             )
-
-    if (WIN32)
-        set_target_properties(gadgetron_toolbox_mri_core_python PROPERTIES SUFFIX .pyd)
-    endif ()
 
     set_target_properties(gadgetron_toolbox_mri_core_python PROPERTIES PREFIX "")
 

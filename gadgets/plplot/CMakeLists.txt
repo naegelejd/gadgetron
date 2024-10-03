@@ -1,7 +1,3 @@
-if (WIN32)
-    add_definitions(-D__BUILD_GADGETRON_PLPLOT__)
-endif ()
-
 include_directories(${PLPLOT_INCLUDE_DIR})
 link_directories(${PLPLOT_LIB_DIR})
 
@@ -13,7 +9,6 @@ set( config_files Generic_Cartesian_Grappa_SNR_CoilQA.xml )
 source_group(config FILES ${config_files})
 
 add_library(gadgetron_plplot SHARED 
-    gadgetron_plplot_export.h 
     ${header_files} 
     ${src_files}
     ${config_files}
@@ -30,7 +25,6 @@ target_link_libraries(gadgetron_plplot
 )
 
 install(FILES 
-    gadgetron_plplot_export.h
     ${header_files}
     DESTINATION ${GADGETRON_INSTALL_INCLUDE_PATH} COMPONENT main)
 

@@ -1,13 +1,8 @@
-if (WIN32)
-    add_definitions(-D__BUILD_GADGETRON_HOSTUTILS__)
-endif ()
-
 set(hostutils_scr_files
         network_utils.cpp
         parameterparser.cpp)
 
 set(hostutils_header_files
-        hostutils_export.h
         network_utils.h
         parameterparser.h
         url_encode.h)

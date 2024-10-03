@@ -1,13 +1,7 @@
-if (WIN32)
-    add_definitions(-D__BUILD_GADGETRON_CPUCORE__)
-endif ()
-
-
 set(header_files ../NDArray.h
                 ../complext.h
                 ../GadgetronException.h
                 ../GadgetronTimer.h
-                cpucore_export.h 
                 hoNDArray.h
                 hoNDArray.hxx
                 hoNDArray_converter.h

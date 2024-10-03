@@ -11,21 +11,18 @@ TEST(FlagTrigger,simple){
     auto func = Gadgetron::FlagTriggerGadget::create_trigger_filter("last_in_slice");
 
     auto acquisition = Core::Acquisition();
-    auto& head = std::get<ISMRMRD::AcquisitionHeader>(acquisition);
-
+    auto& head = acquisition.head;
 
     ASSERT_FALSE(func(acquisition));
-    head.setFlag(ISMRMRD::ISMRMRD_ACQ_LAST_IN_SLICE);
+    head.flags.SetFlags(mrd::AcquisitionFlags::kLastInSlice);
     //bool tmp = func(acquisition);
     ASSERT_TRUE(func(acquisition));
 
-    head.clearAllFlags();
-    head.setFlag(ISMRMRD::ISMRMRD_ACQ_FIRST_IN_ENCODE_STEP1);
-
+    head.flags.Clear();
+    head.flags.SetFlags(mrd::AcquisitionFlags::kFirstInEncodeStep1);
     ASSERT_FALSE(func(acquisition));
 
-    head.setFlag(ISMRMRD::ISMRMRD_ACQ_LAST_IN_SLICE);
-
+    head.flags.SetFlags(mrd::AcquisitionFlags::kLastInSlice);
     ASSERT_TRUE(func(acquisition));
 }
 
@@ -34,21 +31,18 @@ TEST(FlagTrigger,or_test){
     auto func = Gadgetron::FlagTriggerGadget::create_trigger_filter("last_in_slice  ||   last_in_repetition");
 
     auto acquisition = Core::Acquisition();
-    auto& head = std::get<ISMRMRD::AcquisitionHeader>(acquisition);
-
+    auto& head = acquisition.head;
 
     ASSERT_FALSE(func(acquisition));
-    head.setFlag(ISMRMRD::ISMRMRD_ACQ_LAST_IN_SLICE);
+    head.flags.SetFlags(mrd::AcquisitionFlags::kLastInSlice);
     //bool tmp = func(acquisition);
     ASSERT_TRUE(func(acquisition));
 
-    head.clearAllFlags();
-    head.setFlag(ISMRMRD::ISMRMRD_ACQ_LAST_IN_REPETITION);
-
+    head.flags.Clear();
+    head.flags.SetFlags(mrd::AcquisitionFlags::kLastInRepetition);
     ASSERT_TRUE(func(acquisition));
 
-    head.setFlag(ISMRMRD::ISMRMRD_ACQ_LAST_IN_SLICE);
-
+    head.flags.SetFlags(mrd::AcquisitionFlags::kLastInSlice);
     ASSERT_TRUE(func(acquisition));
 }
 
@@ -57,45 +51,38 @@ TEST(FlagTrigger,and_test){
     auto func = Gadgetron::FlagTriggerGadget::create_trigger_filter("last_in_slice  &&   last_in_repetition");
 
     auto acquisition = Core::Acquisition();
-    auto& head = std::get<ISMRMRD::AcquisitionHeader>(acquisition);
-
+    auto& head = acquisition.head;
 
     ASSERT_FALSE(func(acquisition));
-    head.setFlag(ISMRMRD::ISMRMRD_ACQ_LAST_IN_SLICE);
+    head.flags.SetFlags(mrd::AcquisitionFlags::kLastInSlice);
     //bool tmp = func(acquisition);
     ASSERT_FALSE(func(acquisition));
 
-    head.clearAllFlags();
-    head.setFlag(ISMRMRD::ISMRMRD_ACQ_LAST_IN_REPETITION);
-
+    head.flags.Clear();
+    head.flags.SetFlags(mrd::AcquisitionFlags::kLastInRepetition);
     ASSERT_FALSE(func(acquisition));
 
-    head.setFlag(ISMRMRD::ISMRMRD_ACQ_LAST_IN_SLICE);
-
+    head.flags.SetFlags(mrd::AcquisitionFlags::kLastInSlice);
     ASSERT_TRUE(func(acquisition));
 }
 
 TEST(FlagTrigger,not_test){
+    auto func = Gadgetron::FlagTriggerGadget::create_trigger_filter("last_in_slice   &&  !last_in_repetition");
 
-auto func = Gadgetron::FlagTriggerGadget::create_trigger_filter("last_in_slice   &&  !last_in_repetition");
+    auto acquisition = Core::Acquisition();
+    auto& head = acquisition.head;
 
-auto acquisition = Core::Acquisition();
-auto& head = std::get<ISMRMRD::AcquisitionHeader>(acquisition);
+    ASSERT_FALSE(func(acquisition));
+    head.flags.SetFlags(mrd::AcquisitionFlags::kLastInSlice);
+    //bool tmp = func(acquisition);
+    ASSERT_TRUE(func(acquisition));
 
+    head.flags.Clear();
+    head.flags.SetFlags(mrd::AcquisitionFlags::kLastInRepetition);
+    ASSERT_FALSE(func(acquisition));
 
-ASSERT_FALSE(func(acquisition));
-head.setFlag(ISMRMRD::ISMRMRD_ACQ_LAST_IN_SLICE);
-//bool tmp = func(acquisition);
-ASSERT_TRUE(func(acquisition));
-
-head.clearAllFlags();
-head.setFlag(ISMRMRD::ISMRMRD_ACQ_LAST_IN_REPETITION);
-
-ASSERT_FALSE(func(acquisition));
-
-head.setFlag(ISMRMRD::ISMRMRD_ACQ_LAST_IN_SLICE);
-
-ASSERT_FALSE(func(acquisition));
+    head.flags.SetFlags(mrd::AcquisitionFlags::kLastInSlice);
+    ASSERT_FALSE(func(acquisition));
 }
 
 
@@ -104,25 +91,21 @@ TEST(FlagTrigger,presedence_test){
     auto func = Gadgetron::FlagTriggerGadget::create_trigger_filter("last_in_slice || last_in_repetition && first_in_slice");
 
     auto acquisition = Core::Acquisition();
-    auto& head = std::get<ISMRMRD::AcquisitionHeader>(acquisition);
-
-
-    ASSERT_FALSE(func(acquisition));
-    head.setFlag(ISMRMRD::ISMRMRD_ACQ_LAST_IN_SLICE);
-//bool tmp = func(acquisition);
-    ASSERT_TRUE(func(acquisition));
-
-    head.clearAllFlags();
-    head.setFlag(ISMRMRD::ISMRMRD_ACQ_LAST_IN_REPETITION);
+    auto& head = acquisition.head;
 
     ASSERT_FALSE(func(acquisition));
-
-    head.setFlag(ISMRMRD::ISMRMRD_ACQ_FIRST_IN_SLICE);
-
+    head.flags.SetFlags(mrd::AcquisitionFlags::kLastInSlice);
+    //bool tmp = func(acquisition);
     ASSERT_TRUE(func(acquisition));
 
-    head.setFlag(ISMRMRD::ISMRMRD_ACQ_LAST_IN_SLICE);
+    head.flags.Clear();
+    head.flags.SetFlags(mrd::AcquisitionFlags::kLastInRepetition);
+    ASSERT_FALSE(func(acquisition));
 
+    head.flags.SetFlags(mrd::AcquisitionFlags::kFirstInSlice);
+    ASSERT_TRUE(func(acquisition));
+
+    head.flags.SetFlags(mrd::AcquisitionFlags::kLastInSlice);
     ASSERT_TRUE(func(acquisition));
 }
 
@@ -131,15 +114,11 @@ TEST(FlagTrigger,parenthesis_test){
     auto func = Gadgetron::FlagTriggerGadget::create_trigger_filter("( last_in_slice || last_in_repetition ) && first_in_slice");
 
     auto acquisition = Core::Acquisition();
-    auto& head = std::get<ISMRMRD::AcquisitionHeader>(acquisition);
-
+    auto& head = acquisition.head;
 
     ASSERT_FALSE(func(acquisition));
-    head.setFlag(ISMRMRD::ISMRMRD_ACQ_LAST_IN_SLICE);
+    head.flags.SetFlags(mrd::AcquisitionFlags::kLastInSlice);
     ASSERT_FALSE(func(acquisition));
-    head.setFlag(ISMRMRD::ISMRMRD_ACQ_FIRST_IN_SLICE);
+    head.flags.SetFlags(mrd::AcquisitionFlags::kFirstInSlice);
     ASSERT_TRUE(func(acquisition));
-
 }
-
-

@@ -1,7 +1,3 @@
-if (WIN32)
-    add_definitions(-D__BUILD_GADGETRON_MRI_NONCARTESIAN__)
-endif ()
-
 set( gadgetron_mri_noncartesian_header_files
 	CPUGriddingReconGadget.h NonCartesianTools.h GriddingReconGadgetBase.h GriddingReconGadgetBase.hpp)
 
@@ -25,7 +21,6 @@ if(CUDA_FOUND)
 endif()
 
 add_library(gadgetron_mri_noncartesian SHARED 
-  gadgetron_mri_noncartesian_export.h 
   ${gadgetron_mri_noncartesian_header_files} 
   ${gadgetron_mri_noncartesian_src_files}
   ${gadgetron_mri_noncartesian_config_files}
@@ -54,7 +49,6 @@ if(CUDA_FOUND)
 endif()
 
 install(FILES 
-    gadgetron_mri_noncartesian_export.h
     ${gadgetron_mri_noncartesian_header_files}
     DESTINATION ${GADGETRON_INSTALL_INCLUDE_PATH} COMPONENT main)
 

@@ -8,7 +8,6 @@
 #pragma once
 
 #include <complex>
-#include "gadgetron_mricore_export.h"
 #include "Gadget.h"
 #include "GadgetronTimer.h"
 
@@ -26,7 +25,7 @@
 namespace Gadgetron {
 
     template <typename T> 
-    class EXPORTGADGETSMRICORE GenericReconBase : public Gadget1<T>
+    class GenericReconBase : public Gadget1<T>
     {
     public:
         GADGET_DECLARE(GenericReconBase);
@@ -80,7 +79,7 @@ namespace Gadgetron {
         virtual int close(unsigned long flags);
     };
 
-    class EXPORTGADGETSMRICORE GenericReconKSpaceReadoutBase :public GenericReconBase < mrd::AcquisitionHeader >
+    class GenericReconKSpaceReadoutBase :public GenericReconBase < mrd::AcquisitionHeader >
     {
     public:
         GADGET_DECLARE(GenericReconKSpaceReadoutBase);
@@ -92,7 +91,7 @@ namespace Gadgetron {
         virtual int close(unsigned long flags) { return BaseClass::close(flags); }
     };
 
-    class EXPORTGADGETSMRICORE GenericReconDataBase :public GenericReconBase < ReconData >
+    class GenericReconDataBase :public GenericReconBase < ReconData >
     {
     public:
         GADGET_DECLARE(GenericReconDataBase);
@@ -104,7 +103,7 @@ namespace Gadgetron {
         virtual int close(unsigned long flags) { return BaseClass::close(flags); }
     };
 
-    class EXPORTGADGETSMRICORE GenericReconImageBase :public GenericReconBase < ImageArray >
+    class GenericReconImageBase :public GenericReconBase < ImageArray >
     {
     public:
         GADGET_DECLARE(GenericReconImageBase);
@@ -116,7 +115,7 @@ namespace Gadgetron {
         virtual int close(unsigned long flags) { return BaseClass::close(flags); }
     };
 
-    class EXPORTGADGETSMRICORE GenericReconImageHeaderBase :public GenericReconBase < mrd::ImageHeader >
+    class GenericReconImageHeaderBase :public GenericReconBase < mrd::ImageHeader >
     {
     public:
         GADGET_DECLARE(GenericReconImageHeaderBase);

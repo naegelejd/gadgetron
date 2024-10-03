@@ -1,8 +1,3 @@
-if (WIN32)
-    add_definitions(-DTIXML_USE_STL)
-endif ()
-
-
 add_subdirectory(log)
 
 add_subdirectory(operators)
@@ -49,14 +44,6 @@ if(CUDA_FOUND)
     # (e.g. https://github.com/NVIDIA/cub/blob/48768e86a40c25d231a6ff1e04107a60016314a7/cub/util_device.cuh#L208)
     # that when used from multiple libraries can cause crashes.
     # See https://github.com/NVIDIA/thrust/issues/1401 for more information.
-    if (WIN32)
-        add_definitions(-D__BUILD_GADGETRON_GPU__)
-        add_definitions(-D_USE_MATH_DEFINES)
-        add_definitions(-DWIN32_LEAN_AND_MEAN)
-
-        link_directories(${Boost_LIBRARY_DIRS})
-    endif ()
-
     cuda_add_library(gadgetron_toolbox_gpu SHARED 
         core/gpu/check_CUDA.h
         core/gpu/CUBLASContextProvider.cpp
@@ -99,7 +86,6 @@ if(CUDA_FOUND)
         mri/hyper/CSI_utils.h
         mri/hyper/CSIOperator.cpp
         mri/hyper/CSIOperator.h
-        mri/hyper/gadgetron_toolbox_hyper_export.h
         mri/pmri/gpu/b1_map_NIH_Souheil.cu
         mri/pmri/gpu/b1_map.cu
         mri/pmri/gpu/b1_map.h
@@ -119,7 +105,6 @@ if(CUDA_FOUND)
         mri/pmri/gpu/cuSenseOperator.h
         mri/pmri/gpu/cuSpiritBuffer.cpp
         mri/pmri/gpu/cuSpiritOperator.h
-        mri/pmri/gpu/gpupmri_export.h
         mri/pmri/gpu/htgrappa.cpp
         mri/pmri/gpu/htgrappa.cu
         mri/pmri/gpu/htgrappa.h
@@ -155,7 +140,6 @@ if(CUDA_FOUND)
         registration/optical_flow/gpu/cuOpticalFlowSolver.cu
         registration/optical_flow/gpu/cuResampleOperator.cu
         solvers/gpu/cuSolverUtils.cu
-        solvers/gpu/gpusolvers_export.h
     )
 
     target_include_directories(gadgetron_toolbox_gpu
@@ -228,7 +212,6 @@ if(CUDA_FOUND)
         fft/gpu/cuFFTPlan.h
         fft/gpu/cuFFTPlan.hpp
         fft/gpu/cuNDFFT.h
-        fft/gpu/gpufft_export.h
         mri/hyper/CSI_utils.h
         mri/hyper/CSIOperator.h
         mri/pmri/gpu/b1_map.h
@@ -241,7 +224,6 @@ if(CUDA_FOUND)
         mri/pmri/gpu/cuSenseOperator.h
         mri/pmri/gpu/cuSpiritBuffer.h
         mri/pmri/gpu/cuSpiritOperator.h
-        mri/pmri/gpu/gpupmri_export.h
         mri/pmri/gpu/htgrappa.h
         mri/pmri/gpu/sense_utilities.h
         mri/pmri/gpu/senseOperator.h
@@ -261,7 +243,6 @@ if(CUDA_FOUND)
         operators/gpu/cuTvOperator.h
         operators/gpu/cuTvPicsOperator.h
         operators/gpu/cuUpsampleOperator.h
-        operators/gpu/gpuoperators_export.h
         operators/gpu/hoCuEncodingOperatorContainer.h
         operators/gpu/hoCuIdentityOperator.h
         operators/gpu/hoCuOperator.h
@@ -274,7 +255,6 @@ if(CUDA_FOUND)
         registration/optical_flow/gpu/cuLinearResampleOperator.h
         registration/optical_flow/gpu/cuOpticalFlowSolver.h
         registration/optical_flow/gpu/cuResampleOperator.h
-        registration/optical_flow/gpu/gpureg_export.h
         solvers/gpu/cuCgPreconditioner.h
         solvers/gpu/cuCgSolver.h
         solvers/gpu/cuGpBbSolver.h
@@ -286,7 +266,6 @@ if(CUDA_FOUND)
         solvers/gpu/cuSbcLwSolver.h
         solvers/gpu/cuSbLwSolver.h
         solvers/gpu/cuSolverUtils.h
-        solvers/gpu/gpusolvers_export.h
         solvers/gpu/hoCuCgSolver.h
         solvers/gpu/hoCuGpBbSolver.h
         solvers/gpu/hoCuNlcgSolver.h

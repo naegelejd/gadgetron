@@ -1,6 +1,5 @@
 #pragma once
 
-#include "python_export.h"
 #include "log.h"
 #include <boost/python.hpp>
 namespace bp = boost::python;
@@ -9,16 +8,16 @@ namespace Gadgetron
 {
 
 /// Initialize Python and NumPy. Called by each PythonFunction constructor
-EXPORTPYTHON void initialize_python(void);
+void initialize_python(void);
 /// Initialize NumPy
-EXPORTPYTHON void initialize_numpy(void);
+void initialize_numpy(void);
 /// Finalize Python, Called by user expclictly
-EXPORTPYTHON void finalize_python(void);
+void finalize_python(void);
 /// Add a path to the PYTHONPATH
-EXPORTPYTHON void add_python_path(const std::string& path);
+void add_python_path(const std::string& path);
 
 /// Extracts the exception/traceback to build and return a std::string
-EXPORTPYTHON std::string pyerr_to_string(void);
+std::string pyerr_to_string(void);
 
 }
 
@@ -188,6 +187,6 @@ public:
 }
 
 namespace boost { namespace python {
-    EXPORTPYTHON bool hasattr(object o, const char* name);
+    bool hasattr(object o, const char* name);
 } }
 

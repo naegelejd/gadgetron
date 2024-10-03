@@ -1,12 +1,4 @@
-if (WIN32)
-  add_definitions(-D__BUILD_GADGETRON_GADGET_GPUPMRI__)
-  # The two flags below is to fix Windows problems in relation to multiple defined constructors in our headers
-  set (CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /FORCE:MULTIPLE") 
-  set (CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} /FORCE:MULTIPLE") 
-endif ()
-
 add_library(gadgetron_gpuparallelmri SHARED
-    gadgetron_gpupmri_export.h
     GenericReconJob.h
     gpuCgKtSenseGadget.h
     gpuCgSenseGadget.h
@@ -49,8 +41,7 @@ install(TARGETS gadgetron_gpuparallelmri
 	COMPONENT main
 )
 
-install (FILES  gadgetron_gpupmri_export.h
-                GenericReconJob.h
+install (FILES  GenericReconJob.h
                 gpuCgKtSenseGadget.h
                 gpuCgSenseGadget.h
                 gpuCgSpiritGadget.h

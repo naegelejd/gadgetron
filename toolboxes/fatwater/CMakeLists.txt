@@ -1,9 +1,4 @@
-if (WIN32)
-  add_definitions(-D__BUILD_GADGETRON_FATWATER__)
-endif ()
-
 add_library(gadgetron_toolbox_fatwater SHARED
-  fatwater_export.h 
   fatwater.h
   fatwater.cpp
         graph_cut.cpp ImageGraph.cpp correct_frequency_shift.h correct_frequency_shift.cpp bounded_field_map.cpp)
@@ -32,7 +27,6 @@ install(TARGETS gadgetron_toolbox_fatwater
 )
 
 install(FILES
-  fatwater_export.h 
   fatwater.h 
   correct_frequency_shift.h 
   DESTINATION ${GADGETRON_INSTALL_INCLUDE_PATH} COMPONENT main)

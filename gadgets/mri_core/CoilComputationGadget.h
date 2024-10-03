@@ -11,13 +11,8 @@
 #include "ismrmrd/meta.h"
 #include <ismrmrd/ismrmrd.h>
 
-#include "gadgetron_mricore_export.h"
-
-
-
-namespace Gadgetron
-{
-    class EXPORTGADGETSMRICORE CoilComputationGadget :public Gadget2<ISMRMRD::ImageHeader, hoNDArray< std::complex<float> > >
+namespace Gadgetron {
+    class CoilComputationGadget :public Gadget2<ISMRMRD::ImageHeader, hoNDArray< std::complex<float> > >
     {
     public:
         GADGET_DECLARE(CoilComputationGadget);

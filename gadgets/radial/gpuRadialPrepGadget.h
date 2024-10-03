@@ -1,6 +1,5 @@
 #pragma once
 
-#include "gadgetron_radial_export.h"
 #include "Gadget.h"
 #include "hoNDArray.h"
 #include "vector_td.h"
@@ -69,7 +68,7 @@
 
 namespace Gadgetron{
 
-  class EXPORTGADGETS_RADIAL gpuRadialPrepGadget :
+  class gpuRadialPrepGadget :
     public Gadget1< mrd::Acquisition >
   {
 

@@ -17,7 +17,7 @@
 
 namespace Gadgetron {
 
-    class EXPORTGADGETSMRICORE GenericReconGadget : public ImageArraySendMixin<GenericReconGadget>, public GenericReconDataBase{
+    class GenericReconGadget : public ImageArraySendMixin<GenericReconGadget>, public GenericReconDataBase{
     public:
         GADGET_DECLARE(GenericReconGadget);
 
@@ -66,7 +66,7 @@ namespace Gadgetron {
         hoNDArray< std::complex<float> > complex_im_recon_buf_;
         hoNDArray< std::complex<float> > data_recon_buf_;
 
-        // filter used for ref coil map 
+        // filter used for ref coil map
         hoNDArray< std::complex<float> > filter_RO_ref_coi_map_;
         hoNDArray< std::complex<float> > filter_E1_ref_coi_map_;
         hoNDArray< std::complex<float> > filter_E2_ref_coi_map_;

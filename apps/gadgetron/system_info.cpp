@@ -5,18 +5,12 @@
 #include "log.h"
 #include "Process.h"
 
-
-#if defined(_WIN32)
-#include <Windows.h>
-#elif defined(__unix__) || defined(__unix) || defined(unix) || (defined(__APPLE__) && defined(__MACH__))
-
 #include <unistd.h>
 #include <sys/types.h>
 #include <sys/param.h>
 #include <sstream>
 #include <boost/filesystem.hpp>
 
-#endif
 #if defined(BSD)
 #include <sys/sysctl.h>
 #endif
@@ -38,12 +32,6 @@ namespace Gadgetron::Server::Info {
     }
 
     size_t system_memory() {
-#if defined(_WIN32)
-        MEMORYSTATUSEX status;
-        status.dwLength = sizeof(status);
-        GlobalMemoryStatusEx( &status );
-        return (size_t)status.ullTotalPhys;
-#else //Unix variant
 
 #if defined(CTL_HW) && (defined(HW_MEMSIZE) || defined(HW_PHYSMEM64)) //Mac
         int mib[2];
@@ -67,7 +55,6 @@ namespace Gadgetron::Server::Info {
 
 #endif //Mac
 
-#endif //WIN32
         return 0L;
     }
 

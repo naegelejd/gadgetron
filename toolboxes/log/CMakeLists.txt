@@ -1,7 +1,3 @@
-if (WIN32)
-    add_definitions(-D__BUILD_GADGETRON_LOG__)
-endif ()
-
 add_library(gadgetron_toolbox_log SHARED log.cpp)
 target_include_directories(gadgetron_toolbox_log
 		PUBLIC
@@ -18,6 +14,6 @@ install(TARGETS gadgetron_toolbox_log
 	COMPONENT main
 )
 
-install(FILES log.h log_export.h DESTINATION ${GADGETRON_INSTALL_INCLUDE_PATH} COMPONENT main)
+install(FILES log.h DESTINATION ${GADGETRON_INSTALL_INCLUDE_PATH} COMPONENT main)
 
 set(GADGETRON_BUILD_RPATH "${CMAKE_CURRENT_BINARY_DIR};${GADGETRON_BUILD_RPATH}" PARENT_SCOPE)

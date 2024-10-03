@@ -38,18 +38,6 @@ protected:
         GDEBUG_STREAM("gt_ut_res_folder_ is " << gt_ut_res_folder_);
 
         timer_.set_timing_in_destruction(false);
-
-#ifdef WIN32
-    #ifdef USE_OMP
-        /// lock the threads
-        #pragma omp parallel default(shared)
-        {
-            int tid = omp_get_thread_num();
-            DWORD_PTR mask = (1 << tid);
-            SetThreadAffinityMask( GetCurrentThread(), mask );
-        }
-    #endif // USE_OMP
-#endif // WIN32
     }
 
     std::string gt_ut_folder_;

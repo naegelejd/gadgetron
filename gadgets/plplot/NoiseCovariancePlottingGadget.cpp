@@ -5,11 +5,6 @@
 
 #include "fstream"
 
-#ifndef _WIN32
-#include <sys/types.h>
-#include <sys/stat.h>
-#endif // _WIN32
-
 #include <boost/algorithm/string.hpp>
 #include <boost/algorithm/string/split.hpp>
 
@@ -41,11 +36,7 @@ int NoiseCovariancePlottingGadget::process_config(ACE_Message_Block* mb)
     }
     else
     {
-#ifdef _WIN32
-        noise_dependency_folder_ = std::string("c:\\temp\\gadgetron\\");
-#else
         noise_dependency_folder_ =  std::string("/tmp/gadgetron/");
-#endif // _WIN32
     }
 
     GDEBUG("Folder to store noise dependencies is %s\n", noise_dependency_folder_.c_str());

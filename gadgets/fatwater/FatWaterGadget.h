@@ -4,13 +4,12 @@
 #include <fatwater.h>
 #include "Gadget.h"
 #include "hoNDArray.h"
-#include "gadgetron_fatwater_export.h"
 
 #include "mri_core_data.h"
 #include "vector_td_io.h"
 namespace Gadgetron{
 
-  class EXPORTGADGETFATWATER FatWaterGadget : 
+  class FatWaterGadget : 
   public Gadget1<IsmrmrdImageArray>
     {
     public:

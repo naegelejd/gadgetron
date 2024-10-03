@@ -8,13 +8,12 @@
 
 #include "Gadget.h"
 #include "hoNDArray.h"
-#include "gadgetron_epi_export.h"
 
 #include <complex>
 
 namespace Gadgetron {
 
-    class EXPORTGADGETS_EPI OneEncodingGadget :
+    class OneEncodingGadget :
         public Gadget1<mrd::Acquisition>
     {
     public:

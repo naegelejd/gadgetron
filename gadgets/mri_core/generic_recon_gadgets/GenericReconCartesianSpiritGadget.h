@@ -11,7 +11,7 @@ namespace Gadgetron {
 
     /// define the recon status
     template <typename T>
-    class EXPORTGADGETSMRICORE GenericReconCartesianSpiritObj
+    class GenericReconCartesianSpiritObj
     {
     public:
 
@@ -59,7 +59,7 @@ namespace Gadgetron {
 
 namespace Gadgetron {
 
-    class EXPORTGADGETSMRICORE GenericReconCartesianSpiritGadget : public GenericReconGadget
+    class GenericReconCartesianSpiritGadget : public GenericReconGadget
     {
     public:
         GADGET_DECLARE(GenericReconCartesianSpiritGadget);

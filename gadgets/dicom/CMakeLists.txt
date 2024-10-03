@@ -4,21 +4,13 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DHAVE_CONFIG_H -D_REENTRANT -D_OSF_SOUR
 set(Boost_NO_BOOST_CMAKE ON)
 find_package(Boost COMPONENTS date_time REQUIRED)
 
-if(WIN32)
-  link_directories(${Boost_LIBRARY_DIRS})
-endif()
-
-if (WIN32)
-    set(GT_DICOM_LIBRARIES cmr i2d ijg8 dcmfg)
-else ()
-    set(GT_DICOM_LIBRARIES
-            dcmdata
-            oflog
-            ofstd
-        z m pthread)
-    if (APPLE)
-        list(APPEND GT_DICOM_LIBRARIES iconv)
-    endif ()
+set(GT_DICOM_LIBRARIES
+        dcmdata
+        oflog
+        ofstd
+    z m pthread)
+if (APPLE)
+    list(APPEND GT_DICOM_LIBRARIES iconv)
 endif ()
 
 # sanity check:
@@ -55,7 +47,6 @@ include_directories(
         )
 
 set(gadgetron_dicom_header_files 
-    gadgetron_dicom_export.h 
     DicomFinishGadget.h 
     DicomImageWriter.h 
     dicom_ismrmrd_utility.h )

@@ -71,11 +71,7 @@ namespace Gadgetron {
                 const size_t Z = input_data.get_size(2);
                 const size_t S = input_data.get_size(5);
 
-#ifdef WIN32
-    #pragma omp parallel for
-#else
     #pragma omp parallel for collapse(2)
-#endif
                 for (int ky = 0; ky < Y; ky++) {
                     for (size_t kx = 0; kx < X; kx++) {
 

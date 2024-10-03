@@ -1,10 +1,4 @@
-if (WIN32)
-  add_definitions(-D__BUILD_GADGETRON_CARTESIAN__)
-endif ()
-
-
 add_library(gadgetron_cartesian SHARED 
-  gadgetron_cartesian_export.h
   CartesianToGenericGadget.h
   CartesianToGenericGadget.cpp
 )
@@ -19,8 +13,7 @@ target_link_libraries(gadgetron_cartesian gadgetron_toolbox_cpucore
   )
 
 
-install (FILES  gadgetron_cartesian_export.h
-                CartesianToGenericGadget.h
+install (FILES  CartesianToGenericGadget.h
                 DESTINATION ${GADGETRON_INSTALL_INCLUDE_PATH} COMPONENT main)
 
 install(TARGETS gadgetron_cartesian

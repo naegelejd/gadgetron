@@ -2,12 +2,10 @@
 #define RegistrationAveragingGadget_H
 
 #include "Gadget.h"
-#include "GadgetMRIHeaders.h"
 #include "hoNDArray.h"
 #include "complext.h"
 #include "PhysioInterpolationGadget.h"
 #include "GadgetronTimer.h"
-#include "gadgetron_moco_export.h"
 #include "hoNDArray_fileio.h"
 
 #ifdef USE_CUDA
@@ -27,7 +25,7 @@ namespace Gadgetron{
      This is an abstract gadget class and consequently should not be included in any xml configuration file.
      "Instantiate" instead the cpuRegistrationAveragingGadget or gpuRegistrationAveragingGadget.
   */
-  template<class ARRAY_TYPE, unsigned int D> class EXPORTGADGETS_MOCO RegistrationAveragingGadget 
+  template<class ARRAY_TYPE, unsigned int D> class RegistrationAveragingGadget 
     : public Gadget2<ISMRMRD::ImageHeader, hoNDArray< typename ARRAY_TYPE::element_type > > // se note below
   {
     //

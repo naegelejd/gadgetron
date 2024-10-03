@@ -11,7 +11,7 @@ namespace Gadgetron {
 
     /// define the recon status
     template <typename T>
-    class EXPORTGADGETSMRICORE GenericReconCartesianGrappaObj
+    class GenericReconCartesianGrappaObj
     {
     public:
         // ------------------------------------
@@ -50,7 +50,7 @@ namespace Gadgetron {
 
 namespace Gadgetron {
 
-    class EXPORTGADGETSMRICORE GenericReconCartesianGrappaGadget : public GenericReconGadget
+    class GenericReconCartesianGrappaGadget : public GenericReconGadget
     {
     public:
         GADGET_DECLARE(GenericReconCartesianGrappaGadget);

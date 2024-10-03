@@ -12,7 +12,7 @@
 
 namespace Gadgetron {
 
-    class EXPORTGADGETSMRICORE GenericReconNoiseStdMapComputingGadget : public GenericReconImageBase
+    class GenericReconNoiseStdMapComputingGadget : public GenericReconImageBase
     {
     public:
         GADGET_DECLARE(GenericReconNoiseStdMapComputingGadget);

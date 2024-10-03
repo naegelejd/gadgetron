@@ -6,7 +6,6 @@
 #pragma once
 
 #include <complex>
-#include "gadgetron_mricore_export.h"
 
 #include "ismrmrd/ismrmrd.h"
 #include "ismrmrd/xml.h"
@@ -38,7 +37,7 @@ namespace Gadgetron {
     // [Cha Slice Con Phase Rep Set Ave]
     //   0    1    2   3     4   5   6
 
-    class EXPORTGADGETSMRICORE GenericImageReconGadgetBase
+    class GenericImageReconGadgetBase
     {
     public:
         typedef float T;
@@ -204,7 +203,7 @@ namespace Gadgetron {
         std::vector< Image3DType > gfactor_buf_3D_;
     };
 
-    class EXPORTGADGETSMRICORE GenericImageReconGadget : public BasicPropertyGadget, public GenericImageReconGadgetBase
+    class GenericImageReconGadget : public BasicPropertyGadget, public GenericImageReconGadgetBase
     {
     public:
         GADGET_DECLARE(GenericImageReconGadget);

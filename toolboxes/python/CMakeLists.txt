@@ -1,7 +1,4 @@
-
-
 set(gadgetron_toolbox_python_header_files python_converters.h
-        python_export.h
         python_hoNDArray_converter.h
         python_IsmrmrdReconData_converter.h
         python_IsmrmrdImageArray_converter.h
@@ -34,10 +31,6 @@ target_include_directories(gadgetron_toolbox_python
 		$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
 		)
 set_target_properties(gadgetron_toolbox_python PROPERTIES VERSION ${GADGETRON_VERSION_STRING} SOVERSION ${GADGETRON_SOVERSION})
-if (WIN32)
-    # only add this definition to the library, not the example binaries
-    set_target_properties(gadgetron_toolbox_python PROPERTIES COMPILE_DEFINITIONS "__BUILD_GADGETRON_TOOLBOX_PYTHON__")
-endif ()
 
 install(TARGETS gadgetron_toolbox_python
 	EXPORT gadgetron-export

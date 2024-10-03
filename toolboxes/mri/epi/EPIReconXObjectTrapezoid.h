@@ -5,7 +5,6 @@
 
 #pragma once
 
-#include "EPIExport.h"
 #include "EPIReconXObject.h"
 #include "hoArmadillo.h"
 #include "hoNDArray_elemwise.h"
@@ -23,7 +22,7 @@ template <typename T> class EPIReconXObjectTrapezoid : public EPIReconXObject<T>
 
   virtual int computeTrajectory();
 
-  virtual int apply(mrd::AcquisitionHeader &hdr_in, hoNDArray <T> &data_in, 
+  virtual int apply(mrd::AcquisitionHeader &hdr_in, hoNDArray <T> &data_in,
 		    mrd::AcquisitionHeader &hdr_out, hoNDArray <T> &data_out);
 
   using EPIReconXObject<T>::filterPos_;
@@ -93,7 +92,7 @@ template <typename T> int EPIReconXObjectTrapezoid<T>::computeTrajectory()
 
   //GDEBUG_STREAM("Dwell = " << dwellTime_ << "    acqDelayTime = " << acqDelayTime_ << std::endl);
   //GDEBUG_STREAM("rampUpTime = " << rampUpTime_ << "    flatTopTime = " << flatTopTime_ << "    rampDownTime = " << rampDownTime_ << std::endl);
-  
+
   // Some timings
   float totTime = rampUpTime_ + flatTopTime_ + rampDownTime_;
   float readTime = dwellTime_ * numSamples_;
@@ -112,7 +111,7 @@ template <typename T> int EPIReconXObjectTrapezoid<T>::computeTrajectory()
   if (rampDownTime_ > 0.0) {
       readArea -= 0.5*(totTime - (acqDelayTime_+readTime))*(totTime - (acqDelayTime_+readTime))/rampDownTime_;
   }
-  
+
   // Prephase is set so that k=0 is halfway through the readout time
   float prePhaseArea = 0.5 * totArea;
 
@@ -153,7 +152,7 @@ template <typename T> int EPIReconXObjectTrapezoid<T>::computeTrajectory()
 }
 
 
-template <typename T> int EPIReconXObjectTrapezoid<T>::apply(mrd::AcquisitionHeader &hdr_in, hoNDArray <T> &data_in, 
+template <typename T> int EPIReconXObjectTrapezoid<T>::apply(mrd::AcquisitionHeader &hdr_in, hoNDArray <T> &data_in,
 		    mrd::AcquisitionHeader &hdr_out, hoNDArray <T> &data_out)
 {
   if (!operatorComputed_) {
@@ -244,7 +243,7 @@ template <typename T> int EPIReconXObjectTrapezoid<T>::apply(mrd::AcquisitionHea
         Mneg_(p,q) = Mn(p,q);
       }
     }
-    
+
     //Mp.print("Mp =");
     //Mn.print("Mn =");
 
@@ -271,7 +270,7 @@ template <typename T> int EPIReconXObjectTrapezoid<T>::apply(mrd::AcquisitionHea
   // Copy the input header to the output header and set the size and the center sample
   hdr_out = hdr_in;
   hdr_out.center_sample = reconNx_/2;
-  
+
   return 0;
 }
 
@@ -292,5 +291,5 @@ template <typename T> float EPIReconXObjectTrapezoid<T>::calcOffCenterDistance(m
   return roOffCenterDistance;
 
 }
-	
+
 }}

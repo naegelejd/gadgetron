@@ -1,11 +1,4 @@
-if (WIN32)
-    add_definitions(-D__BUILD_GADGETRON_CPUOPERATORS__)
-endif ()
-
-
-
 set(cpu_operator_header_files 
-    cpuOperatorExport.h 
     hoIdentityOperator.h
     hoImageOperator.h
     hoDiagonalOperator.h

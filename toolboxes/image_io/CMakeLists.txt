@@ -1,11 +1,4 @@
-
-if (WIN32)
-    add_definitions(-D__BUILD_GADGETRON_IMAGE_ANALYZE_IO__)
-endif ()
-
-
 set(image_io_header_files
-        ImageIOExport.h
         ImageIOBase.h
         ImageIOAnalyze.h)
 

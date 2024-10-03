@@ -1,8 +1,3 @@
-if (WIN32)
-  add_definitions(-D__BUILD_GADGETS_FATWATER__)
-endif ()
-
-
 add_library(gadgetron_fatwater SHARED 
   FatWaterGadget.h FatWaterGadget.cpp
 )
@@ -22,7 +17,6 @@ target_link_libraries(
 
 install(FILES 
   FatWaterGadget.h
-  gadgetron_fatwater_export.h
   DESTINATION ${GADGETRON_INSTALL_INCLUDE_PATH} COMPONENT main)
 
   install(TARGETS gadgetron_fatwater

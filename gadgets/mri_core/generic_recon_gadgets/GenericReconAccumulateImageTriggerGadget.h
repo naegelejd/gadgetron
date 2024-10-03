@@ -13,7 +13,6 @@
 #pragma once
 
 #include <complex>
-#include "gadgetron_mricore_export.h"
 #include "Gadget.h"
 #include "hoNDArray.h"
 
@@ -43,7 +42,7 @@ namespace Gadgetron {
 #define GT_DIM_NUM_IMAGE 7
 
 template <typename T, int D> 
-class EXPORTGADGETSMRICORE GenericReconAccumulateImageTriggerGadget : public Gadgetron::GenericReconBase< IsmrmrdImageArray >
+class GenericReconAccumulateImageTriggerGadget : public Gadgetron::GenericReconBase< IsmrmrdImageArray >
 {
 public:
     GADGET_DECLARE(GenericReconAccumulateImageTriggerGadget);
@@ -155,7 +154,7 @@ protected:
     int image_counter_;
 };
 
-class EXPORTGADGETSMRICORE GenericReconAccumulateImage2DTriggerGadget : public GenericReconAccumulateImageTriggerGadget<float, 2>
+class GenericReconAccumulateImage2DTriggerGadget : public GenericReconAccumulateImageTriggerGadget<float, 2>
 {
 public:
     GADGET_DECLARE(GenericReconAccumulateImage2DTriggerGadget);
@@ -166,7 +165,7 @@ public:
     ~GenericReconAccumulateImage2DTriggerGadget();
 };
 
-class EXPORTGADGETSMRICORE GenericReconAccumulateImage3DTriggerGadget : public GenericReconAccumulateImageTriggerGadget<float, 3>
+class GenericReconAccumulateImage3DTriggerGadget : public GenericReconAccumulateImageTriggerGadget<float, 3>
 {
 public:
     GADGET_DECLARE(GenericReconAccumulateImage3DTriggerGadget);

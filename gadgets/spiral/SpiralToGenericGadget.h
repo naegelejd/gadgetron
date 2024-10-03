@@ -4,7 +4,6 @@
 
 #include "../../toolboxes/mri/spiral/TrajectoryParameters.h"
 #include "Gadget.h"
-#include "gadgetron_spiral_export.h"
 #include "hoNDArray.h"
 
 #include <complex>
@@ -13,7 +12,7 @@
 
 namespace Gadgetron {
 
-    class EXPORTGADGETS_SPIRAL SpiralToGenericGadget :
+    class SpiralToGenericGadget :
             public Gadget1<mrd::Acquisition> {
 
     public:

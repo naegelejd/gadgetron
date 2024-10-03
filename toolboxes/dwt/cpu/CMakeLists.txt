@@ -1,9 +1,3 @@
-if (WIN32)
-    add_definitions(-D__BUILD_GADGETRON_CPUDWT__)
-endif ()
-
-
-
 add_library(gadgetron_toolbox_cpudwt SHARED 
     hoNDWavelet.h
     hoNDWavelet.cpp

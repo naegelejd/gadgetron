@@ -1,6 +1,5 @@
 #pragma once
 
-#include "gadgetron_gpupmri_export.h"
 #include "Gadget.h"
 #include "hoNDArray.h"
 #include "vector_td.h"
@@ -16,7 +15,7 @@
 
 namespace Gadgetron{
 
-  class EXPORTGADGETS_GPUPMRI gpuGenericSensePrepGadget :
+  class gpuGenericSensePrepGadget :
     public Gadget1< mrd::Acquisition >
   {
     

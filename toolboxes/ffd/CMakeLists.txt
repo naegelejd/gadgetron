@@ -1,7 +1,3 @@
-if (WIN32)
-  add_definitions(-D__BUILD_GADGETRON_CPUFFD__)
-endif ()
-
 set(ffd_header_bspline_files 
                     BSplineFFD.h
                     BSplineFFD2D.h

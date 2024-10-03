@@ -1,8 +1,4 @@
-
-
-
 add_library(gadgetron_toolbox_denoise SHARED 
-        denoise_export.h
         non_local_means.cpp
         non_local_means.h
         non_local_bayes.cpp non_local_bayes.h)
@@ -30,7 +26,6 @@ install(TARGETS gadgetron_toolbox_denoise
 
 
 install(FILES
-        denoise_export.h
         non_local_means.h
         non_local_bayes.h
         DESTINATION ${GADGETRON_INSTALL_INCLUDE_PATH} COMPONENT main)

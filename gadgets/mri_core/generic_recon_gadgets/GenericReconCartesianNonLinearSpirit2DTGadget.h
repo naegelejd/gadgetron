@@ -2,8 +2,8 @@
     \brief  This is the class gadget for 2DT cartesian non-linear Spirit reconstruction, working on the ReconData.
             The redundant dimension is dimension N.
 
-            Ref: 
-            Equation 3 and 4. [1] Hui Xue, Souheil Inati, Thomas Sangild Sorensen, Peter Kellman, Michael S. Hansen. 
+            Ref:
+            Equation 3 and 4. [1] Hui Xue, Souheil Inati, Thomas Sangild Sorensen, Peter Kellman, Michael S. Hansen.
             Distributed MRI Reconstruction using Gadgetron based Cloud Computing. Magenetic Resonance in Medicine, 73(3):1015-25, 2015.
 
     \author Hui Xue
@@ -15,7 +15,7 @@
 
 namespace Gadgetron {
 
-    class EXPORTGADGETSMRICORE GenericReconCartesianNonLinearSpirit2DTGadget : public GenericReconCartesianSpiritGadget
+    class GenericReconCartesianNonLinearSpirit2DTGadget : public GenericReconCartesianSpiritGadget
     {
     public:
         GADGET_DECLARE(GenericReconCartesianNonLinearSpirit2DTGadget);

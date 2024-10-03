@@ -25,13 +25,7 @@
 #include <mutex>
 
 #include <cerrno>
-#ifdef _WIN32
-    #include <direct.h>
-    #define getcwd _getcwd
-    #define chdir _chdir
-#else
-    #include <unistd.h>
-#endif
+#include <unistd.h>
 
 #include "bart_helpers.h"
 

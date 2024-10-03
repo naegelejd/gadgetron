@@ -2,9 +2,6 @@
 
 #include "Gadget.h"
 #include "hoNDArray.h"
-#include "gadgetron_debugging_export.h"
-
-#include <ismrmrd/ismrmrd.h>
 
 namespace Gadgetron{
 

@@ -42,7 +42,7 @@ template<class T> void CSIOperator<T>::mult_MH(cuNDArray<complext<T>> *in , cuND
 template <class T> void CSIOperator<T>::set_frequencies(std::vector<T>& freq) {
     frequencies = cuNDArray<T>(freq.size());
     cudaMemcpy(frequencies.data(), freq.data(), frequencies.get_number_of_bytes(), cudaMemcpyKind::cudaMemcpyHostToDevice);
-    
+
 }
 
 template<class T> void CSIOperator<T>::mult_M(cuNDArray<complext<T>> *in , cuNDArray<complext<T>> * out, bool accumulate){
@@ -61,6 +61,6 @@ template<class T> void CSIOperator<T>::mult_M(cuNDArray<complext<T>> *in , cuNDA
 }
 
 
-template class EXPORTHYPER CSIOperator<float>;
+template class CSIOperator<float>;
 
 } /* namespace Gadgetron */

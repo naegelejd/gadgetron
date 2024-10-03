@@ -1,9 +1,5 @@
 include(GoogleTest)
 
-if (WIN32)
-    link_directories(${Boost_LIBRARY_DIRS})
-endif ()
-
 set(test_src_files
         tests.cpp
         hoNDArray_elemwise_test.cpp
@@ -19,7 +15,7 @@ set(test_src_files
         cmr_mapping_test.cpp
         hoNDArray_linalg_test.cpp
         core_test.cpp
-        core_primitive_io_test.cpp 
+        core_primitive_io_test.cpp
         threadpool_test.cpp
         from_string_test.cpp
         hoNDArrayView_test.cpp
@@ -30,9 +26,9 @@ set(test_src_files
         hoSDC_test.cpp
         nhlbi_compression_tests.cpp
         mri_core_stream_test.cpp
-        gadgets/setup_gadget.h 
-        gadgets/AcquisitionAccumulateTrigger_test.cpp 
-        #gadgets/FlagTriggerParsing_test.cpp   # TODO: Disabled because not integration tested
+        gadgets/setup_gadget.h
+        gadgets/AcquisitionAccumulateTrigger_test.cpp
+        gadgets/FlagTriggerParsing_test.cpp
     )
 
 if (PYTHONLIBS_FOUND)

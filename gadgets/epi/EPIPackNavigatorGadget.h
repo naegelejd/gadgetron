@@ -4,7 +4,6 @@
 #include "Gadget.h"
 #include "hoNDArray.h"
 #include "hoArmadillo.h"
-#include "gadgetron_epi_export.h"
 
 #include <ismrmrd/ismrmrd.h>
 #include <complex>
@@ -14,7 +13,7 @@
 
 namespace Gadgetron{
 
-  class  EXPORTGADGETS_EPI EPIPackNavigatorGadget :
+  class  EPIPackNavigatorGadget :
   public Gadget2<ISMRMRD::AcquisitionHeader,hoNDArray< std::complex<float> > >
     {
     public:

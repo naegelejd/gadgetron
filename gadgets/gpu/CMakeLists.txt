@@ -1,7 +1,3 @@
-if (WIN32)
-  add_definitions(-D__BUILD_GADGETRON_GPUGADGET__)
-endif ()
-
 add_library(gadgetron_gpugadget SHARED
         cuFFTGadget.h
         cuFFTGadget.cpp)

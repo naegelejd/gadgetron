@@ -1,8 +1,3 @@
-if (WIN32)
-  add_definitions(-D__BUILD_GADGETRON_CPUNFFT__)
-  add_definitions(-D_USE_MATH_DEFINES)
-endif ()
-
 add_library(gadgetron_toolbox_cpunfft SHARED
     hoNFFT.h
     hoNFFT.cpp

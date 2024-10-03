@@ -3,14 +3,13 @@
 
 #include "Gadget.h"
 #include "hoNDArray.h"
-#include "gadgetron_mricore_export.h"
 
 #include <ismrmrd/ismrmrd.h>
 #include <complex>
 
 namespace Gadgetron{
   
-  class EXPORTGADGETSMRICORE CropAndCombineGadget : 
+  class CropAndCombineGadget : 
   public Gadget2<ISMRMRD::ImageHeader, hoNDArray< std::complex<float> > >
     {
     public:

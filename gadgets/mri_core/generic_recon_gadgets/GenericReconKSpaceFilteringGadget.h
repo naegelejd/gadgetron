@@ -18,7 +18,7 @@
 
 namespace Gadgetron {
 
-    class EXPORTGADGETSMRICORE GenericReconKSpaceFilteringGadget : public GenericReconImageBase
+    class GenericReconKSpaceFilteringGadget : public GenericReconImageBase
     {
     public:
         GADGET_DECLARE(GenericReconKSpaceFilteringGadget);

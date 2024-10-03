@@ -14,7 +14,7 @@
 
 namespace Gadgetron {
 
-    class EXPORTGADGETSMRICORE GenericReconEigenChannelGadget : public GenericReconDataBase
+    class GenericReconEigenChannelGadget : public GenericReconDataBase
     {
     public:
         GADGET_DECLARE(GenericReconEigenChannelGadget);
@@ -43,7 +43,7 @@ namespace Gadgetron {
 
         /// optionally, upstream coil compression can be applied
         /// if upstream_coil_compression==true, only kept channels will be sent out to next gadgets and other channels will be removed
-        /// no matter whether upstream_coil_compression is true or false, all channels will be converted into eigen channel 
+        /// no matter whether upstream_coil_compression is true or false, all channels will be converted into eigen channel
         GADGET_PROPERTY(upstream_coil_compression, bool, "Whether to perform upstream coil compression", true);
         /// the logic here is that if upstream_coil_compression_num_modesKept>0, only upstream_coil_compression_num_modesKept channels will be kept
         /// if upstream_coil_compression_num_modesKept<=0 and upstream_coil_compression_thres>0, this threshold will be used to determine how many channels to keep

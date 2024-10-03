@@ -8,12 +8,10 @@ The dicom image is sent out with message id -> dicom image -> dicom image name -
 #ifndef DICOMFINISHGADGET_H
 #define DICOMFINISHGADGET_H
 
-#include "gadgetron_dicom_export.h"
 
 #include "Gadget.h"
 #include "hoNDArray.h"
 #include "ismrmrd/meta.h"
-#include "GadgetMRIHeaders.h"
 #include "ismrmrd/ismrmrd.h"
 
 #include "dcmtk/config/osconfig.h"
@@ -34,7 +32,7 @@ The dicom image is sent out with message id -> dicom image -> dicom image name -
 
 namespace Gadgetron
 {
-    class EXPORTGADGETSDICOM DicomFinishGadget : public Gadget1< ISMRMRD::ImageHeader >
+    class DicomFinishGadget : public Gadget1< ISMRMRD::ImageHeader >
     {
     public:
 

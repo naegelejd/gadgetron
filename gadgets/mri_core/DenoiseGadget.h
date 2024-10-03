@@ -3,7 +3,6 @@
 #define GADGETRON_DENOISEGADGET_H
 
 #include "Gadget.h"
-#include "gadgetron_mricore_export.h"
 #include "hoNDArray.h"
 
 #include "PureGadget.h"
@@ -15,7 +14,7 @@ namespace Gadgetron {
     using DenoiseSupportedTypes =
         Core::variant<mrd::Image<float>, mrd::Image<std::complex<float>>, mrd::ImageArray>;
 
-    class EXPORTGADGETSMRICORE DenoiseGadget
+    class DenoiseGadget
         : public Core::PureGadget<DenoiseSupportedTypes, DenoiseSupportedTypes> {
 
     public:

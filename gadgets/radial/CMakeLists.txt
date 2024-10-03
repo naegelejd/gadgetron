@@ -1,12 +1,7 @@
-if (WIN32)
-  add_definitions(-D__BUILD_GADGETRON_RADIAL__)
-endif ()
-
 list(APPEND PHASE_GADGET RadialPhaseCorrectionGadget.h RadialPhaseCorrectionGadget.cpp)
 install (FILES  RadialPhaseCorrectionGadget.h DESTINATION ${GADGETRON_INSTALL_INCLUDE_PATH} COMPONENT main)
 
 add_library(gadgetron_gpuradial SHARED 
-  gadgetron_radial_export.h
   gpuRadialPrepGadget.h gpuRadialPrepGadget.cpp 
   gpuRadialSensePrepGadget.h gpuRadialSensePrepGadget.cpp 
   gpuRadialSpiritPrepGadget.h gpuRadialSpiritPrepGadget.cpp 
@@ -24,8 +19,7 @@ target_link_libraries(gadgetron_gpuradial
         gadgetron_toolbox_cpucore_math
         gadgetron_toolbox_gpu)
 
-install (FILES  gadgetron_radial_export.h
-                gpuRadialPrepGadget.h 
+install (FILES  gpuRadialPrepGadget.h 
                 gpuRadialSensePrepGadget.h 
                 gpuRadialSpiritPrepGadget.h 
                 gpuRetroGatedSensePrepGadget.h 

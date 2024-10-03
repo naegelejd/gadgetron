@@ -1,7 +1,3 @@
-if (WIN32)
-    add_definitions(-D__BUILD_GADGETRON_CORE__)
-endif ()
-
 add_compile_options(-Wall -Werror)
 add_subdirectory(parallel)
 
@@ -20,12 +16,10 @@ set_target_properties(gadgetron_core PROPERTIES
         SOVERSION ${GADGETRON_SOVERSION})
 
 target_link_libraries(gadgetron_core
-        ISMRMRD::ISMRMRD
         mrd::mrd
         gadgetron_toolbox_cpucore
         Boost::boost
         Boost::filesystem
-        ${CURL_LIBRARIES}
         )
 
 target_include_directories(gadgetron_core PUBLIC
@@ -64,18 +58,14 @@ install(FILES
         PropertyMixin.h
         GadgetContainerMessage.h
         ChannelAlgorithms.h
-        variant.hpp
         Process.h
         DESTINATION ${GADGETRON_INSTALL_INCLUDE_PATH} COMPONENT main)
 
 install(FILES
         io/adapt_struct.h
         io/from_string.h
-        io/ismrmrd_types.h
         io/primitives.h
         io/primitives.hpp
-        io/sfndam_serializable.h
-        io/sfndam.h
         DESTINATION ${GADGETRON_INSTALL_INCLUDE_PATH}/io COMPONENT main)
 install(FILES
         config/distributed_default.xml

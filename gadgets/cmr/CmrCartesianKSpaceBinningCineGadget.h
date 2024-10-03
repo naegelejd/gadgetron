@@ -20,13 +20,12 @@
 
 #pragma once
 
-#include "gadgetron_cmr_export.h"
 #include "generic_recon_gadgets/GenericReconGadget.h"
 #include "cmr_kspace_binning.h"
 
 namespace Gadgetron {
 
-    class EXPORTGADGETSCMR CmrCartesianKSpaceBinningCineGadget : public GenericReconGadget
+    class CmrCartesianKSpaceBinningCineGadget : public GenericReconGadget
     {
     public:
         GADGET_DECLARE(CmrCartesianKSpaceBinningCineGadget);

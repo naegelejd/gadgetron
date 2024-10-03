@@ -2,14 +2,12 @@
 #define DICOMIMAGEWRITER_H
 
 #include <dcmtk/dcmdata/dctk.h>
-#include "gadgetron_dicom_export.h"
-#include "GadgetMRIHeaders.h"
 #include "ismrmrd/ismrmrd.h"
 #include "Writer.h"
 
 namespace Gadgetron {
 
-    class EXPORTGADGETSDICOM DicomImageWriter
+    class DicomImageWriter
         : public Core::TypedWriter<DcmFileFormat, Core::optional<std::string>, Core::optional<ISMRMRD::MetaContainer>> {
     protected:
         void serialize(std::ostream& stream, const DcmFileFormat&,

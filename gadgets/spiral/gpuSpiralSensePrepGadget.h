@@ -2,7 +2,6 @@
 #define gpuSpiralSensePrepGadget_H
 #pragma once
 
-#include "gadgetron_spiral_export.h"
 #include "Gadget.h"
 #include "cuCgSolver.h"
 #include "cuNonCartesianSenseOperator.h"
@@ -20,7 +19,7 @@
 
 namespace Gadgetron {
 
-    class EXPORTGADGETS_SPIRAL gpuSpiralSensePrepGadget :
+    class gpuSpiralSensePrepGadget :
             public Gadget1<mrd::Acquisition> {
 
     public:

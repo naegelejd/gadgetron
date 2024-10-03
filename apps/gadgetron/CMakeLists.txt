@@ -1,3 +1,5 @@
+find_package(PugiXML REQUIRED)
+
 configure_file(gadgetron_config.in gadgetron_config.h)
 
 add_executable(gadgetron
@@ -33,7 +35,7 @@ target_link_libraries(gadgetron
         Boost::system
         Boost::filesystem
         Boost::program_options
-        ${CURL_LIBRARIES}
+        ${PUGIXML_LIBRARIES}
         GTBLAS
         ${CMAKE_DL_LIBS})
 

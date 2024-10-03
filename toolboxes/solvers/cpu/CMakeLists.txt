@@ -1,5 +1,4 @@
 set( cpu_solver_header_files
-        cpusolver_export.h
         hoGdSolver.h
         hoCgPreconditioner.h
         hoCgSolver.h

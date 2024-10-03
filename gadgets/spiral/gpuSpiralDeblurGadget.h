@@ -2,7 +2,6 @@
 #define gpuSpiralDeblurGadget_H
 #pragma once
 
-#include "gadgetron_spiral_export.h"
 #include "Gadget.h"
 #include "cuNFFT.h"
 #include "hoNDArray.h"
@@ -16,7 +15,7 @@ using namespace std;
 
 namespace Gadgetron{
 
-  class EXPORTGADGETS_SPIRAL gpuSpiralDeblurGadget :
+  class gpuSpiralDeblurGadget :
     public Gadget1< ReconData >
   {
 

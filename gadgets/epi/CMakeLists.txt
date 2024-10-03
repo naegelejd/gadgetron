@@ -1,8 +1,3 @@
-if (WIN32)
-  add_definitions(-D__BUILD_GADGETRON_EPI__)
-endif ()
-
-
 add_library(gadgetron_epi SHARED 
   EPIReconXGadget.h EPIReconXGadget.cpp
   EPICorrGadget.h EPICorrGadget.cpp
@@ -33,7 +28,6 @@ install(FILES
   EPICorrGadget.h
   EPIPackNavigatorGadget.h
   FFTXGadget.h
-  gadgetron_epi_export.h
   DESTINATION ${GADGETRON_INSTALL_INCLUDE_PATH} COMPONENT main)
 
 install(TARGETS gadgetron_epi

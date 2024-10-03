@@ -5,7 +5,6 @@
 
 #pragma once
 
-#include "EPIExport.h"
 #include "EPIReconXObject.h"
 #include "hoArmadillo.h"
 #include "hoNDArray_elemwise.h"
@@ -23,7 +22,7 @@ template <typename T> class EPIReconXObjectFlat : public EPIReconXObject<T>
 
   virtual int computeTrajectory();
 
-  virtual int apply(mrd::AcquisitionHeader &hdr_in, hoNDArray <T> &data_in, 
+  virtual int apply(mrd::AcquisitionHeader &hdr_in, hoNDArray <T> &data_in,
 		    mrd::AcquisitionHeader &hdr_out, hoNDArray <T> &data_out);
 
   using EPIReconXObject<T>::filterPos_;
@@ -110,7 +109,7 @@ template <typename T> int EPIReconXObjectFlat<T>::computeTrajectory()
 }
 
 
-template <typename T> int EPIReconXObjectFlat<T>::apply(mrd::AcquisitionHeader &hdr_in, hoNDArray <T> &data_in, 
+template <typename T> int EPIReconXObjectFlat<T>::apply(mrd::AcquisitionHeader &hdr_in, hoNDArray <T> &data_in,
 		    mrd::AcquisitionHeader &hdr_out, hoNDArray <T> &data_out)
 {
   if (!operatorComputed_) {
@@ -189,7 +188,7 @@ template <typename T> int EPIReconXObjectFlat<T>::apply(mrd::AcquisitionHeader &
   // Copy the input header to the output header and set the size and the center sample
   hdr_out = hdr_in;
   hdr_out.center_sample = reconNx_/2;
-  
+
   return 0;
 }
 

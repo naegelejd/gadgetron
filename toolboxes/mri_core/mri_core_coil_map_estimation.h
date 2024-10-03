@@ -23,7 +23,6 @@
 
 #pragma once
 
-#include "mri_core_export.h"
 #include "hoNDArray.h"
 
 namespace Gadgetron

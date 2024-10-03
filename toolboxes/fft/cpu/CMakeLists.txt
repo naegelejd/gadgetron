@@ -1,10 +1,4 @@
-if (WIN32)
-    add_definitions(-D__BUILD_GADGETRON_CPUFFT__)
-endif ()
-
-
 add_library(gadgetron_toolbox_cpufft SHARED
-        cpufft_export.h
         hoNDFFT.h
         hoNDFFT.cpp
         )
@@ -37,7 +31,6 @@ install(TARGETS gadgetron_toolbox_cpufft
 )
 
 install(FILES
-        cpufft_export.h
         hoNDFFT.h
         DESTINATION ${GADGETRON_INSTALL_INCLUDE_PATH} COMPONENT main)
 

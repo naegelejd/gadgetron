@@ -9,10 +9,9 @@
 #include <mri_core_data.h>
 #include "Gadget.h"
 #include "hoNDArray.h"
-#include "gadgetron_mricore_export.h"
 
 namespace Gadgetron {
-EXPORTGADGETSMRICORE class ImageAccumulatorGadget :  public Gadget1<IsmrmrdImageArray> {
+class ImageAccumulatorGadget :  public Gadget1<IsmrmrdImageArray> {
 
 
     public:

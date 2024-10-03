@@ -1,8 +1,4 @@
-if (WIN32)
-  add_definitions(-D__BUILD_GADGETRON_CPUKLT__)
-endif ()
 add_library(gadgetron_toolbox_cpuklt SHARED 
-  cpuklt_export.h 
   hoNDKLT.h
   hoNDKLT.cpp
   )
@@ -35,7 +31,6 @@ install(TARGETS gadgetron_toolbox_cpuklt
 
 
 install(FILES
-  cpuklt_export.h 
   hoNDKLT.h
   DESTINATION ${GADGETRON_INSTALL_INCLUDE_PATH} COMPONENT main)
 

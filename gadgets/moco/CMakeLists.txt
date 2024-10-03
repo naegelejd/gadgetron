@@ -1,7 +1,3 @@
-if (WIN32)
-    add_definitions(-D__BUILD_GADGETRON_MOCO__)
-endif ()
-
 if (CUDA_FOUND)
     list(APPEND CPU_GADGETS cpuRegistrationAveragingGadget.cpp)
     list(APPEND CPU_LIBS gadgetron_toolbox_cpucore_math gadgetron_toolbox_cpureg)
@@ -13,7 +9,6 @@ if (CUDA_FOUND)
 
     add_library(gadgetron_moco SHARED
             cpuRegistrationAveragingGadget.h
-            gadgetron_moco_export.h
             gpuRegistrationAveragingGadget.h
             gpuRegistrationScatteringGadget.h
             RegistrationAveragingGadget.h
@@ -39,7 +34,6 @@ if (CUDA_FOUND)
     install(TARGETS gadgetron_moco DESTINATION lib COMPONENT main)
 
     install(FILES cpuRegistrationAveragingGadget.h
-            gadgetron_moco_export.h
             gpuRegistrationAveragingGadget.h
             gpuRegistrationScatteringGadget.h
             RegistrationAveragingGadget.h

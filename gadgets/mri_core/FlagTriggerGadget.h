@@ -38,6 +38,8 @@ class FlagTriggerGadget : public Core::ChannelGadget<Core::Acquisition> {
         is_dummyscan_data = 26,
         is_rtfeedback_data = 27,
         is_surfacecoilcorrectionscan_data = 29,
+        is_phase_stabilization_reference = 30,
+        is_phase_stabilization = 31,
 
         compression1 = 52,
         compression2 = 53,

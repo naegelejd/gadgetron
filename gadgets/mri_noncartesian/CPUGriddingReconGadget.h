@@ -8,13 +8,12 @@
 
 #pragma once 
 #include "generic_recon_gadgets/GenericReconGadget.h"
-#include "gadgetron_mri_noncartesian_export.h"
 #include "hoNDArray.h"
 #include "GriddingReconGadgetBase.h"
 
 namespace Gadgetron{
 
-	class EXPORTGADGETSMRINONCARTESIAN CPUGriddingReconGadget :public GriddingReconGadgetBase<hoNDArray> {
+	class CPUGriddingReconGadget :public GriddingReconGadgetBase<hoNDArray> {
 
 	public:
 

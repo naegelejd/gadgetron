@@ -3,7 +3,6 @@
 
 #pragma once
 
-#include "gadgetron_gpupmri_export.h"
 #include <complex>
 #include "Gadget.h"
 #include "GenericReconJob.h"
@@ -22,7 +21,7 @@
 
 namespace Gadgetron{
 
-  class EXPORTGADGETS_GPUPMRI gpuLALMSenseGadget : public gpuSenseGadget
+  class gpuLALMSenseGadget : public gpuSenseGadget
   {
 
   public:

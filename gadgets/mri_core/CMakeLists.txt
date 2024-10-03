@@ -1,33 +1,21 @@
-if (WIN32)
-    add_definitions(-D__BUILD_GADGETRON_MRICORE__)
-endif ()
-
 find_package(ZFP)
 
 include_directories(${HDF5_INCLUDE_DIRS} ${CMAKE_SOURCE_DIR}/core/io)
 
-if(MSVC)
-  set_source_files_properties(CompressedFloatBufferAvx2.cpp PROPERTIES COMPILE_FLAGS "/arch:AVX2")
-else()
-  set_source_files_properties(CompressedFloatBufferSse41.cpp PROPERTIES COMPILE_FLAGS "-msse4.1")
-  set_source_files_properties(CompressedFloatBufferAvx2.cpp PROPERTIES COMPILE_FLAGS "-mavx2 -mfma")
-endif()
+set_source_files_properties(CompressedFloatBufferSse41.cpp PROPERTIES COMPILE_FLAGS "-msse4.1")
+set_source_files_properties(CompressedFloatBufferAvx2.cpp PROPERTIES COMPILE_FLAGS "-mavx2 -mfma")
 
 
-set(gadgetron_mricore_header_files 
+set(gadgetron_mricore_header_files
         AugmentImageMetadataGadget.h
         NoiseAdjustGadget.h
         PCACoilGadget.h
-        # AccumulatorGadget.h
         FFTGadget.h
         CombineGadget.h
-        # CropAndCombineGadget.h
-        # NoiseAdjustGadget_unoptimized.h
         ExtractGadget.h
         FloatToFixPointGadget.h
         RemoveROOversamplingGadget.h
         CoilReductionGadget.h
-        # ScaleGadget.h
         FlowPhaseSubtractionGadget.h
         PhysioInterpolationGadget.h
         AsymmetricEchoAdjustROGadget.h
@@ -41,16 +29,20 @@ set(gadgetron_mricore_header_files
         ImageFinishGadget.h
         NHLBICompression.h
         cpuisa.h
-        # ImageAccumulatorGadget.h
-        # ImageResizingGadget.h
         ImageArraySendMixin.h
         ImageArraySendMixin.hpp
         AutoScaleGadget.h
         DenoiseGadget.h
+        FlagTriggerGadget.h
+        ImageIndexGadget.h
+        # AccumulatorGadget.h
+        # CropAndCombineGadget.h
+        # NoiseAdjustGadget_unoptimized.h
+        # ScaleGadget.h
+        # ImageAccumulatorGadget.h
+        # ImageResizingGadget.h
         # CoilComputationGadget.h
         # ImageFFTGadget.h
-        # FlagTriggerGadget.h
-        ImageIndexGadget.h
         # IsmrmrdDumpGadget.h
         )
 
@@ -58,17 +50,13 @@ set(gadgetron_mricore_src_files
         AugmentImageMetadataGadget.cpp
         NoiseAdjustGadget.cpp
         PCACoilGadget.cpp
-        # AccumulatorGadget.cpp
         FFTGadget.cpp
         CombineGadget.cpp
-        # CropAndCombineGadget.cpp
         ImageFinishGadget.cpp
-        # NoiseAdjustGadget_unoptimized.cpp
         ExtractGadget.cpp
         FloatToFixPointGadget.cpp
         RemoveROOversamplingGadget.cpp
         CoilReductionGadget.cpp
-        # ScaleGadget.cpp
         FlowPhaseSubtractionGadget.cpp
         PhysioInterpolationGadget.cpp
         AsymmetricEchoAdjustROGadget.cpp
@@ -83,14 +71,18 @@ set(gadgetron_mricore_src_files
         CompressedFloatBufferSse41.cpp
         CompressedFloatBufferAvx2.cpp
         cpuisa.cpp
-        # ImageAccumulatorGadget.cpp
-        # ImageResizingGadget.cpp
         AutoScaleGadget.cpp
         DenoiseGadget.cpp
+        FlagTriggerGadget.cpp
+        ImageIndexGadget.cpp
+        # AccumulatorGadget.cpp
+        # CropAndCombineGadget.cpp
+        # NoiseAdjustGadget_unoptimized.cpp
+        # ScaleGadget.cpp
+        # ImageAccumulatorGadget.cpp
+        # ImageResizingGadget.cpp
         # CoilComputationGadget.cpp
         # ImageFFTGadget.cpp
-        # FlagTriggerGadget.cpp
-        ImageIndexGadget.cpp
         # IsmrmrdDumpGadget.cpp
         )
 
@@ -101,10 +93,9 @@ set(gadgetron_mricore_config_files
         config/default_measurement_dependencies.xml
         config/isalive.xml
         )
-set(gadgetron_mricore_generic_recon_gadgets_header_files 
+set(gadgetron_mricore_generic_recon_gadgets_header_files
         generic_recon_gadgets/GenericReconBase.h
         generic_recon_gadgets/GenericReconGadget.h
-        # generic_recon_gadgets/GenericReconCartesianFFTGadget.h
         generic_recon_gadgets/GenericReconCartesianGrappaGadget.h
         generic_recon_gadgets/GenericReconCartesianSpiritGadget.h
         generic_recon_gadgets/GenericReconCartesianNonLinearSpirit2DTGadget.h
@@ -117,18 +108,18 @@ set(gadgetron_mricore_generic_recon_gadgets_header_files
         generic_recon_gadgets/GenericReconImageArrayScalingGadget.h
         generic_recon_gadgets/GenericReconEigenChannelGadget.h
         generic_recon_gadgets/GenericReconNoiseStdMapComputingGadget.h
-        # generic_recon_gadgets/GenericImageReconGadget.h
-        # generic_recon_gadgets/GenericReconAccumulateImageTriggerGadget.h
-        # generic_recon_gadgets/GenericImageReconArrayToImageGadget.h
-        # generic_recon_gadgets/GenericReconReferenceKSpaceDelayedBufferGadget.h
-        # generic_recon_gadgets/GenericReconImageToImageArrayGadget.h
         generic_recon_gadgets/GenericReconStreamDef.h
+        # generic_recon_gadgets/GenericReconAccumulateImageTriggerGadget.h
+        # generic_recon_gadgets/GenericReconCartesianFFTGadget.h
+        # generic_recon_gadgets/GenericReconImageToImageArrayGadget.h
+        # generic_recon_gadgets/GenericReconReferenceKSpaceDelayedBufferGadget.h
+        # generic_recon_gadgets/GenericImageReconGadget.h
+        # generic_recon_gadgets/GenericImageReconArrayToImageGadget.h
 )
 
 set(gadgetron_mricore_generic_recon_gadgets_src_files
         generic_recon_gadgets/GenericReconBase.cpp
         generic_recon_gadgets/GenericReconGadget.cpp
-        # generic_recon_gadgets/GenericReconCartesianFFTGadget.cpp
         generic_recon_gadgets/GenericReconCartesianGrappaGadget.cpp
         generic_recon_gadgets/GenericReconCartesianSpiritGadget.cpp
         generic_recon_gadgets/GenericReconCartesianNonLinearSpirit2DTGadget.cpp
@@ -136,16 +127,17 @@ set(gadgetron_mricore_generic_recon_gadgets_src_files
         generic_recon_gadgets/GenericReconPartialFourierHandlingGadget.cpp
         generic_recon_gadgets/GenericReconPartialFourierHandlingFilterGadget.cpp
         generic_recon_gadgets/GenericReconPartialFourierHandlingPOCSGadget.cpp
-        # generic_recon_gadgets/GenericReconReferenceKSpaceDelayedBufferGadget.cpp
         generic_recon_gadgets/GenericReconKSpaceFilteringGadget.cpp
         generic_recon_gadgets/GenericReconFieldOfViewAdjustmentGadget.cpp
         generic_recon_gadgets/GenericReconImageArrayScalingGadget.cpp
         generic_recon_gadgets/GenericReconEigenChannelGadget.cpp
         generic_recon_gadgets/GenericReconNoiseStdMapComputingGadget.cpp
-        # generic_recon_gadgets/GenericImageReconGadget.cpp
         # generic_recon_gadgets/GenericReconAccumulateImageTriggerGadget.cpp
-        # generic_recon_gadgets/GenericImageReconArrayToImageGadget.cpp
+        # generic_recon_gadgets/GenericReconCartesianFFTGadget.cpp
         # generic_recon_gadgets/GenericReconImageToImageArrayGadget.cpp
+        # generic_recon_gadgets/GenericReconReferenceKSpaceDelayedBufferGadget.cpp
+        # generic_recon_gadgets/GenericImageReconGadget.cpp
+        # generic_recon_gadgets/GenericImageReconArrayToImageGadget.cpp
 )
 
 set(gadgetron_mricore_generic_recon_gadgets_config_files
@@ -188,13 +180,12 @@ if (Boost_PYTHON3_FOUND AND PYTHONLIBS_FOUND AND NUMPY_FOUND)
 endif ()
 
 add_library(gadgetron_mricore SHARED
-    gadgetron_mricore_export.h
     ${gadgetron_mricore_header_files}
     ${gadgetron_mricore_src_files}
     ${gadgetron_mricore_config_files}
     ${gadgetron_mricore_generic_recon_gadgets_header_files}
     ${gadgetron_mricore_generic_recon_gadgets_src_files}
-    ${gadgetron_mricore_generic_recon_gadgets_config_files} 
+    ${gadgetron_mricore_generic_recon_gadgets_config_files}
 )
 
 set_target_properties(gadgetron_mricore PROPERTIES VERSION ${GADGETRON_VERSION_STRING} SOVERSION ${GADGETRON_SOVERSION})
@@ -204,7 +195,7 @@ target_link_libraries(gadgetron_mricore
         gadgetron_toolbox_log
         gadgetron_toolbox_cpucore
         gadgetron_toolbox_cpufft
-        # gadgetron_toolbox_image_analyze_io
+        gadgetron_toolbox_image_analyze_io
         gadgetron_toolbox_denoise
         gadgetron_toolbox_hostutils
         gadgetron_toolbox_cpuoperator
@@ -240,17 +231,15 @@ install(FILES
 endif ()
 
 install(FILES
-        gadgetron_mricore_export.h
         ${gadgetron_mricore_header_files}
         DESTINATION ${GADGETRON_INSTALL_INCLUDE_PATH} COMPONENT main)
 
 install(FILES
-        gadgetron_mricore_export.h
         ${gadgetron_mricore_generic_recon_gadgets_header_files}
         DESTINATION ${GADGETRON_INSTALL_INCLUDE_PATH}/generic_recon_gadgets COMPONENT main)
 
 
-install(FILES 
+install(FILES
         ${gadgetron_mricore_config_files}
         ${gadgetron_mricore_generic_recon_gadgets_config_files}
          DESTINATION ${GADGETRON_INSTALL_CONFIG_PATH} COMPONENT main)

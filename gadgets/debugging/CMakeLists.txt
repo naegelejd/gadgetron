@@ -1,7 +1,3 @@
-if (WIN32)
-    add_definitions(-D__BUILD_GADGETRON_DEBUGGING__)
-endif ()
-
 include_directories(${HDF5_INCLUDE_DIRS})
 
 set(gadgetron_debugging_header_files
@@ -26,7 +22,6 @@ set(gadgetron_debugging_config_files
         )
 
 add_library(gadgetron_debugging SHARED
-    gadgetron_debugging_export.h
     ${gadgetron_debugging_header_files}
     ${gadgetron_debugging_src_files}
     ${gadgetron_debuggingconfig_files}
@@ -53,7 +48,6 @@ target_include_directories(gadgetron_debugging
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>)
 
 install(FILES
-        gadgetron_debugging_export.h
         ${gadgetron_debugging_header_files}
         DESTINATION ${GADGETRON_INSTALL_INCLUDE_PATH} COMPONENT main)
 

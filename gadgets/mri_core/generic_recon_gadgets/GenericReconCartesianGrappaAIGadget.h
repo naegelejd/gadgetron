@@ -10,7 +10,7 @@
 
 namespace Gadgetron {
 
-    class EXPORTGADGETSMRICORE GenericReconCartesianGrappaAIGadget : public GenericReconCartesianGrappaGadget
+    class GenericReconCartesianGrappaAIGadget : public GenericReconCartesianGrappaGadget
     {
     public:
         GADGET_DECLARE(GenericReconCartesianGrappaAIGadget);

@@ -11,15 +11,15 @@ namespace Gadgetron {
 /// Wrappers for NumPy C-API functions. These functions must be used
 /// in the same C++ source file as the call to `import_array()`. In this
 /// case, that is Python.cpp. The simplest solution is to lightly wrap the API.
-EXPORTPYTHON int NumPyArray_NDIM(PyObject* obj);
-EXPORTPYTHON npy_intp NumPyArray_DIM(PyObject* obj, int i);
-EXPORTPYTHON void *NumPyArray_DATA(PyObject* obj);
-EXPORTPYTHON npy_intp *NumPyArray_STRIDES(PyObject* obj);
-EXPORTPYTHON int NumPyArray_ITEMSIZE(PyObject* obj);
-EXPORTPYTHON npy_intp NumPyArray_SIZE(PyObject* obj);
-EXPORTPYTHON PyObject *NumPyArray_SimpleNew(int nd, npy_intp* dims, int typenum);
-EXPORTPYTHON PyObject *NumPyArray_EMPTY(int nd, npy_intp* dims, int typenum, int fortran);
-EXPORTPYTHON PyObject* NumPyArray_FromAny(PyObject* op, PyArray_Descr* dtype, int min_depth, int max_depth, int requirements, PyObject* context);
+int NumPyArray_NDIM(PyObject* obj);
+npy_intp NumPyArray_DIM(PyObject* obj, int i);
+void *NumPyArray_DATA(PyObject* obj);
+npy_intp *NumPyArray_STRIDES(PyObject* obj);
+int NumPyArray_ITEMSIZE(PyObject* obj);
+npy_intp NumPyArray_SIZE(PyObject* obj);
+PyObject *NumPyArray_SimpleNew(int nd, npy_intp* dims, int typenum);
+PyObject *NumPyArray_EMPTY(int nd, npy_intp* dims, int typenum, int fortran);
+PyObject* NumPyArray_FromAny(PyObject* op, PyArray_Descr* dtype, int min_depth, int max_depth, int requirements, PyObject* context);
 /// return the enumerated numpy type for a given C++ type
 template <typename T> int get_numpy_type() { return NPY_VOID; }
 template <> inline int get_numpy_type< bool >() { return NPY_BOOL; }

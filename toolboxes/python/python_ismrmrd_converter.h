@@ -33,7 +33,7 @@ namespace Gadgetron {
     //   }
     }
 // -------------------------------------------------------------------------------------------------------
-// ISMRMRD::AcquisitionHeader
+// mrd::AcquisitionHeader
 
 template<class T> struct Header_to_PythonHeader {
     static PyObject* convert(const T& head) {
@@ -69,11 +69,11 @@ template<class T> struct Header_from_PythonHeader {
         return obj;
     }
 
-    /// Construct an ISMRMRD::AcquisitionHeader in-place
+    /// Construct an mrd::AcquisitionHeader in-place
     static void construct(PyObject* obj, bp::converter::rvalue_from_python_stage1_data* data) {
         void* storage = ((bp::converter::rvalue_from_python_storage<T>*)data)->storage.bytes;
 
-        // Placement-new of ISMRMRD::AcquisitionHeader in memory provided by Boost
+        // Placement-new of mrd::AcquisitionHeader in memory provided by Boost
         auto head = new (storage) T;
         data->convertible = storage;
 
@@ -134,7 +134,7 @@ struct MetaContainer_from_PythonMetaContainer
         return obj;
     }
 
-    /// Construct an ISMRMRD::MetaContainer in-place
+    /// Construct an mrd::ImageMeta in-place
     static void construct(PyObject* obj, bp::converter::rvalue_from_python_stage1_data* data)
     {
         void* storage = ((bp::converter::rvalue_from_python_storage<mrd::ImageMeta>*)data)->storage.bytes;
@@ -230,7 +230,7 @@ struct Waveform_from_PythonWaveform
         return obj;
     }
 
-    /// Construct an ISMRMRD::MetaContainer in-place
+    /// Construct an mrd::Waveform in-place
     static void construct(PyObject* obj, bp::converter::rvalue_from_python_stage1_data* data)
     {
         void* storage = ((bp::converter::rvalue_from_python_storage<mrd::WaveformUint32>*)data)->storage.bytes;
@@ -347,7 +347,7 @@ inline void create_mrd_Waveform_converter()
 // };
 
 // -------------------------------------------------------------------------------------------------------
-/// Partial specialization of `python_converter` for ISMRMRD::AcquisitionHeader
+/// Partial specialization of `python_converter` for mrd::AcquisitionHeader
 template<> struct python_converter<mrd::AcquisitionHeader> {
     static void create()
     {
@@ -356,7 +356,7 @@ template<> struct python_converter<mrd::AcquisitionHeader> {
 };
 
 // -------------------------------------------------------------------------------------------------------
-/// Partial specialization of `python_converter` for ISMRMRD::ImageHeader
+/// Partial specialization of `python_converter` for mrd::ImageHeader
 template<> struct python_converter<mrd::ImageHeader> {
     static void create()
     {
@@ -365,7 +365,7 @@ template<> struct python_converter<mrd::ImageHeader> {
 };
 
 // -------------------------------------------------------------------------------------------------------
-/// Partial specialization of `python_converter` for ISMRMRD::MetaContainer
+/// Partial specialization of `python_converter` for mrd::ImageMeta
 template<> struct python_converter<mrd::ImageMeta> {
     static void create()
     {
@@ -374,7 +374,7 @@ template<> struct python_converter<mrd::ImageMeta> {
 };
 
 // -------------------------------------------------------------------------------------------------------
-/// Partial specialization of `python_converter` for ISMRMRD::Waveform
+/// Partial specialization of `python_converter` for mrd::Waveform
 template<> struct python_converter<mrd::WaveformUint32> {
     static void create()
     {

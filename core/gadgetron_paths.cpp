@@ -2,15 +2,11 @@
 #include "gadgetron_paths.h"
 #include <memory>
 
-#if defined _WIN32 || _WIN64
-#include <libloaderapi.h>
-#else
 extern "C" {
 #include <unistd.h>
 #include <sys/types.h>
 #include <pwd.h>
 }
-#endif
 
 namespace {
 
@@ -37,31 +33,6 @@ namespace {
             home_dir = getpwuid(getuid())->pw_dir;
         }
         return boost::filesystem::path(home_dir) / ".gadgetron";
-    }
-#elif defined _WIN32 || _WIN64
-    #define MAX_GADGETRON_HOME_LENGTH 1024
-
-    std::string get_executable_path() {
-        // Full path to the executable (including the executable file)
-        char buffer[MAX_GADGETRON_HOME_LENGTH];
-
-        // When passing NULL to GetModuleHandle, it returns handle of exe itself
-        HMODULE hModule = GetModuleHandle(NULL);
-
-        if (hModule == NULL) {
-            throw std::runtime_error("Could not determine location of Gadgetron binary.");
-        }
-
-        GetModuleFileName(hModule, buffer, sizeof(buffer));
-
-        return std::string(buffer);
-    }
-
-    boost::filesystem::path get_data_directory(){
-         auto appdata = std::getenv("APPDATA");
-
-            return boost::filesystem::path(appdata) / "gadgetron";
-
     }
 #else
     std::string get_executable_path(size_t buffer_size = 1024) {
@@ -95,15 +66,9 @@ namespace {
 
 namespace Gadgetron::Server {
 
-#ifdef _WIN32
-    const boost::filesystem::path default_working_folder() {
-        return "c:/temp/gadgetron/";
-    }
-#else
     const boost::filesystem::path default_working_folder() {
         return "/tmp/gadgetron/";
     }
-#endif
 
     const boost::filesystem::path default_gadgetron_home() {
 

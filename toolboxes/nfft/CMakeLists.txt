@@ -6,7 +6,6 @@ target_include_directories(gadgetron_toolbox_nfft
         ${CMAKE_CURRENT_SOURCE_DIR})
 
 install(FILES
-    nfft_export.h
     ConvolutionKernel.h
     ConvolutionKernel.hpp
     GriddingConvolution.h

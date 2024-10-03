@@ -2,7 +2,6 @@
 
 #include "Gadget.h"
 #include "hoNDArray.h"
-#include "gadgetron_radial_export.h"
 
 #include <boost/shared_ptr.hpp>
 #include <boost/shared_array.hpp>
@@ -13,7 +12,7 @@
 
 namespace Gadgetron {
 
-  class EXPORTGADGETS_RADIAL RadialPhaseCorrectionGadget :
+  class RadialPhaseCorrectionGadget :
     public Gadget2<ISMRMRD::AcquisitionHeader, hoNDArray< std::complex<float> > >
   {
   public:

@@ -2,7 +2,6 @@
 
 #include "Gadget.h"
 #include "hoNDArray.h"
-#include "gadgetron_plplot_export.h"
 #include "GadgetronTimer.h"
 
 #include <ismrmrd/ismrmrd.h>
@@ -12,7 +11,7 @@
 
 namespace Gadgetron {
 
-    class EXPORTPLPLOTGADGET NoiseCovariancePlottingGadget : public Gadget2<ISMRMRD::ImageHeader, hoNDArray< std::complex<float> > >
+    class NoiseCovariancePlottingGadget : public Gadget2<ISMRMRD::ImageHeader, hoNDArray< std::complex<float> > >
     {
     public:
         GADGET_DECLARE(NoiseCovariancePlottingGadget);

@@ -223,10 +223,10 @@ void generate_symmetric_filter(size_t len, hoNDArray<T>& filter, MRDKSPACEFILTER
     }
 }
 
-template EXPORTMRICORE void generate_symmetric_filter(size_t len, hoNDArray<float>& filter, MRDKSPACEFILTER filterType, double sigma, size_t width);
-template EXPORTMRICORE void generate_symmetric_filter(size_t len, hoNDArray<double>& filter, MRDKSPACEFILTER filterType, double sigma, size_t width);
-template EXPORTMRICORE void generate_symmetric_filter(size_t len, hoNDArray< std::complex<float> >& filter, MRDKSPACEFILTER filterType, double sigma, size_t width);
-template EXPORTMRICORE void generate_symmetric_filter(size_t len, hoNDArray< std::complex<double> >& filter, MRDKSPACEFILTER filterType, double sigma, size_t width);
+template void generate_symmetric_filter(size_t len, hoNDArray<float>& filter, MRDKSPACEFILTER filterType, double sigma, size_t width);
+template void generate_symmetric_filter(size_t len, hoNDArray<double>& filter, MRDKSPACEFILTER filterType, double sigma, size_t width);
+template void generate_symmetric_filter(size_t len, hoNDArray< std::complex<float> >& filter, MRDKSPACEFILTER filterType, double sigma, size_t width);
+template void generate_symmetric_filter(size_t len, hoNDArray< std::complex<double> >& filter, MRDKSPACEFILTER filterType, double sigma, size_t width);
 
 // ------------------------------------------------------------------------
 
@@ -420,10 +420,10 @@ void generate_asymmetric_filter(size_t len, size_t start, size_t end, hoNDArray<
     }
 }
 
-template EXPORTMRICORE void generate_asymmetric_filter(size_t len, size_t start, size_t end, hoNDArray<float>& filter, MRDKSPACEFILTER filterType, size_t width, bool densityComp);
-template EXPORTMRICORE void generate_asymmetric_filter(size_t len, size_t start, size_t end, hoNDArray<double>& filter, MRDKSPACEFILTER filterType, size_t width, bool densityComp);
-template EXPORTMRICORE void generate_asymmetric_filter(size_t len, size_t start, size_t end, hoNDArray< std::complex<float> >& filter, MRDKSPACEFILTER filterType, size_t width, bool densityComp);
-template EXPORTMRICORE void generate_asymmetric_filter(size_t len, size_t start, size_t end, hoNDArray< std::complex<double> >& filter, MRDKSPACEFILTER filterType, size_t width, bool densityComp);
+template void generate_asymmetric_filter(size_t len, size_t start, size_t end, hoNDArray<float>& filter, MRDKSPACEFILTER filterType, size_t width, bool densityComp);
+template void generate_asymmetric_filter(size_t len, size_t start, size_t end, hoNDArray<double>& filter, MRDKSPACEFILTER filterType, size_t width, bool densityComp);
+template void generate_asymmetric_filter(size_t len, size_t start, size_t end, hoNDArray< std::complex<float> >& filter, MRDKSPACEFILTER filterType, size_t width, bool densityComp);
+template void generate_asymmetric_filter(size_t len, size_t start, size_t end, hoNDArray< std::complex<double> >& filter, MRDKSPACEFILTER filterType, size_t width, bool densityComp);
 
 // ------------------------------------------------------------------------
 
@@ -508,10 +508,10 @@ void generate_symmetric_filter_ref(size_t len, size_t start, size_t end, hoNDArr
     }
 }
 
-template EXPORTMRICORE void generate_symmetric_filter_ref(size_t len, size_t start, size_t end, hoNDArray<float>& filter);
-template EXPORTMRICORE void generate_symmetric_filter_ref(size_t len, size_t start, size_t end, hoNDArray<double>& filter);
-template EXPORTMRICORE void generate_symmetric_filter_ref(size_t len, size_t start, size_t end, hoNDArray< std::complex<float> >& filter);
-template EXPORTMRICORE void generate_symmetric_filter_ref(size_t len, size_t start, size_t end, hoNDArray< std::complex<double> >& filter);
+template void generate_symmetric_filter_ref(size_t len, size_t start, size_t end, hoNDArray<float>& filter);
+template void generate_symmetric_filter_ref(size_t len, size_t start, size_t end, hoNDArray<double>& filter);
+template void generate_symmetric_filter_ref(size_t len, size_t start, size_t end, hoNDArray< std::complex<float> >& filter);
+template void generate_symmetric_filter_ref(size_t len, size_t start, size_t end, hoNDArray< std::complex<double> >& filter);
 
 // ------------------------------------------------------------------------
 
@@ -542,10 +542,10 @@ void compute_2d_filter(const hoNDArray<T>& fx, const hoNDArray<T>& fy, hoNDArray
     }
 }
 
-template EXPORTMRICORE void compute_2d_filter(const hoNDArray<float>& fx, const hoNDArray<float>& fy, hoNDArray<float>& fxy);
-template EXPORTMRICORE void compute_2d_filter(const hoNDArray<double>& fx, const hoNDArray<double>& fy, hoNDArray<double>& fxy);
-template EXPORTMRICORE void compute_2d_filter(const hoNDArray< std::complex<float> >& fx, const hoNDArray< std::complex<float> >& fy, hoNDArray< std::complex<float> >& fxy);
-template EXPORTMRICORE void compute_2d_filter(const hoNDArray< std::complex<double> >& fx, const hoNDArray< std::complex<double> >& fy, hoNDArray< std::complex<double> >& fxy);
+template void compute_2d_filter(const hoNDArray<float>& fx, const hoNDArray<float>& fy, hoNDArray<float>& fxy);
+template void compute_2d_filter(const hoNDArray<double>& fx, const hoNDArray<double>& fy, hoNDArray<double>& fxy);
+template void compute_2d_filter(const hoNDArray< std::complex<float> >& fx, const hoNDArray< std::complex<float> >& fy, hoNDArray< std::complex<float> >& fxy);
+template void compute_2d_filter(const hoNDArray< std::complex<double> >& fx, const hoNDArray< std::complex<double> >& fy, hoNDArray< std::complex<double> >& fxy);
 
 // ------------------------------------------------------------------------
 
@@ -645,10 +645,10 @@ void compute_3d_filter(const hoNDArray<T>& fx, const hoNDArray<T>& fy, const hoN
     }
 }
 
-template EXPORTMRICORE void compute_3d_filter(const hoNDArray<float>& fx, const hoNDArray<float>& fy, const hoNDArray<float>& fz, hoNDArray<float>& fxyz);
-template EXPORTMRICORE void compute_3d_filter(const hoNDArray<double>& fx, const hoNDArray<double>& fy, const hoNDArray<double>& fz, hoNDArray<double>& fxyz);
-template EXPORTMRICORE void compute_3d_filter(const hoNDArray< std::complex<float> >& fx, const hoNDArray< std::complex<float> >& fy, const hoNDArray< std::complex<float> >& fz, hoNDArray< std::complex<float> >& fxyz);
-template EXPORTMRICORE void compute_3d_filter(const hoNDArray< std::complex<double> >& fx, const hoNDArray< std::complex<double> >& fy, const hoNDArray< std::complex<double> >& fz, hoNDArray< std::complex<double> >& fxyz);
+template void compute_3d_filter(const hoNDArray<float>& fx, const hoNDArray<float>& fy, const hoNDArray<float>& fz, hoNDArray<float>& fxyz);
+template void compute_3d_filter(const hoNDArray<double>& fx, const hoNDArray<double>& fy, const hoNDArray<double>& fz, hoNDArray<double>& fxyz);
+template void compute_3d_filter(const hoNDArray< std::complex<float> >& fx, const hoNDArray< std::complex<float> >& fy, const hoNDArray< std::complex<float> >& fz, hoNDArray< std::complex<float> >& fxyz);
+template void compute_3d_filter(const hoNDArray< std::complex<double> >& fx, const hoNDArray< std::complex<double> >& fy, const hoNDArray< std::complex<double> >& fz, hoNDArray< std::complex<double> >& fxyz);
 
 // ------------------------------------------------------------------------
 
@@ -730,10 +730,10 @@ void apply_kspace_filter_RO(hoNDArray<T>& data, const hoNDArray<T>& fRO)
     }
 }
 
-template EXPORTMRICORE void apply_kspace_filter_RO(hoNDArray<float>& data, const hoNDArray<float>& fRO);
-template EXPORTMRICORE void apply_kspace_filter_RO(hoNDArray<double>& data, const hoNDArray<double>& fRO);
-template EXPORTMRICORE void apply_kspace_filter_RO(hoNDArray< std::complex<float> >& data, const hoNDArray< std::complex<float> >& fRO);
-template EXPORTMRICORE void apply_kspace_filter_RO(hoNDArray< std::complex<double> >& data, const hoNDArray< std::complex<double> >& fRO);
+template void apply_kspace_filter_RO(hoNDArray<float>& data, const hoNDArray<float>& fRO);
+template void apply_kspace_filter_RO(hoNDArray<double>& data, const hoNDArray<double>& fRO);
+template void apply_kspace_filter_RO(hoNDArray< std::complex<float> >& data, const hoNDArray< std::complex<float> >& fRO);
+template void apply_kspace_filter_RO(hoNDArray< std::complex<double> >& data, const hoNDArray< std::complex<double> >& fRO);
 
 template <typename T> 
 void apply_kspace_filter_RO(const hoNDArray<T>& data, const hoNDArray<T>& fRO, hoNDArray<T>& dataFiltered)
@@ -749,10 +749,10 @@ void apply_kspace_filter_RO(const hoNDArray<T>& data, const hoNDArray<T>& fRO, h
     }
 }
 
-template EXPORTMRICORE void apply_kspace_filter_RO(const hoNDArray<float>& data, const hoNDArray<float>& fRO, hoNDArray<float>& dataFiltered);
-template EXPORTMRICORE void apply_kspace_filter_RO(const hoNDArray<double>& data, const hoNDArray<double>& fRO, hoNDArray<double>& dataFiltered);
-template EXPORTMRICORE void apply_kspace_filter_RO(const hoNDArray< std::complex<float> >& data, const hoNDArray< std::complex<float> >& fRO, hoNDArray< std::complex<float> >& dataFiltered);
-template EXPORTMRICORE void apply_kspace_filter_RO(const hoNDArray< std::complex<double> >& data, const hoNDArray< std::complex<double> >& fRO, hoNDArray< std::complex<double> >& dataFiltered);
+template void apply_kspace_filter_RO(const hoNDArray<float>& data, const hoNDArray<float>& fRO, hoNDArray<float>& dataFiltered);
+template void apply_kspace_filter_RO(const hoNDArray<double>& data, const hoNDArray<double>& fRO, hoNDArray<double>& dataFiltered);
+template void apply_kspace_filter_RO(const hoNDArray< std::complex<float> >& data, const hoNDArray< std::complex<float> >& fRO, hoNDArray< std::complex<float> >& dataFiltered);
+template void apply_kspace_filter_RO(const hoNDArray< std::complex<double> >& data, const hoNDArray< std::complex<double> >& fRO, hoNDArray< std::complex<double> >& dataFiltered);
 
 // ------------------------------------------------------------------------
 
@@ -777,10 +777,10 @@ void apply_kspace_filter_E1(const hoNDArray<T>& data, const hoNDArray<T>& fE1, h
     }
 }
 
-template EXPORTMRICORE void apply_kspace_filter_E1(const hoNDArray<float>& data, const hoNDArray<float>& fE1, hoNDArray<float>& dataFiltered);
-template EXPORTMRICORE void apply_kspace_filter_E1(const hoNDArray<double>& data, const hoNDArray<double>& fE1, hoNDArray<double>& dataFiltered);
-template EXPORTMRICORE void apply_kspace_filter_E1(const hoNDArray< std::complex<float> >& data, const hoNDArray< std::complex<float> >& fE1, hoNDArray< std::complex<float> >& dataFiltered);
-template EXPORTMRICORE void apply_kspace_filter_E1(const hoNDArray< std::complex<double> >& data, const hoNDArray< std::complex<double> >& fE1, hoNDArray< std::complex<double> >& dataFiltered);
+template void apply_kspace_filter_E1(const hoNDArray<float>& data, const hoNDArray<float>& fE1, hoNDArray<float>& dataFiltered);
+template void apply_kspace_filter_E1(const hoNDArray<double>& data, const hoNDArray<double>& fE1, hoNDArray<double>& dataFiltered);
+template void apply_kspace_filter_E1(const hoNDArray< std::complex<float> >& data, const hoNDArray< std::complex<float> >& fE1, hoNDArray< std::complex<float> >& dataFiltered);
+template void apply_kspace_filter_E1(const hoNDArray< std::complex<double> >& data, const hoNDArray< std::complex<double> >& fE1, hoNDArray< std::complex<double> >& dataFiltered);
 
 // ------------------------------------------------------------------------
 
@@ -800,10 +800,10 @@ void apply_kspace_filter_ROE1(const hoNDArray<T>& data, const hoNDArray<T>& fROE
     }
 }
 
-template EXPORTMRICORE void apply_kspace_filter_ROE1(const hoNDArray<float>& data, const hoNDArray<float>& fROE1, hoNDArray<float>& dataFiltered);
-template EXPORTMRICORE void apply_kspace_filter_ROE1(const hoNDArray<double>& data, const hoNDArray<double>& fROE1, hoNDArray<double>& dataFiltered);
-template EXPORTMRICORE void apply_kspace_filter_ROE1(const hoNDArray< std::complex<float> >& data, const hoNDArray< std::complex<float> >& fROE1, hoNDArray< std::complex<float> >& dataFiltered);
-template EXPORTMRICORE void apply_kspace_filter_ROE1(const hoNDArray< std::complex<double> >& data, const hoNDArray< std::complex<double> >& fROE1, hoNDArray< std::complex<double> >& dataFiltered);
+template void apply_kspace_filter_ROE1(const hoNDArray<float>& data, const hoNDArray<float>& fROE1, hoNDArray<float>& dataFiltered);
+template void apply_kspace_filter_ROE1(const hoNDArray<double>& data, const hoNDArray<double>& fROE1, hoNDArray<double>& dataFiltered);
+template void apply_kspace_filter_ROE1(const hoNDArray< std::complex<float> >& data, const hoNDArray< std::complex<float> >& fROE1, hoNDArray< std::complex<float> >& dataFiltered);
+template void apply_kspace_filter_ROE1(const hoNDArray< std::complex<double> >& data, const hoNDArray< std::complex<double> >& fROE1, hoNDArray< std::complex<double> >& dataFiltered);
 
 // ------------------------------------------------------------------------
 
@@ -826,10 +826,10 @@ void apply_kspace_filter_ROE1(const hoNDArray<T>& data, const hoNDArray<T>& fRO,
     }
 }
 
-template EXPORTMRICORE void apply_kspace_filter_ROE1(const hoNDArray<float>& data, const hoNDArray<float>& fRO, const hoNDArray<float>& fE1, hoNDArray<float>& dataFiltered);
-template EXPORTMRICORE void apply_kspace_filter_ROE1(const hoNDArray<double>& data, const hoNDArray<double>& fRO, const hoNDArray<double>& fE1, hoNDArray<double>& dataFiltered);
-template EXPORTMRICORE void apply_kspace_filter_ROE1(const hoNDArray< std::complex<float> >& data, const hoNDArray< std::complex<float> >& fRO, const hoNDArray< std::complex<float> >& fE1, hoNDArray< std::complex<float> >& dataFiltered);
-template EXPORTMRICORE void apply_kspace_filter_ROE1(const hoNDArray< std::complex<double> >& data, const hoNDArray< std::complex<double> >& fRO, const hoNDArray< std::complex<double> >& fE1, hoNDArray< std::complex<double> >& dataFiltered);
+template void apply_kspace_filter_ROE1(const hoNDArray<float>& data, const hoNDArray<float>& fRO, const hoNDArray<float>& fE1, hoNDArray<float>& dataFiltered);
+template void apply_kspace_filter_ROE1(const hoNDArray<double>& data, const hoNDArray<double>& fRO, const hoNDArray<double>& fE1, hoNDArray<double>& dataFiltered);
+template void apply_kspace_filter_ROE1(const hoNDArray< std::complex<float> >& data, const hoNDArray< std::complex<float> >& fRO, const hoNDArray< std::complex<float> >& fE1, hoNDArray< std::complex<float> >& dataFiltered);
+template void apply_kspace_filter_ROE1(const hoNDArray< std::complex<double> >& data, const hoNDArray< std::complex<double> >& fRO, const hoNDArray< std::complex<double> >& fE1, hoNDArray< std::complex<double> >& dataFiltered);
 
 // ------------------------------------------------------------------------
 
@@ -857,10 +857,10 @@ void apply_kspace_filter_E2(const hoNDArray<T>& data, const hoNDArray<T>& fE2, h
     }
 }
 
-template EXPORTMRICORE void apply_kspace_filter_E2(const hoNDArray<float>& data, const hoNDArray<float>& fE2, hoNDArray<float>& dataFiltered);
-template EXPORTMRICORE void apply_kspace_filter_E2(const hoNDArray<double>& data, const hoNDArray<double>& fE2, hoNDArray<double>& dataFiltered);
-template EXPORTMRICORE void apply_kspace_filter_E2(const hoNDArray< std::complex<float> >& data, const hoNDArray< std::complex<float> >& fE2, hoNDArray< std::complex<float> >& dataFiltered);
-template EXPORTMRICORE void apply_kspace_filter_E2(const hoNDArray< std::complex<double> >& data, const hoNDArray< std::complex<double> >& fE2, hoNDArray< std::complex<double> >& dataFiltered);
+template void apply_kspace_filter_E2(const hoNDArray<float>& data, const hoNDArray<float>& fE2, hoNDArray<float>& dataFiltered);
+template void apply_kspace_filter_E2(const hoNDArray<double>& data, const hoNDArray<double>& fE2, hoNDArray<double>& dataFiltered);
+template void apply_kspace_filter_E2(const hoNDArray< std::complex<float> >& data, const hoNDArray< std::complex<float> >& fE2, hoNDArray< std::complex<float> >& dataFiltered);
+template void apply_kspace_filter_E2(const hoNDArray< std::complex<double> >& data, const hoNDArray< std::complex<double> >& fE2, hoNDArray< std::complex<double> >& dataFiltered);
 
 // ------------------------------------------------------------------------
 
@@ -886,10 +886,10 @@ void apply_kspace_filter_ROE2(const hoNDArray<T>& data, const hoNDArray<T>& fRO,
     }
 }
 
-template EXPORTMRICORE void apply_kspace_filter_ROE2(const hoNDArray<float>& data, const hoNDArray<float>& fRO, const hoNDArray<float>& fE2, hoNDArray<float>& dataFiltered);
-template EXPORTMRICORE void apply_kspace_filter_ROE2(const hoNDArray<double>& data, const hoNDArray<double>& fRO, const hoNDArray<double>& fE2, hoNDArray<double>& dataFiltered);
-template EXPORTMRICORE void apply_kspace_filter_ROE2(const hoNDArray< std::complex<float> >& data, const hoNDArray< std::complex<float> >& fRO, const hoNDArray< std::complex<float> >& fE2, hoNDArray< std::complex<float> >& dataFiltered);
-template EXPORTMRICORE void apply_kspace_filter_ROE2(const hoNDArray< std::complex<double> >& data, const hoNDArray< std::complex<double> >& fRO, const hoNDArray< std::complex<double> >& fE2, hoNDArray< std::complex<double> >& dataFiltered);
+template void apply_kspace_filter_ROE2(const hoNDArray<float>& data, const hoNDArray<float>& fRO, const hoNDArray<float>& fE2, hoNDArray<float>& dataFiltered);
+template void apply_kspace_filter_ROE2(const hoNDArray<double>& data, const hoNDArray<double>& fRO, const hoNDArray<double>& fE2, hoNDArray<double>& dataFiltered);
+template void apply_kspace_filter_ROE2(const hoNDArray< std::complex<float> >& data, const hoNDArray< std::complex<float> >& fRO, const hoNDArray< std::complex<float> >& fE2, hoNDArray< std::complex<float> >& dataFiltered);
+template void apply_kspace_filter_ROE2(const hoNDArray< std::complex<double> >& data, const hoNDArray< std::complex<double> >& fRO, const hoNDArray< std::complex<double> >& fE2, hoNDArray< std::complex<double> >& dataFiltered);
 
 // ------------------------------------------------------------------------
 
@@ -915,10 +915,10 @@ void apply_kspace_filter_E1E2(const hoNDArray<T>& data, const hoNDArray<T>& fE1,
     }
 }
 
-template EXPORTMRICORE void apply_kspace_filter_E1E2(const hoNDArray<float>& data, const hoNDArray<float>& fE1, const hoNDArray<float>& fE2, hoNDArray<float>& dataFiltered);
-template EXPORTMRICORE void apply_kspace_filter_E1E2(const hoNDArray<double>& data, const hoNDArray<double>& fE1, const hoNDArray<double>& fE2, hoNDArray<double>& dataFiltered);
-template EXPORTMRICORE void apply_kspace_filter_E1E2(const hoNDArray< std::complex<float> >& data, const hoNDArray< std::complex<float> >& fE1, const hoNDArray< std::complex<float> >& fE2, hoNDArray< std::complex<float> >& dataFiltered);
-template EXPORTMRICORE void apply_kspace_filter_E1E2(const hoNDArray< std::complex<double> >& data, const hoNDArray< std::complex<double> >& fE1, const hoNDArray< std::complex<double> >& fE2, hoNDArray< std::complex<double> >& dataFiltered);
+template void apply_kspace_filter_E1E2(const hoNDArray<float>& data, const hoNDArray<float>& fE1, const hoNDArray<float>& fE2, hoNDArray<float>& dataFiltered);
+template void apply_kspace_filter_E1E2(const hoNDArray<double>& data, const hoNDArray<double>& fE1, const hoNDArray<double>& fE2, hoNDArray<double>& dataFiltered);
+template void apply_kspace_filter_E1E2(const hoNDArray< std::complex<float> >& data, const hoNDArray< std::complex<float> >& fE1, const hoNDArray< std::complex<float> >& fE2, hoNDArray< std::complex<float> >& dataFiltered);
+template void apply_kspace_filter_E1E2(const hoNDArray< std::complex<double> >& data, const hoNDArray< std::complex<double> >& fE1, const hoNDArray< std::complex<double> >& fE2, hoNDArray< std::complex<double> >& dataFiltered);
 
 // ------------------------------------------------------------------------
 
@@ -939,10 +939,10 @@ void apply_kspace_filter_ROE1E2(const hoNDArray<T>& data, const hoNDArray<T>& fR
     }
 }
 
-template EXPORTMRICORE void apply_kspace_filter_ROE1E2(const hoNDArray<float>& data, const hoNDArray<float>& fROE1E2, hoNDArray<float>& dataFiltered);
-template EXPORTMRICORE void apply_kspace_filter_ROE1E2(const hoNDArray<double>& data, const hoNDArray<double>& fROE1E2, hoNDArray<double>& dataFiltered);
-template EXPORTMRICORE void apply_kspace_filter_ROE1E2(const hoNDArray< std::complex<float> >& data, const hoNDArray< std::complex<float> >& fROE1E2, hoNDArray< std::complex<float> >& dataFiltered);
-template EXPORTMRICORE void apply_kspace_filter_ROE1E2(const hoNDArray< std::complex<double> >& data, const hoNDArray< std::complex<double> >& fROE1E2, hoNDArray< std::complex<double> >& dataFiltered);
+template void apply_kspace_filter_ROE1E2(const hoNDArray<float>& data, const hoNDArray<float>& fROE1E2, hoNDArray<float>& dataFiltered);
+template void apply_kspace_filter_ROE1E2(const hoNDArray<double>& data, const hoNDArray<double>& fROE1E2, hoNDArray<double>& dataFiltered);
+template void apply_kspace_filter_ROE1E2(const hoNDArray< std::complex<float> >& data, const hoNDArray< std::complex<float> >& fROE1E2, hoNDArray< std::complex<float> >& dataFiltered);
+template void apply_kspace_filter_ROE1E2(const hoNDArray< std::complex<double> >& data, const hoNDArray< std::complex<double> >& fROE1E2, hoNDArray< std::complex<double> >& dataFiltered);
 
 // ------------------------------------------------------------------------
 
@@ -966,10 +966,10 @@ void apply_kspace_filter_ROE1E2(const hoNDArray<T>& data, const hoNDArray<T>& fR
     }
 }
 
-template EXPORTMRICORE void apply_kspace_filter_ROE1E2(const hoNDArray<float>& data, const hoNDArray<float>& fRO, const hoNDArray<float>& fE1, const hoNDArray<float>& fE2, hoNDArray<float>& dataFiltered);
-template EXPORTMRICORE void apply_kspace_filter_ROE1E2(const hoNDArray<double>& data, const hoNDArray<double>& fRO, const hoNDArray<double>& fE1, const hoNDArray<double>& fE2, hoNDArray<double>& dataFiltered);
-template EXPORTMRICORE void apply_kspace_filter_ROE1E2(const hoNDArray< std::complex<float> >& data, const hoNDArray< std::complex<float> >& fRO, const hoNDArray< std::complex<float> >& fE1, const hoNDArray< std::complex<float> >& fE2, hoNDArray< std::complex<float> >& dataFiltered);
-template EXPORTMRICORE void apply_kspace_filter_ROE1E2(const hoNDArray< std::complex<double> >& data, const hoNDArray< std::complex<double> >& fRO, const hoNDArray< std::complex<double> >& fE1, const hoNDArray< std::complex<double> >& fE2, hoNDArray< std::complex<double> >& dataFiltered);
+template void apply_kspace_filter_ROE1E2(const hoNDArray<float>& data, const hoNDArray<float>& fRO, const hoNDArray<float>& fE1, const hoNDArray<float>& fE2, hoNDArray<float>& dataFiltered);
+template void apply_kspace_filter_ROE1E2(const hoNDArray<double>& data, const hoNDArray<double>& fRO, const hoNDArray<double>& fE1, const hoNDArray<double>& fE2, hoNDArray<double>& dataFiltered);
+template void apply_kspace_filter_ROE1E2(const hoNDArray< std::complex<float> >& data, const hoNDArray< std::complex<float> >& fRO, const hoNDArray< std::complex<float> >& fE1, const hoNDArray< std::complex<float> >& fE2, hoNDArray< std::complex<float> >& dataFiltered);
+template void apply_kspace_filter_ROE1E2(const hoNDArray< std::complex<double> >& data, const hoNDArray< std::complex<double> >& fRO, const hoNDArray< std::complex<double> >& fE1, const hoNDArray< std::complex<double> >& fE2, hoNDArray< std::complex<double> >& dataFiltered);
 
 // ------------------------------------------------------------------------
 
@@ -1017,10 +1017,10 @@ void compute_filter_SNR_unit_scale_factor(const hoNDArray<T>& filter, T& scalFac
     scalFactor = (T)(1.0 / std::sqrt(std::abs(sos) / len));
 }
 
-template EXPORTMRICORE void compute_filter_SNR_unit_scale_factor(const hoNDArray<float>& filter, float& scalFactor);
-template EXPORTMRICORE void compute_filter_SNR_unit_scale_factor(const hoNDArray<double>& filter, double& scalFactor);
+template void compute_filter_SNR_unit_scale_factor(const hoNDArray<float>& filter, float& scalFactor);
+template void compute_filter_SNR_unit_scale_factor(const hoNDArray<double>& filter, double& scalFactor);
 
-template<> EXPORTMRICORE
+template<> 
 void compute_filter_SNR_unit_scale_factor(const hoNDArray< std::complex<float> >& filter, std::complex<float> & scalFactor)
 {
     size_t ii, len;
@@ -1041,7 +1041,7 @@ void compute_filter_SNR_unit_scale_factor(const hoNDArray< std::complex<float> >
     scalFactor = (std::complex<float>)(1.0 / std::sqrt(std::abs(sos) / len));
 }
 
-template<> EXPORTMRICORE
+template<>
 void compute_filter_SNR_unit_scale_factor(const hoNDArray< std::complex<double> >& filter, std::complex<double> & scalFactor)
 {
     size_t ii, len;

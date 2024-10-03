@@ -7,10 +7,8 @@
 
 #include "Gadget.h"
 #include "hoNDArray.h"
-#include "GadgetMRIHeaders.h"
 #include "Node.h"
 #include "Types.h"
-#include "gadgetron_debugging_export.h"
 
 
 namespace Gadgetron{

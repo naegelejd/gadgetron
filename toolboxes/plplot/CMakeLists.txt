@@ -1,19 +1,12 @@
 # gadgetron_toolbox_plplot is a toolbox for plotting gadgetron data structures using PLplot
 
-if (WIN32)
-    add_definitions(-D__BUILD_GADGETRON_TOOLBOX_PLPLOT__)
-endif ()
-
 include_directories(${PLPLOT_INCLUDE_DIR})
 link_directories(${PLPLOT_LIB_DIR})
-
 
 set(header_files GtPLplot.h)
 set(src_files GtPLplot.cpp)
 
-set(plplot_files PLplotExport.h 
-            ${header_files} 
-            ${src_files} )
+set(plplot_files ${header_files} ${src_files} )
 
 source_group(plplot FILES ${header_files} ${src_files})
 
@@ -43,7 +36,6 @@ install(TARGETS gadgetron_toolbox_plplot
 
 
 install (FILES  
-        PLplotExport.h 
         ${header_files} 
         DESTINATION ${GADGETRON_INSTALL_INCLUDE_PATH} COMPONENT main)
 

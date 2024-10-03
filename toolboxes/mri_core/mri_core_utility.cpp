@@ -73,10 +73,10 @@ namespace Gadgetron
         }
     }
 
-    template EXPORTMRICORE hoNDArray<bool> detect_readout_sampling_status(const hoNDArray< float >& data);
-    template EXPORTMRICORE hoNDArray<bool> detect_readout_sampling_status(const hoNDArray< double >& data);
-    template EXPORTMRICORE hoNDArray<bool> detect_readout_sampling_status(const hoNDArray< std::complex<float> >& data);
-    template EXPORTMRICORE hoNDArray<bool> detect_readout_sampling_status(const hoNDArray< std::complex<double> >& data);
+    template hoNDArray<bool> detect_readout_sampling_status(const hoNDArray< float >& data);
+    template hoNDArray<bool> detect_readout_sampling_status(const hoNDArray< double >& data);
+    template hoNDArray<bool> detect_readout_sampling_status(const hoNDArray< std::complex<float> >& data);
+    template hoNDArray<bool> detect_readout_sampling_status(const hoNDArray< std::complex<double> >& data);
 
     // ------------------------------------------------------------------------
 
@@ -125,10 +125,10 @@ namespace Gadgetron
 
     }
 
-    template EXPORTMRICORE std::tuple<size_t, size_t> detect_sampled_region_E1(const hoNDArray<float>& data);
-    template EXPORTMRICORE std::tuple<size_t, size_t> detect_sampled_region_E1(const hoNDArray<double>& data);
-    template EXPORTMRICORE std::tuple<size_t, size_t> detect_sampled_region_E1(const hoNDArray< std::complex<float> >& data);
-    template EXPORTMRICORE std::tuple<size_t, size_t> detect_sampled_region_E1(const hoNDArray< std::complex<double> >& data);
+    template std::tuple<size_t, size_t> detect_sampled_region_E1(const hoNDArray<float>& data);
+    template std::tuple<size_t, size_t> detect_sampled_region_E1(const hoNDArray<double>& data);
+    template std::tuple<size_t, size_t> detect_sampled_region_E1(const hoNDArray< std::complex<float> >& data);
+    template std::tuple<size_t, size_t> detect_sampled_region_E1(const hoNDArray< std::complex<double> >& data);
 
     // ------------------------------------------------------------------------
 
@@ -182,10 +182,10 @@ namespace Gadgetron
         }
     }
 
-    template EXPORTMRICORE std::tuple<size_t, size_t> detect_sampled_region_E2(const hoNDArray<float>& data);
-    template EXPORTMRICORE std::tuple<size_t, size_t> detect_sampled_region_E2(const hoNDArray<double>& data);
-    template EXPORTMRICORE std::tuple<size_t, size_t> detect_sampled_region_E2(const hoNDArray< std::complex<float> >& data);
-    template EXPORTMRICORE std::tuple<size_t, size_t> detect_sampled_region_E2(const hoNDArray< std::complex<double> >& data);
+    template std::tuple<size_t, size_t> detect_sampled_region_E2(const hoNDArray<float>& data);
+    template std::tuple<size_t, size_t> detect_sampled_region_E2(const hoNDArray<double>& data);
+    template std::tuple<size_t, size_t> detect_sampled_region_E2(const hoNDArray< std::complex<float> >& data);
+    template std::tuple<size_t, size_t> detect_sampled_region_E2(const hoNDArray< std::complex<double> >& data);
 
 
     // ------------------------------------------------------------------------
@@ -270,12 +270,12 @@ namespace Gadgetron
         }
     }
 
-    template EXPORTMRICORE void zero_pad_resize(const hoNDArray< std::complex<float> >& complexIm, size_t sizeRO, size_t sizeE1, size_t sizeE2, hoNDArray< std::complex<float> >& complexImResized);
-    template EXPORTMRICORE void zero_pad_resize(const hoNDArray< std::complex<double> >& complexIm, size_t sizeRO, size_t sizeE1, size_t sizeE2, hoNDArray< std::complex<double> >& complexImResized);
+    template void zero_pad_resize(const hoNDArray< std::complex<float> >& complexIm, size_t sizeRO, size_t sizeE1, size_t sizeE2, hoNDArray< std::complex<float> >& complexImResized);
+    template void zero_pad_resize(const hoNDArray< std::complex<double> >& complexIm, size_t sizeRO, size_t sizeE1, size_t sizeE2, hoNDArray< std::complex<double> >& complexImResized);
 
     // ------------------------------------------------------------------------
 
-    template <typename T> 
+    template <typename T>
     void compute_averaged_data_N_S(const hoNDArray<T>& data, bool average_N, bool average_S, bool count_sampling_freq, hoNDArray<T>& res)
     {
 
@@ -358,12 +358,12 @@ namespace Gadgetron
 
     }
 
-    template EXPORTMRICORE void compute_averaged_data_N_S(const hoNDArray< std::complex<float> >& data, bool average_N, bool average_S, bool count_sampling_freq, hoNDArray< std::complex<float> >& res);
-    template EXPORTMRICORE void compute_averaged_data_N_S(const hoNDArray< std::complex<double> >& data, bool average_N, bool average_S, bool count_sampling_freq, hoNDArray< std::complex<double> >& res);
+    template void compute_averaged_data_N_S(const hoNDArray< std::complex<float> >& data, bool average_N, bool average_S, bool count_sampling_freq, hoNDArray< std::complex<float> >& res);
+    template void compute_averaged_data_N_S(const hoNDArray< std::complex<double> >& data, bool average_N, bool average_S, bool count_sampling_freq, hoNDArray< std::complex<double> >& res);
 
     // ------------------------------------------------------------------------
 
-    template <typename T> 
+    template <typename T>
     void select_data_N_S(const hoNDArray<T>& data, bool select_N, size_t n, bool select_S, size_t s, hoNDArray<T>& res)
     {
         try
@@ -454,15 +454,15 @@ namespace Gadgetron
         }
     }
 
-    template EXPORTMRICORE void select_data_N_S(const hoNDArray< std::complex<float> >& data, bool select_N, size_t n, bool select_S, size_t s, hoNDArray< std::complex<float> >& res);
-    template EXPORTMRICORE void select_data_N_S(const hoNDArray< std::complex<double> >& data, bool select_N, size_t n, bool select_S, size_t s, hoNDArray< std::complex<double> >& res);
+    template void select_data_N_S(const hoNDArray< std::complex<float> >& data, bool select_N, size_t n, bool select_S, size_t s, hoNDArray< std::complex<float> >& res);
+    template void select_data_N_S(const hoNDArray< std::complex<double> >& data, bool select_N, size_t n, bool select_S, size_t s, hoNDArray< std::complex<double> >& res);
 
     // ------------------------------------------------------------------------
 
-    template <typename T> 
+    template <typename T>
     void compute_eigen_channel_coefficients(const hoNDArray<T>& data, bool average_N, bool average_S, bool count_sampling_freq, size_t N, size_t S, double coil_compression_thres, size_t compression_num_modesKept, std::vector< std::vector< std::vector< hoNDKLT<T> > > >& KLT)
     {
-        
+
         size_t RO = data.get_size(0);
         size_t E1 = data.get_size(1);
         size_t E2 = data.get_size(2);
@@ -535,15 +535,15 @@ namespace Gadgetron
                 }
             }
         }
-        
+
     }
 
-    template EXPORTMRICORE void compute_eigen_channel_coefficients(const hoNDArray< std::complex<float> >& data, bool average_N, bool average_S, bool count_sampling_freq, size_t N, size_t S, double coil_compression_thres, size_t compression_num_modesKept, std::vector< std::vector< std::vector< hoNDKLT< std::complex<float> > > > >& KLT);
-    template EXPORTMRICORE void compute_eigen_channel_coefficients(const hoNDArray< std::complex<double> >& data, bool average_N, bool average_S, bool count_sampling_freq, size_t N, size_t S, double coil_compression_thres, size_t compression_num_modesKept, std::vector< std::vector< std::vector< hoNDKLT< std::complex<double> > > > >& KLT);
+    template void compute_eigen_channel_coefficients(const hoNDArray< std::complex<float> >& data, bool average_N, bool average_S, bool count_sampling_freq, size_t N, size_t S, double coil_compression_thres, size_t compression_num_modesKept, std::vector< std::vector< std::vector< hoNDKLT< std::complex<float> > > > >& KLT);
+    template void compute_eigen_channel_coefficients(const hoNDArray< std::complex<double> >& data, bool average_N, bool average_S, bool count_sampling_freq, size_t N, size_t S, double coil_compression_thres, size_t compression_num_modesKept, std::vector< std::vector< std::vector< hoNDKLT< std::complex<double> > > > >& KLT);
 
     // ------------------------------------------------------------------------
 
-    template <typename T> 
+    template <typename T>
     void apply_eigen_channel_coefficients(const std::vector< std::vector< std::vector< hoNDKLT<T> > > >& KLT, hoNDArray<T>& data)
     {
         try
@@ -595,8 +595,8 @@ namespace Gadgetron
         }
     }
 
-    template EXPORTMRICORE void apply_eigen_channel_coefficients(const std::vector< std::vector< std::vector< hoNDKLT< std::complex<float> > > > >& KLT, hoNDArray< std::complex<float> >& data);
-    template EXPORTMRICORE void apply_eigen_channel_coefficients(const std::vector< std::vector< std::vector< hoNDKLT< std::complex<double> > > > >& KLT, hoNDArray< std::complex<double> >& data);
+    template void apply_eigen_channel_coefficients(const std::vector< std::vector< std::vector< hoNDKLT< std::complex<float> > > > >& KLT, hoNDArray< std::complex<float> >& data);
+    template void apply_eigen_channel_coefficients(const std::vector< std::vector< std::vector< hoNDKLT< std::complex<double> > > > >& KLT, hoNDArray< std::complex<double> >& data);
 
     // ------------------------------------------------------------------------
 
@@ -605,11 +605,7 @@ namespace Gadgetron
         char* v = std::getenv("GADGETRON_DEBUG_FOLDER");
         if (v == NULL)
         {
-#ifdef _WIN32
-            debugFolderPath = "c:/temp/gadgetron";
-#else
             debugFolderPath = "/tmp/gadgetron";
-#endif // _WIN32
         }
         else
         {
@@ -706,6 +702,22 @@ namespace Gadgetron
 
     // ------------------------------------------------------------------------
 
+    void set_meta_from_mrd_header(const mrd::ImageHeader& header, mrd::ImageMeta& attrib)
+    {
+        attrib["PatientPosition"] = {header.position[0], header.position[1], header.position[2]};
+
+        attrib["col_dir"] = {header.col_dir[0], header.col_dir[1], header.col_dir[2]};
+
+        attrib["line_dir"] = {header.line_dir[0], header.line_dir[1], header.line_dir[2]};
+
+        attrib["slice_dir"] = {header.slice_dir[0], header.slice_dir[1], header.slice_dir[2]};
+
+        attrib["patient_table_position"] = {header.patient_table_position[0], header.patient_table_position[1], header.patient_table_position[2]};
+
+        attrib["fov"] = {header.field_of_view[0], header.field_of_view[1], header.field_of_view[2]};
+    }
+
+
     template <typename T>
     void get_mrd_meta_values(const mrd::ImageMeta& attrib, const std::string& name, std::vector<T>& v)
     {
@@ -726,7 +738,7 @@ namespace Gadgetron
         }
         catch (...)
         {
-            GADGET_THROW("Error happened in get_ismrmrd_meta_values(const ISMRMRD::MetaContainer& attrib, const std::string& name, std::vector<T>& v) ... ");
+            GADGET_THROW("Error happened in get_mrd_meta_values(const mrd::ImageMeta& attrib, const std::string& name, std::vector<T>& v) ... ");
         }
     }
 
@@ -746,7 +758,7 @@ namespace Gadgetron
         }
         catch (...)
         {
-            GADGET_THROW("Error happened in setISMRMRMetaValues(ISMRMRD::MetaContainer& attrib, const std::string& name, const std::vector<T>& v) ... ");
+            GADGET_THROW("Error happened in set_mrd_meta_values(mrd::ImageMeta& attrib, const std::string& name, const std::vector<T>& v) ... ");
         }
     }
 
@@ -765,7 +777,7 @@ namespace Gadgetron
         }
         catch (...)
         {
-            GADGET_THROW("Error happened in append_ismrmrd_meta_values(ISMRMRD::MetaContainer& attrib, const std::string& name, const std::vector<T>& v) ... ");
+            GADGET_THROW("Error happened in append_mrd_meta_values(mrd::ImageMeta& attrib, const std::string& name, const std::vector<T>& v) ... ");
         }
     }
 

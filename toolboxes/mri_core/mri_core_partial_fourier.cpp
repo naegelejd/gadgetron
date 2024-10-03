@@ -421,12 +421,12 @@ namespace Gadgetron
         }
     }
 
-    template EXPORTMRICORE void partial_fourier_POCS(const hoNDArray< std::complex<float> >& kspace,
+    template void partial_fourier_POCS(const hoNDArray< std::complex<float> >& kspace,
         size_t startRO, size_t endRO, size_t startE1, size_t endE1, size_t startE2, size_t endE2,
         size_t transit_band_RO, size_t transit_band_E1, size_t transit_band_E2,
         size_t iter, double thres, hoNDArray< std::complex<float> >& res);
 
-    template EXPORTMRICORE void partial_fourier_POCS(const hoNDArray< std::complex<double> >& kspace,
+    template void partial_fourier_POCS(const hoNDArray< std::complex<double> >& kspace,
         size_t startRO, size_t endRO, size_t startE1, size_t endE1, size_t startE2, size_t endE2,
         size_t transit_band_RO, size_t transit_band_E1, size_t transit_band_E2,
         size_t iter, double thres, hoNDArray< std::complex<double> >& res);
@@ -575,13 +575,13 @@ namespace Gadgetron
 
     }
 
-    template EXPORTMRICORE void partial_fourier_filter(const hoNDArray< std::complex<float> >& kspace,
+    template void partial_fourier_filter(const hoNDArray< std::complex<float> >& kspace,
         size_t startRO, size_t endRO, size_t startE1, size_t endE1, size_t startE2, size_t endE2,
         double filter_pf_width_RO, double filter_pf_width_E1, double filter_pf_width_E2, bool filter_pf_density_comp,
         hoNDArray< std::complex<float> >& filter_pf_RO, hoNDArray< std::complex<float> >& filter_pf_E1, hoNDArray< std::complex<float> >& filter_pf_E2,
         hoNDArray< std::complex<float> >& res);
 
-    template EXPORTMRICORE void partial_fourier_filter(const hoNDArray< std::complex<double> >& kspace,
+    template void partial_fourier_filter(const hoNDArray< std::complex<double> >& kspace,
         size_t startRO, size_t endRO, size_t startE1, size_t endE1, size_t startE2, size_t endE2,
         double filter_pf_width_RO, double filter_pf_width_E1, double filter_pf_width_E2, bool filter_pf_density_comp,
         hoNDArray< std::complex<double> >& filter_pf_RO, hoNDArray< std::complex<double> >& filter_pf_E1, hoNDArray< std::complex<double> >& filter_pf_E2,

@@ -16,7 +16,6 @@
 #define BART_GADGET_H
 
 #include "generic_recon_gadgets/GenericReconGadget.h"
-#include "gadgetron_mricore_export.h"
 #include "mri_core_data.h"
 
 #include <vector>
@@ -27,16 +26,6 @@
 #include <string>
 
 #include <boost/filesystem.hpp>
-
-#if defined (WIN32)
-#ifdef __BUILD_GADGETRON_bartgadget__
-#define EXPORTGADGETS_bartgadget __declspec(dllexport)
-#else
-#define EXPORTGADGETS_bartgadget __declspec(dllimport)
-#endif
-#else
-#define EXPORTGADGETS_bartgadget
-#endif
 
 
 namespace Gadgetron {
@@ -60,7 +49,7 @@ namespace Gadgetron {
 	  std::string traj_data;		
      };
 
-     class EXPORTGADGETS_bartgadget BartGadget final : public GenericReconGadget
+     class BartGadget final : public GenericReconGadget
      {
      public:
 	  enum bart_memory_behaviour {BART_ALL_IN_MEM, BART_ALL_ON_DISK, BART_MIX_DISK_MEM};

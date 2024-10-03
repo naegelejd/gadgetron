@@ -3,24 +3,22 @@
 
 #include "Gadget.h"
 #include "hoNDArray.h"
-#include "gadgetron_debugging_export.h"
 
-#include <ismrmrd/ismrmrd.h>
 #include <complex>
 #include <chrono>
 
 namespace Gadgetron{
-  
-  class EXPORTGADGETSDEBUGGING RateLimitGadget :
+
+  class RateLimitGadget :
   public BasicPropertyGadget
     {
-      
+
     public:
       GADGET_DECLARE(RateLimitGadget);
-      
+
       RateLimitGadget();
       ~RateLimitGadget();
-      
+
     protected:
       GADGET_PROPERTY(sleep_time_, int, "sleep_time", 0);
 

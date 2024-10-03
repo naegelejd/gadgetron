@@ -6,11 +6,11 @@
 #include "cuCKOpticalFlowSolver.h"
 #include "RegistrationAveragingGadget.h"
 
-namespace Gadgetron{  
+namespace Gadgetron{
 
-  class EXPORTGADGETS_MOCO gpuRegistrationAveragingGadget2D :
+  class gpuRegistrationAveragingGadget2D :
     public RegistrationAveragingGadget< cuNDArray<float>, 2 >
-  {    
+  {
   public:
     GADGET_DECLARE(gpuRegistrationAveragingGadget2D);
 

@@ -2,7 +2,6 @@
 #define gpuCgSenseGadget_H
 #pragma once
 
-#include "gadgetron_gpupmri_export.h"
 #include "Gadget.h"
 #include "GenericReconJob.h"
 #include "cuCgSolver.h"
@@ -16,7 +15,7 @@
 
 namespace Gadgetron{
 
-  class EXPORTGADGETS_GPUPMRI gpuCgSenseGadget : public gpuSenseGadget
+  class gpuCgSenseGadget : public gpuSenseGadget
    {
 
   public:

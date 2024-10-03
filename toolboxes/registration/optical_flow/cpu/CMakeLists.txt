@@ -1,12 +1,3 @@
-    if (WIN32)
-        add_definitions(-D__BUILD_GADGETRON_CPUREG__)
-    endif ()
-
-    if (WIN32)
-        link_directories(${Boost_LIBRARY_DIRS})
-    endif ()
-
-
     set(opticalflow_files
             hoCKOpticalFlowSolver.cpp
             hoCKOpticalFlowSolver.h
@@ -54,7 +45,6 @@
     if (BUILD_CPU_OPTIMAL_FLOW_REG)
 
         add_library(gadgetron_toolbox_cpureg SHARED
-                cpureg_export.h
                 ${opticalflow_files}
                 ${transformation_files}
                 ${solver_files}

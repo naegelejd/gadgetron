@@ -169,9 +169,9 @@ void Gadgetron::mult_freq(cuNDArray<complext<T> >* in_out, cuNDArray<complext<T>
 
 
 
-template EXPORTHYPER void Gadgetron::CSI_dft<float>(cuNDArray<float_complext>* kspace,cuNDArray<float_complext>* tspace, cuNDArray<float>* frequencies, float dtt, float dte);
-template EXPORTHYPER void Gadgetron::CSI_dftH<float>(cuNDArray<float_complext>* kspace,cuNDArray<float_complext>* tspace, cuNDArray<float>* frequencies, float dtt, float dte);
+template void Gadgetron::CSI_dft<float>(cuNDArray<float_complext>* kspace,cuNDArray<float_complext>* tspace, cuNDArray<float>* frequencies, float dtt, float dte);
+template void Gadgetron::CSI_dftH<float>(cuNDArray<float_complext>* kspace,cuNDArray<float_complext>* tspace, cuNDArray<float>* frequencies, float dtt, float dte);
 
 
-template EXPORTHYPER boost::shared_ptr<cuNDArray<float_complext> > Gadgetron::calculate_frequency_calibration<float>(cuNDArray<float_complext>* time_track, cuNDArray<float>* frequencies,cuNDArray<float_complext> * csm,float dtt,float dte);
-template EXPORTHYPER void Gadgetron::mult_freq<float>(cuNDArray<complext<float> >* in_out, cuNDArray<complext<float> >* freqs, bool conjugate);
+template boost::shared_ptr<cuNDArray<float_complext> > Gadgetron::calculate_frequency_calibration<float>(cuNDArray<float_complext>* time_track, cuNDArray<float>* frequencies,cuNDArray<float_complext> * csm,float dtt,float dte);
+template void Gadgetron::mult_freq<float>(cuNDArray<complext<float> >* in_out, cuNDArray<complext<float> >* freqs, bool conjugate);

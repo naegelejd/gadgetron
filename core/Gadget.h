@@ -488,11 +488,7 @@ namespace Gadgetron {
         GADGET_PROPERTY(pass_on_undesired_data, bool,
                         "If true, data not matching the process function will be passed to next Gadget (ignored)", true);
         GADGET_PROPERTY(threads, int, "Number of threads to run in this Gadget (ignored)", 1);
-#ifdef _WIN32
-        GADGET_PROPERTY(workingDirectory, std::string, "Where to store temporary files", "c:\\temp\\gadgetron\\");
-#else
         GADGET_PROPERTY(workingDirectory, std::string, "Where to store temporary files", "/tmp/gadgetron/");
-#endif // _WIN32
     };
 
     template<class P1>

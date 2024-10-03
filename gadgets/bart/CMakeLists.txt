@@ -1,4 +1,3 @@
-
 cmake_policy(SET CMP0028 NEW) # double colon only for imported or alias libraries
 
 # ==============================================================================
@@ -21,10 +20,6 @@ set(GADGET_FILES
 )
 
 # ------------------------------------------------------------------------------
-
-if (WIN32)
-  add_definitions(-D__BUILD_GADGETRON_bartgadget__)
-endif ()
 
 if(BART_MEMONLY_CFL)
   add_definitions(-DMEMONLY_CFL)

@@ -9,15 +9,8 @@
 #include "hoNDImage.h"
 #include "Types.h"
 #include <boost/hana/adapt_struct.hpp>
-#include "sfndam_serializable.h"
 
 namespace Gadgetron::Core::IO {
-
-    template<class T>
-    std::enable_if_t<std::is_base_of_v<SfndamSerializable<T>,T>> read(std::istream &stream, T &t)
-    {
-        t = T::DeserializeFromSfnadm(stream);
-    }
 
     template<class T>
     std::enable_if_t<Gadgetron::Core::is_trivially_copyable_v<T>> read(std::istream &stream, T &t);
@@ -45,7 +38,7 @@ namespace Gadgetron::Core::IO {
 
     template<class T, unsigned int D>
     void read(std::istream &stream, Gadgetron::hoNDArray< Gadgetron::hoNDImage<T, D> > &array);
-    
+
     template<class... ARGS>
     void read(std::istream& stream, Core::tuple<ARGS...>& tup);
 
@@ -81,9 +74,6 @@ namespace Gadgetron::Core::IO {
 
     template<class... ARGS>
     void write(std::ostream& ostream, const std::tuple<ARGS...>& tup);
-
-    template<class T>
-    std::enable_if_t<std::is_base_of_v<SfndamSerializable<T>,T>> write(std::ostream &stream, const SfndamSerializable<T> &t);
 
     template<class T>
     std::enable_if_t<boost::hana::Struct<T>::value, void> write(std::ostream &ostream, const T &x);

@@ -12,7 +12,7 @@
 
 namespace Gadgetron {
 
-    class EXPORTGADGETSMRICORE GenericReconCartesianReferencePrepGadget : public GenericReconDataBase
+    class GenericReconCartesianReferencePrepGadget : public GenericReconDataBase
     {
     public:
         GADGET_DECLARE(GenericReconCartesianReferencePrepGadget);

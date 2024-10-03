@@ -1,7 +1,3 @@
-    if (WIN32)
-        add_definitions(-D__BUILD_GADGETRON_EPI__)
-    endif ()
-
     add_library(gadgetron_toolbox_epi  INTERFACE)
 
     target_link_libraries(gadgetron_toolbox_epi INTERFACE gadgetron_toolbox_cpucore gadgetron_toolbox_cpucore_math gadgetron_toolbox_log )
@@ -11,7 +7,6 @@
             ${CMAKE_CURRENT_SOURCE_DIR})
 
     install(FILES
-            EPIExport.h
             EPIReconXObject.h
             EPIReconXObjectFlat.h
             EPIReconXObjectTrapezoid.h

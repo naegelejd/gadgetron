@@ -1,20 +1,19 @@
 #pragma once
-#include "hostutils_export.h"
 
 #include <vector>
 #include <string>
 
 namespace Gadgetron {
 
-  typedef enum 
+  typedef enum
     {
       COMMAND_LINE_STRING,
       COMMAND_LINE_INT,
       COMMAND_LINE_FLOAT,
       COMMAND_LINE_NO_ARG
-    } CommandLineParameterType; 
+    } CommandLineParameterType;
 
-  class EXPORTHOSTUTILS CommandLineParameter
+  class CommandLineParameter
   {
   public:
     CommandLineParameter(char com_switch, CommandLineParameterType type, unsigned int nr_values, const char* desc, bool required);
@@ -47,7 +46,7 @@ namespace Gadgetron {
     float                    *m_float_value;
   };
 
-  class EXPORTHOSTUTILS ParameterParser
+  class ParameterParser
   {
   public:
     ParameterParser(int list_size = 10, int list_increment = 10);

@@ -6,11 +6,11 @@
 #include "hoCKOpticalFlowSolver.h"
 #include "RegistrationAveragingGadget.h"
 
-namespace Gadgetron{  
+namespace Gadgetron{
 
-  class EXPORTGADGETS_MOCO cpuRegistrationAveragingGadget2D :
+  class cpuRegistrationAveragingGadget2D :
     public RegistrationAveragingGadget< hoNDArray<float>, 2 >
-  {    
+  {
   public:
     GADGET_DECLARE(cpuRegistrationAveragingGadget2D);
     cpuRegistrationAveragingGadget2D() : RegistrationAveragingGadget< hoNDArray<float>, 2 >() {}

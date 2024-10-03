@@ -1,10 +1,5 @@
 enable_testing()
 
-if(WIN32)
-    link_directories(${Boost_LIBRARY_DIRS})
-endif()
-
-
 add_executable(gadgetron_ut_plplot
     plplot_ut.cpp 
     plplot_test.cpp )

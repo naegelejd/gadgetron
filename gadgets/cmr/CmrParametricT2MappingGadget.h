@@ -10,7 +10,7 @@
 
 namespace Gadgetron {
 
-    class EXPORTGADGETSCMR CmrParametricT2MappingGadget : public CmrParametricMappingGadget
+    class CmrParametricT2MappingGadget : public CmrParametricMappingGadget
     {
     public:
         GADGET_DECLARE(CmrParametricT2MappingGadget);

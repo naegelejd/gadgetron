@@ -3,7 +3,6 @@
 #include "Gadget.h"
 #include "hoNDArray.h"
 #include "cuNDArray.h"
-#include "gadgetron_hyper_export.h"
 
 #include "CMRTOperator.h"
 #include <ismrmrd/ismrmrd.h>
@@ -12,7 +11,7 @@
 
 namespace Gadgetron{
 
-  class EXPORTGADGETSHYPER CMRTGadget :
+  class CMRTGadget :
     public Gadget3< ISMRMRD::AcquisitionHeader, hoNDArray< std::complex<float> >, hoNDArray<float> >
   {
     

@@ -9,8 +9,6 @@
 #include "hoNDArray.h"
 #include "hoNDImage.h"
 
-#include "PLplotExport.h"
-
 #include "hoNDArray_elemwise.h"
 #include "hoNDArray_reductions.h"
 #include "hoNDArray_utils.h"
@@ -27,7 +25,7 @@ namespace Gadgetron {
 /// if trueColor = false, the grey image will be generated [xsize ysize]
 /// if drawLine = false, the line will be not plotted, onl glyphs
 template <typename T>
-EXPORTGTPLPLOT bool
+bool
 plotCurves(const std::vector<hoNDArray<T>>& x, const std::vector<hoNDArray<T>>& y, const std::string& xlabel,
            const std::string& ylabel, const std::string& title, const std::vector<std::string>& legend,
            const std::vector<std::string>& symbols, size_t xsize, size_t ysize, bool trueColor, bool drawLine,
@@ -37,7 +35,7 @@ plotCurves(const std::vector<hoNDArray<T>>& x, const std::vector<hoNDArray<T>>& 
 /// xlim: xmin to xmax
 /// ylim: ymin to ymax
 template <typename T>
-EXPORTGTPLPLOT bool plotCurves(const std::vector<hoNDArray<T>>& x, const std::vector<hoNDArray<T>>& y,
+bool plotCurves(const std::vector<hoNDArray<T>>& x, const std::vector<hoNDArray<T>>& y,
                                const std::string& xlabel, const std::string& ylabel, const std::string& title,
                                const std::vector<std::string>& legend, const std::vector<std::string>& symbols,
                                size_t xsize, size_t ysize, T xlim[2], T ylim[2], bool trueColor, bool drawLine,
@@ -46,7 +44,7 @@ EXPORTGTPLPLOT bool plotCurves(const std::vector<hoNDArray<T>>& x, const std::ve
 
 /// plot noise std
 template <typename T>
-EXPORTGTPLPLOT bool plotNoiseStandardDeviation(const hoNDArray<std::complex<T>>& m,
+bool plotNoiseStandardDeviation(const hoNDArray<std::complex<T>>& m,
                                                const std::vector<std::string>& coilStrings, const std::string& xlabel,
                                                const std::string& ylabel, const std::string& title, size_t xsize,
                                                size_t ysize, bool trueColor, hoNDArray<float>& plotIm);

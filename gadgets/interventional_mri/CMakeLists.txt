@@ -1,11 +1,4 @@
-if (WIN32)
-    add_definitions(-D__BUILD_GADGETRON_INTERVENTIONAL_MRI__)
-endif ()
-
-
-
 add_library(gadgetron_interventional_mri SHARED 
-    gadgetron_interventional_mri_export.h 
     DeviceChannelSplitterGadget.h
     DeviceChannelSplitterGadget.cpp
 )
@@ -20,7 +13,6 @@ target_link_libraries(gadgetron_interventional_mri
 )
 
 install(FILES
-    gadgetron_interventional_mri_export.h
     DeviceChannelSplitterGadget.h
     DESTINATION ${GADGETRON_INSTALL_INCLUDE_PATH} COMPONENT main)
 

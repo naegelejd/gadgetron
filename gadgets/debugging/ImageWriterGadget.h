@@ -3,7 +3,6 @@
 
 #include "Gadget.h"
 #include "hoNDArray.h"
-#include "gadgetron_debugging_export.h"
 
 #include <ismrmrd/ismrmrd.h>
 #include <complex>
@@ -26,21 +25,21 @@ namespace Gadgetron{
       long calls_;      
   };
   
-  class EXPORTGADGETSDEBUGGING ImageWriterGadgetUSHORT :
+  class ImageWriterGadgetUSHORT :
   public ImageWriterGadget<uint16_t >
   {
   public:
     GADGET_DECLARE(ImageWriterGadgetUSHORT)
   };
 
-  class EXPORTGADGETSDEBUGGING ImageWriterGadgetFLOAT :
+  class ImageWriterGadgetFLOAT :
   public ImageWriterGadget<float>
   {
   public:
     GADGET_DECLARE(ImageWriterGadgetFLOAT)
   };
 
-  class EXPORTGADGETSDEBUGGING ImageWriterGadgetCPLX :
+  class ImageWriterGadgetCPLX :
   public ImageWriterGadget< std::complex<float> >
   {
   public:

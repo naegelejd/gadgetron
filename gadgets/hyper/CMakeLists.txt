@@ -1,8 +1,3 @@
-if (WIN32)
-  add_definitions(-D__BUILD_GADGETRON_HYPER__)
-endif ()
-
-
 add_library(gadgetron_hyper SHARED 
   NFFT2DGadget.h NFFT2DGadget.cpp
   CMRT3DGadget.h CMRT3DGadget.cpp
@@ -29,7 +24,6 @@ install(FILES
   CMRTGadget.h
   CMRT3DGadget.h
   CSIGadget.h
-  gadgetron_hyper_export.h
   DESTINATION ${GADGETRON_INSTALL_INCLUDE_PATH})
 
 install(FILES NFFT2D.xml CMRT3D.xml CMRT.xml FS-CSI.xml DESTINATION ${GADGETRON_INSTALL_CONFIG_PATH})

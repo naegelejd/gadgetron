@@ -2,14 +2,13 @@
 
 #include "Gadget.h"
 #include "hoNDArray.h"
-#include "gadgetron_mricore_export.h"
 
 #include <ismrmrd/ismrmrd.h>
 #include <complex>
 
 namespace Gadgetron{
 
-  class EXPORTGADGETSMRICORE NoiseAdjustGadget_unoptimized : 
+  class NoiseAdjustGadget_unoptimized : 
   public Gadget2<ISMRMRD::AcquisitionHeader,hoNDArray< std::complex<float> > >
     {
     public:

@@ -5,7 +5,6 @@
 
 #pragma once
 #include "Node.h"
-#include "gadgetron_mricore_export.h"
 #include "hoNDArray.h"
 
 #include "mri_core_data.h"

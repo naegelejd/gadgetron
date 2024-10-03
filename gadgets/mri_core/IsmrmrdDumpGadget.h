@@ -22,11 +22,7 @@ namespace Gadgetron {
 
     protected:
 
-#ifndef WIN32
-        NODE_PROPERTY(folder, boost::filesystem::path, "Folder for save dump file", "/tmp/gadgetron_data");
-#else
         NODE_PROPERTY(folder, boost::filesystem::path, "Folder for save dump file", "c:/temp/gadgetron_data");
-#endif // WIN32
 
         NODE_PROPERTY(file_prefix, std::string, "Prefix for dump file", "ISMRMRD_DUMP");
 

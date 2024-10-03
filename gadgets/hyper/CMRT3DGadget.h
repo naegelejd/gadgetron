@@ -1,6 +1,5 @@
 #pragma once
 
-#include "gadgetron_hyper_export.h"
 #include "Gadget.h"
 #include "hoNDArray.h"
 #include "cuNDArray.h"
@@ -13,7 +12,7 @@
 
 namespace Gadgetron {
 
-  class EXPORTGADGETSHYPER CMRT3DGadget : 
+  class CMRT3DGadget : 
     public Gadget2< ISMRMRD::ImageHeader, hoNDArray< std::complex<float> > >
   {  
   public:

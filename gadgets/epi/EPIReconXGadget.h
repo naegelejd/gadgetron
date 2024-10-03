@@ -3,7 +3,6 @@
 
 #include "Gadget.h"
 #include "hoNDArray.h"
-#include "gadgetron_epi_export.h"
 #include "hoArmadillo.h"
 
 #include <complex>
@@ -13,7 +12,7 @@
 
 namespace Gadgetron{
 
-  class EXPORTGADGETS_EPI EPIReconXGadget : 
+  class EPIReconXGadget : 
   public Gadget1<mrd::Acquisition>
     {
     public:

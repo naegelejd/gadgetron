@@ -2,15 +2,13 @@
 
 #include "Gadget.h"
 #include "hoNDArray.h"
-#include "GadgetMRIHeaders.h"
-#include "gadgetron_interventional_mri_export.h"
 
 #include <ismrmrd/ismrmrd.h>
 #include <complex>
 
 namespace Gadgetron{
 
-  template <typename T> class EXPORTGADGETSINTERVENTIONAL_MRI DeviceChannelSplitterGadget : 
+  template <typename T> class DeviceChannelSplitterGadget : 
   public Gadget2<ISMRMRD::ImageHeader,hoNDArray< T > >
   {
   protected:
@@ -18,21 +16,21 @@ namespace Gadgetron{
 			GadgetContainerMessage< hoNDArray< T > >* m2);
   };
   
-  class EXPORTGADGETSINTERVENTIONAL_MRI DeviceChannelSplitterGadgetUSHORT :
+  class DeviceChannelSplitterGadgetUSHORT :
   public DeviceChannelSplitterGadget<uint16_t>
   {
   public:
     GADGET_DECLARE(DeviceChannelSplitterGadgetUSHORT);
   };
 
-  class EXPORTGADGETSINTERVENTIONAL_MRI DeviceChannelSplitterGadgetFLOAT :
+  class DeviceChannelSplitterGadgetFLOAT :
   public DeviceChannelSplitterGadget<float>
   {
   public:
     GADGET_DECLARE(DeviceChannelSplitterGadgetFLOAT);
   };
 
-  class EXPORTGADGETSINTERVENTIONAL_MRI DeviceChannelSplitterGadgetCPLX :
+  class DeviceChannelSplitterGadgetCPLX :
   public DeviceChannelSplitterGadget< std::complex<float> >
   {
   public:

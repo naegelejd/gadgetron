@@ -257,11 +257,7 @@ namespace Gadgetron {
             hoNDArray<arma::Mat<std::complex<float>>> Ps(num_fm, num_r2star);
             size_t nte = echo_times.size();
 
-#ifdef WIN32
 #pragma omp parallel for
-#else
-#pragma omp parallel for
-#endif
             for (int k3 = 0; k3 < num_fm; k3++) {
 
                 float fm = field_map_strengths[k3];
@@ -329,11 +325,8 @@ namespace Gadgetron {
 
 
             hoNDArray<float> r2star_map(field_map.dimensions());
-#ifdef WIN32
-#pragma omp parallel for
-#else
+
 #pragma omp parallel for collapse(2)
-#endif
             for (int k2 = 0; k2 < Y; k2++) {
                 for (int k1 = 0; k1 < X; k1++) {
                     // Get current signal
@@ -405,11 +398,7 @@ namespace Gadgetron {
             auto &residual = std::get<0>(result);
             auto &r2starIndex = std::get<1>(result);
 
-#ifdef WIN32
-#pragma omp parallel for 
-#else
 #pragma omp parallel for collapse(3)
-#endif
             for (int kz = 0; kz < Z; kz++) {
                 for (int ky = 0; ky < Y; ky++) {
                     for (int kx = 0; kx < X; kx++) {
@@ -471,11 +460,7 @@ namespace Gadgetron {
             hoNDArray<std::complex<float> > out(X, Y, Z, CHA, N, parameters.species.size(),
                                                 LOC); // S dimension gets replaced by water/fat stuff
 
-#ifdef WIN32
-#pragma omp parallel for 
-#else
 #pragma omp parallel for collapse(3)
-#endif
             for (int kz = 0; kz < Z; kz++) {
                 for (int ky = 0; ky < Y; ky++) {
                     for (int kx = 0; kx < X; kx++) {

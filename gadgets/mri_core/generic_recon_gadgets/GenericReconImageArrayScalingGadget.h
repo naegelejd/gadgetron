@@ -13,7 +13,7 @@
 
 namespace Gadgetron {
 
-    class EXPORTGADGETSMRICORE GenericReconImageArrayScalingGadget : public GenericReconImageBase
+    class GenericReconImageArrayScalingGadget : public GenericReconImageBase
     {
     public:
         GADGET_DECLARE(GenericReconImageArrayScalingGadget);

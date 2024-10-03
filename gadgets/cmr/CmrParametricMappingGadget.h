@@ -5,12 +5,11 @@
 
 #pragma once
 
-#include "gadgetron_cmr_export.h"
 #include "generic_recon_gadgets/GenericReconBase.h"
 
 namespace Gadgetron {
 
-    class EXPORTGADGETSCMR CmrParametricMappingGadget : public GenericReconImageBase
+    class CmrParametricMappingGadget : public GenericReconImageBase
     {
     public:
         GADGET_DECLARE(CmrParametricMappingGadget);

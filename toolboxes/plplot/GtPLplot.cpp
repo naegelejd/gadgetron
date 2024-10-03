@@ -266,7 +266,7 @@ void getPlotGlyph(size_t n, std::string& gly) {
 }
 
 template <typename T>
-EXPORTGTPLPLOT bool
+bool
 plotCurves(const std::vector<hoNDArray<T>>& x, const std::vector<hoNDArray<T>>& y, const std::string& xlabel,
            const std::string& ylabel, const std::string& title, const std::vector<std::string>& legend,
            const std::vector<std::string>& symbols, size_t xsize, size_t ysize, bool trueColor, bool drawLine,
@@ -289,21 +289,21 @@ plotCurves(const std::vector<hoNDArray<T>>& x, const std::vector<hoNDArray<T>>& 
     return true;
 }
 
-template EXPORTGTPLPLOT bool plotCurves(const std::vector<hoNDArray<float>>& x, const std::vector<hoNDArray<float>>& y,
+template bool plotCurves(const std::vector<hoNDArray<float>>& x, const std::vector<hoNDArray<float>>& y,
                                         const std::string& xlabel, const std::string& ylabel, const std::string& title,
                                         const std::vector<std::string>& legend, const std::vector<std::string>& symbols,
                                         size_t xsize, size_t ysize, bool trueColor, bool drawLine,
                                         const std::vector<int>& lineStyple, const std::vector<int>& lineWidth,
                                         hoNDArray<float>& plotIm);
 
-template EXPORTGTPLPLOT bool
+template bool
 plotCurves(const std::vector<hoNDArray<double>>& x, const std::vector<hoNDArray<double>>& y, const std::string& xlabel,
            const std::string& ylabel, const std::string& title, const std::vector<std::string>& legend,
            const std::vector<std::string>& symbols, size_t xsize, size_t ysize, bool trueColor, bool drawLine,
            const std::vector<int>& lineStyple, const std::vector<int>& lineWidth, hoNDArray<float>& plotIm);
 
 template <typename T>
-EXPORTGTPLPLOT bool plotCurves(const std::vector<hoNDArray<T>>& x, const std::vector<hoNDArray<T>>& y,
+bool plotCurves(const std::vector<hoNDArray<T>>& x, const std::vector<hoNDArray<T>>& y,
                                const std::string& xlabel, const std::string& ylabel, const std::string& title,
                                const std::vector<std::string>& legend, const std::vector<std::string>& symbols,
                                size_t xsize, size_t ysize, T xlim[2], T ylim[2], bool trueColor, bool drawLine,
@@ -473,14 +473,14 @@ EXPORTGTPLPLOT bool plotCurves(const std::vector<hoNDArray<T>>& x, const std::ve
     return true;
 }
 
-template EXPORTGTPLPLOT bool plotCurves(const std::vector<hoNDArray<float>>& x, const std::vector<hoNDArray<float>>& y,
+template bool plotCurves(const std::vector<hoNDArray<float>>& x, const std::vector<hoNDArray<float>>& y,
                                         const std::string& xlabel, const std::string& ylabel, const std::string& title,
                                         const std::vector<std::string>& legend, const std::vector<std::string>& symbols,
                                         size_t xsize, size_t ysize, float xlim[2], float ylim[2], bool trueColor,
                                         bool drawLine, const std::vector<int>& lineStyple,
                                         const std::vector<int>& lineWidth, hoNDArray<float>& plotIm);
 
-template EXPORTGTPLPLOT bool plotCurves(const std::vector<hoNDArray<double>>& x,
+template bool plotCurves(const std::vector<hoNDArray<double>>& x,
                                         const std::vector<hoNDArray<double>>& y, const std::string& xlabel,
                                         const std::string& ylabel, const std::string& title,
                                         const std::vector<std::string>& legend, const std::vector<std::string>& symbols,
@@ -639,13 +639,13 @@ bool plotNoiseStandardDeviation(const hoNDArray<std::complex<T>>& m, const std::
     return true;
 }
 
-template EXPORTGTPLPLOT bool plotNoiseStandardDeviation(const hoNDArray<std::complex<float>>& m,
+template bool plotNoiseStandardDeviation(const hoNDArray<std::complex<float>>& m,
                                                         const std::vector<std::string>& coilStrings,
                                                         const std::string& xlabel, const std::string& ylabel,
                                                         const std::string& title, size_t xsize, size_t ysize,
                                                         bool trueColor, hoNDArray<float>& plotIm);
 
-template EXPORTGTPLPLOT bool plotNoiseStandardDeviation(const hoNDArray<std::complex<double>>& m,
+template bool plotNoiseStandardDeviation(const hoNDArray<std::complex<double>>& m,
                                                         const std::vector<std::string>& coilStrings,
                                                         const std::string& xlabel, const std::string& ylabel,
                                                         const std::string& title, size_t xsize, size_t ysize,

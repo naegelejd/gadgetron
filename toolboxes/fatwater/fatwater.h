@@ -4,14 +4,13 @@
 #include <vector>
 #include <utility>
 
-#include "fatwater_export.h"
 #include "hoNDArray.h"
 
 namespace Gadgetron
 {
     namespace FatWater {
 
-        struct EXPORTFATWATER Config {
+        struct Config {
             std::pair<float, float> frequency_range = {-500, 500};
             size_t number_of_frequency_samples = 200;
 
@@ -32,19 +31,19 @@ namespace Gadgetron
         /**
            Amplitudes and frequences (in ppm)
          */
-        struct EXPORTFATWATER ChemicalSpecies {
+        struct ChemicalSpecies {
             std::string name;
             std::vector<std::pair<std::complex<float>, float> > amplitude_frequency_pairs;
         };
 
 
-        struct EXPORTFATWATER Output {
+        struct Output {
             hoNDArray<std::complex<float>> images;
             hoNDArray<float> field_map;
             hoNDArray<float> r2star_map;
         };
 
-        struct EXPORTFATWATER Parameters {
+        struct Parameters {
 
             float field_strength_T;
             bool precession_is_clockwise;
@@ -65,7 +64,7 @@ namespace Gadgetron
            data array is assumed to be a 7D array [X, Y, Z, CHA, N, S, LOC]
 
          */
-        EXPORTFATWATER Output
+        Output
         fatwater_separation(const hoNDArray <std::complex<float>> &data, Parameters p, Config config);
     }
 }

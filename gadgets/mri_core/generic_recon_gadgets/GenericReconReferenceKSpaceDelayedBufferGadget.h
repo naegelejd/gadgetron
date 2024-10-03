@@ -16,7 +16,7 @@
 
 namespace Gadgetron {
 
-    class EXPORTGADGETSMRICORE GenericReconReferenceKSpaceDelayedBufferGadget : public GenericReconKSpaceReadoutBase
+    class GenericReconReferenceKSpaceDelayedBufferGadget : public GenericReconKSpaceReadoutBase
     {
     public:
         GADGET_DECLARE(GenericReconReferenceKSpaceDelayedBufferGadget);
