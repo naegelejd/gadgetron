@@ -1,12 +1,13 @@
 #pragma once
 
+#include "ErrorHandler.h"
 #include "Channel.h"
 #include "Context.h"
+
 #include <memory>
 #include <thread>
-#include "connection/Core.h"
 
-namespace Gadgetron::Server::Connection {
+namespace Gadgetron::Main {
 
     class Processable {
     public:

@@ -1,8 +1,9 @@
 #pragma once
 
 #include <ostream>
+#include <boost/filesystem/path.hpp>
 
-namespace Gadgetron::Server::Info {
+namespace Gadgetron::Main::Info {
 
     void print_system_information(std::ostream &);
 
@@ -12,6 +13,8 @@ namespace Gadgetron::Server::Info {
     size_t system_memory();
     bool python_support();
     bool matlab_support();
+
+    const boost::filesystem::path default_gadgetron_home();
 
     namespace CUDA {
         bool cuda_support();

@@ -16,15 +16,6 @@
         Email: hui.xue@nih.gov
     -->
 
-    <!-- reader -->
-    <reader><slot>1008</slot><dll>gadgetron_mricore</dll><classname>GadgetIsmrmrdAcquisitionMessageReader</classname></reader>
-    <reader><slot>1026</slot><dll>gadgetron_mricore</dll><classname>GadgetIsmrmrdWaveformMessageReader</classname></reader>
-    <reader><slot>1022</slot><dll>gadgetron_mricore</dll><classname>MRIImageReader</classname></reader>
-
-    <!-- writer -->
-    <writer><slot>1022</slot><dll>gadgetron_mricore</dll><classname>MRIImageWriter</classname></writer>
-    <writer><slot>1008</slot><dll>gadgetron_mricore</dll><classname>GadgetIsmrmrdAcquisitionMessageWriter</classname></writer>
-
     <!-- Noise prewhitening -->
     <gadget><name>NoiseAdjust</name><dll>gadgetron_mricore</dll><classname>NoiseAdjustGadget</classname></gadget>
 
@@ -92,8 +83,8 @@
       <!--property><name>BartWorkingDirectory_path</name><value></value></property-->
       <property><name>isBartFileBeingStored</name><value>false</value></property>
       <property><name>image_series</name><value>0</value></property>
-      <!-- Controls the behaviour of BART with regards to files 
-	   Possible values are: 
+      <!-- Controls the behaviour of BART with regards to files
+	   Possible values are:
 	   - BART_ALL_IN_MEM: store everything in memory (beware of large datasets!)
 	   - BART_ALL_ON_DISK: store everything on-disk (might not be available if BartGadget was compiled with -DMEMONLY_CFL)
 	   - BART_MIX_DISK_MEM: mixed on-disk/in-memory storage
@@ -170,7 +161,7 @@
       <dll>gadgetron_mricore</dll>
       <classname>ExtractGadget</classname>
     </gadget>
-	
+
 	<gadget>
       <name>Sort</name>
       <dll>gadgetron_mricore</dll>
@@ -179,20 +170,20 @@
         <name>sorting_dimension</name>
         <value>repetition</value>
       </property>
-    </gadget>  
+    </gadget>
 
     <gadget>
       <name>AutoScale</name>
       <dll>gadgetron_mricore</dll>
       <classname>AutoScaleGadget</classname>
     </gadget>
-    
+
     <gadget>
       <name>FloatToShort</name>
       <dll>gadgetron_mricore</dll>
       <classname>FloatToUShortGadget</classname>
     </gadget>
-	
+
     <gadget>
         <name>ImageFinish</name>
         <dll>gadgetron_mricore</dll>

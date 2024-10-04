@@ -1,4 +1,4 @@
-add_library(gadgetron_epi SHARED 
+add_library(gadgetron_epi SHARED
   EPIReconXGadget.h EPIReconXGadget.cpp
   EPICorrGadget.h EPICorrGadget.cpp
   EPIPackNavigatorGadget.h EPIPackNavigatorGadget.cpp

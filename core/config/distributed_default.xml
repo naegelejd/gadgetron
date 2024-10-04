@@ -1,33 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
     <version>2</version>
-    <readers>
-        <reader>
-            <slot>1008</slot>
-            <dll>gadgetron_mricore</dll>
-            <classname>GadgetIsmrmrdAcquisitionMessageReader</classname>
-        </reader>
-
-        <reader>
-            <slot>1022</slot>
-            <dll>gadgetron_mricore</dll>
-            <classname>MRIImageReader</classname>
-        </reader>
-    </readers>
-    <writers>
-        <writer>
-            <slot>1022</slot>
-            <dll>gadgetron_mricore</dll>
-            <classname>MRIImageWriter</classname>
-        </writer>
-
-        <writer>
-            <slot>1008</slot>
-            <dll>gadgetron_mricore</dll>
-            <classname>GadgetIsmrmrdAcquisitionMessageWriter</classname>
-        </writer>
-    </writers>
-
     <stream>
         <distributed>
             <readers>

@@ -1,10 +1,10 @@
 #pragma once
 #include "Message.h"
 #include "PureGadget.h"
-#include "connection/Loader.h"
-#include "connection/config/Config.h"
+#include "Loader.h"
+#include "Config.h"
 
-namespace Gadgetron::Server::Connection::Nodes {
+namespace Gadgetron::Main::Nodes {
     class PureStream {
     public:
         PureStream(const Config::PureStream&, const Core::Context&, Loader&);

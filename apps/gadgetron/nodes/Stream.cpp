@@ -2,16 +2,16 @@
 
 #include "Parallel.h"
 #include "ParallelProcess.h"
-#include "connection/core/Processable.h"
+#include "Processable.h"
 
-#include "connection/Loader.h"
+#include "Loader.h"
 
 #include "Node.h"
 
 namespace {
     using namespace Gadgetron::Core;
-    using namespace Gadgetron::Server::Connection;
-    using namespace Gadgetron::Server::Connection::Nodes;
+    using namespace Gadgetron::Main;
+    using namespace Gadgetron::Main::Nodes;
     using namespace std::string_literals;
 
     class NodeProcessable : public Processable {
@@ -58,7 +58,7 @@ namespace {
     }
 }
 
-namespace Gadgetron::Server::Connection::Nodes {
+namespace Gadgetron::Main::Nodes {
 
     Stream::Stream(const Config::Stream &config, const Core::StreamContext &context, Loader &loader) : key(config.key) {
         for (auto &node_config : config.nodes) {
@@ -106,7 +106,7 @@ namespace Gadgetron::Server::Connection::Nodes {
     bool Stream::empty() const { return nodes.empty(); }
 }
 
-const std::string &Gadgetron::Server::Connection::Nodes::Stream::name() {
+const std::string &Gadgetron::Main::Nodes::Stream::name() {
     static const std::string name = "Stream";
     return key.empty() ? name : key;
 }

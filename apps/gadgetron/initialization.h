@@ -1,6 +1,6 @@
 #pragma once
 
-namespace Gadgetron::Server {
+namespace Gadgetron::Main {
     void configure_blas_libraries();
 
     void check_environment_variables();

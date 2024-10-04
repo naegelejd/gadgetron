@@ -9,19 +9,19 @@
 #include <boost/program_options/variables_map.hpp>
 
 #include <mrd/binary/protocols.h>
-#include <mri_core_data.h>
+#include "mri_core_data.h"
 
 #include "Channel.h"
-#include "connection/Core.h"
-#include "connection/Loader.h"
+#include "ErrorHandler.h"
+#include "Loader.h"
 
 using namespace Gadgetron::Core;
-using namespace Gadgetron::Server;
+using namespace Gadgetron::Main;
 
 namespace
 {
 
-class ErrorThrower : public Connection::ErrorReporter
+class ErrorThrower : public ErrorReporter
 {
   public:
     void operator()(const std::string& location, const std::string& message) override {
@@ -54,8 +54,8 @@ public:
     void consume(std::istream& input_stream, std::ostream& output_stream, std::string config_xml_name)
     {
         Context::Paths paths{
-            args_["home"].as<boost::filesystem::path>().string(),
-            args_["dir"].as<boost::filesystem::path>().string()};
+            args_["home"].as<boost::filesystem::path>().string()
+        };
 
         mrd::binary::MrdReader mrd_reader(input_stream);
         mrd::binary::MrdWriter mrd_writer(output_stream);
@@ -63,7 +63,7 @@ public:
         mrd::Header hdr = consume_mrd_header(mrd_reader, mrd_writer);
 
         auto context = StreamContext(hdr, paths, args_);
-        auto loader = Connection::Loader(context);
+        auto loader = Loader(context);
         auto config_path = find_config_path(args_["home"].as<boost::filesystem::path>().string(), config_xml_name);
 
         GINFO_STREAM("Loading configuration from: " << config_path.string());
@@ -72,7 +72,7 @@ public:
             throw std::runtime_error("Failed to open file at path: " + config_path.string());
         }
 
-        auto config = Connection::parse_config(file);
+        auto config = Config::parse(file);
         file.close();
 
         auto stream = loader.load(config.stream);
@@ -84,7 +84,7 @@ public:
             try
             {
                 ErrorThrower error_thrower;
-                Connection::ErrorHandler error_handler(error_thrower, std::string(__FILE__));
+                ErrorHandler error_handler(error_thrower, std::string(__FILE__));
                 stream->process(std::move(input_channel.input), std::move(output_channel.output), error_handler);
                 processing = false;
             }
@@ -132,7 +132,7 @@ public:
         mrd_writer.WriteHeader(hdr);
 
         if (!hdr.has_value()) {
-            throw std::runtime_error("Failed to read ISMRMRD header");
+            GADGET_THROW("Failed to read ISMRMRD header");
         }
         return hdr.value();
     }
@@ -182,7 +182,7 @@ public:
                 } else if (convertible_to<mrd::ImageArray>(message) ) {
                     mrd_writer.WriteData(force_unpack<mrd::ImageArray>(std::move(message)));
                 } else {
-                    GADGET_THROW("Unsupported Message type for MrdWriter");
+                    GADGET_THROW("Unsupported Message type for MrdWriter! Check that the last Gadget emits a valid MRD type.");
                 }
             } catch (const ChannelClosed& exc) {
                 break;

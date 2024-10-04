@@ -4,7 +4,6 @@
 #include <boost/program_options.hpp>
 
 #include "log.h"
-#include "gadgetron_paths.h"
 #include "initialization.h"
 
 #include "system_info.h"
@@ -15,7 +14,7 @@
 
 using namespace boost::filesystem;
 using namespace boost::program_options;
-using namespace Gadgetron::Server;
+using namespace Gadgetron::Main;
 
 using gadget_parameter = std::pair<std::string, std::string>;
 
@@ -42,11 +41,8 @@ int main(int argc, char *argv[]) {
     gadgetron_options.add_options()
             ("help,h", "Prints this help message.")
             ("info", "Prints build info about the Gadgetron.")
-            ("dir,W",
-                value<path>()->default_value(default_working_folder()),
-                "Set the Gadgetron working directory.")
             ("home,G",
-                value<path>()->default_value(default_gadgetron_home()),
+                value<path>()->default_value(Info::default_gadgetron_home()),
                 "Set the Gadgetron home directory.")
             ("input,i",
                 value<std::string>(),
@@ -88,9 +84,6 @@ int main(int argc, char *argv[]) {
 
         GINFO("Gadgetron %s [%s]\n", GADGETRON_VERSION_STRING, GADGETRON_GIT_SHA1_HASH);
 
-        // Ensure working directory exists.
-        create_directories(args["dir"].as<path>());
-
         if (!args.count("config"))
         {
             GERROR_STREAM("No config file provided. Use --config/-c");
@@ -100,46 +93,29 @@ int main(int argc, char *argv[]) {
         auto cfg = args["config"].as<std::string>();
         StreamConsumer consumer(args);
 
-        if(args.count("input") && args.count("output"))
-        {
-            auto input_stream = std::ifstream(args["input"].as<std::string>());
-            if (!input_stream) {
+        std::unique_ptr<std::istream> input_file;
+        if (args.count("input")) {
+            input_file = std::make_unique<std::ifstream>(args["input"].as<std::string>());
+            if (!input_file->good()) {
                 GERROR_STREAM("Could not open input file: " << args["input"].as<std::string>());
                 return 1;
             }
-            auto output_stream = std::ofstream(args["output"].as<std::string>());
-            if (!output_stream) {
+        }
+
+        std::unique_ptr<std::ostream> output_file;
+        if (args.count("output")) {
+            output_file = std::make_unique<std::ofstream>(args["output"].as<std::string>());
+            if (!output_file->good()) {
                 GERROR_STREAM("Could not open output file: " << args["output"].as<std::string>());
                 return 1;
             }
-            consumer.consume(input_stream, output_stream, cfg);
-            output_stream.close();
         }
-        else if(args.count("input"))
-        {
-            auto input_stream = std::ifstream(args["input"].as<std::string>());
-            if (!input_stream) {
-                GERROR_STREAM("Could not open input file: " << args["input"].as<std::string>());
-                return 1;
-            }
-            consumer.consume(input_stream, std::cout, cfg);
-            std::flush(std::cout);
-        }
-        else if(args.count("output"))
-        {
-            auto output_stream = std::ofstream(args["output"].as<std::string>());
-            if (!output_stream) {
-                GERROR_STREAM("Could not open output file: " << args["output"].as<std::string>());
-                return 1;
-            }
-            consumer.consume(std::cin, output_stream, cfg);
-            output_stream.close();
-        }
-        else
-        {
-            consumer.consume(std::cin, std::cout, cfg);
-            std::flush(std::cout);
-        }
+
+        std::istream& input = input_file ? *input_file : std::cin;
+        std::ostream& output = output_file ? *output_file : std::cout;
+        consumer.consume(input, output, cfg);
+        std::flush(output);
+
         GDEBUG_STREAM("Finished consuming stream");
     }
     catch (std::exception &e)

@@ -2,29 +2,13 @@
 <gadgetronStreamConfiguration xsi:schemaLocation="http://gadgetron.sf.net/gadgetron gadgetron.xsd"
 			      xmlns="http://gadgetron.sf.net/gadgetron"
 			      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-  
-  <reader>
-    <slot>1008</slot>
-    <dll>gadgetron_mricore</dll>
-    <classname>GadgetIsmrmrdAcquisitionMessageReader</classname>
-  </reader>
-    <reader>
-        <slot>1026</slot>
-        <dll>gadgetron_mricore</dll>
-        <classname>GadgetIsmrmrdWaveformMessageReader</classname>
-    </reader>
-  <writer>
-    <slot>1022</slot>
-    <dll>gadgetron_mricore</dll>
-    <classname>MRIImageWriter</classname>
-  </writer>
 
   <gadget>
     <name>NoiseAdjust</name>
     <dll>gadgetron_mricore</dll>
     <classname>NoiseAdjustGadget_unoptimized</classname>
   </gadget>
-  
+
   <gadget>
     <name>gpuSpiralSensePrepGadget</name>
     <dll>gadgetron_spiral</dll>
@@ -32,7 +16,7 @@
     <property><name>deviceno</name><value>0</value></property>
     <property><name>use_multiframe_grouping</name><value>true</value></property>
   </gadget>
-  
+
   <gadget>
     <name>gpuSbSenseGadget</name>
     <dll>gadgetron_gpuparallelmri</dll>
@@ -72,7 +56,7 @@
     <dll>gadgetron_mricore</dll>
     <classname>FlowPhaseSubtractionGadget</classname>
   </gadget>
-  
+
   <gadget>
     <name>MaxwellCorrection</name>
     <dll>gadgetron_mricore</dll>
@@ -85,20 +69,12 @@
     <classname>ExtractGadget</classname>
     <property><name>extract_mask</name><value>9</value></property>
   </gadget>
-  
-  <!--
-      <gadget>
-      <name>ImageWrite</name>
-      <dll>gadgetron_mricore</dll>
-      <classname>ImageWriterGadgetFLOAT</classname>
-      </gadget>
-  -->    
-  
+
   <gadget>
     <name>AutoScaleGadget</name>
     <dll>gadgetron_mricore</dll>
     <classname>AutoScaleGadget</classname>
-  </gadget> 
+  </gadget>
 
   <gadget>
     <name>FloatToShort</name>
@@ -110,6 +86,6 @@
     <name>ImageFinish</name>
     <dll>gadgetron_mricore</dll>
     <classname>ImageFinishGadget</classname>
-  </gadget>    
+  </gadget>
 
 </gadgetronStreamConfiguration>

@@ -8,7 +8,6 @@ add_library(gadgetron_core SHARED
         Message.cpp
         Response.cpp
         Process.cpp
-        gadgetron_paths.cpp
         io/from_string.cpp)
 
 set_target_properties(gadgetron_core PROPERTIES

@@ -2,22 +2,6 @@
 <gadgetronStreamConfiguration xsi:schemaLocation="http://gadgetron.sf.net/gadgetron gadgetron.xsd"
         xmlns="http://gadgetron.sf.net/gadgetron"
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-         
-    <reader>
-      <slot>1008</slot>
-      <dll>gadgetron_mricore</dll>
-      <classname>GadgetIsmrmrdAcquisitionMessageReader</classname>
-    </reader>
-    <reader>
-        <slot>1026</slot>
-        <dll>gadgetron_mricore</dll>
-        <classname>GadgetIsmrmrdWaveformMessageReader</classname>
-    </reader>
-    <writer>
-      <slot>1022</slot>
-      <dll>gadgetron_mricore</dll>
-      <classname>MRIImageWriter</classname>
-    </writer>
 
     <gadget>
       <name>NoiseAdjust</name>
@@ -37,7 +21,7 @@
       <classname>CoilReductionGadget</classname>
       <property><name>coils_out</name><value>16</value></property>
     </gadget>
-    
+
     <gadget>
       <name>gpuRadialSensePrepGadget</name>
       <dll>gadgetron_gpuradial</dll>
@@ -53,7 +37,7 @@
       <property><name>reconstruction_os_factor_x</name><value>1.5</value></property>
       <property><name>reconstruction_os_factor_y</name><value>1.5</value></property>
     </gadget>
-    
+
     <gadget>
       <name>gpuCgSenseGadget_slice0</name>
       <dll>gadgetron_gpuparallelmri</dll>
@@ -105,20 +89,12 @@
       <classname>ExtractGadget</classname>
     </gadget>
 
-    <!--
-	<gadget>
-	<name>ImageWrite</name>
-	<dll>gadgetron_mricore</dll>
-	<classname>ImageWriterGadgetFLOAT</classname>
-	</gadget>
-    -->
-    
     <gadget>
       <name>AutoScale</name>
       <dll>gadgetron_mricore</dll>
       <classname>AutoScaleGadget</classname>
     </gadget>
-        
+
     <gadget>
       <name>FloatToShort</name>
       <dll>gadgetron_mricore</dll>
@@ -130,5 +106,5 @@
       <dll>gadgetron_mricore</dll>
       <classname>ImageFinishGadget</classname>
     </gadget>
-    
+
 </gadgetronStreamConfiguration>

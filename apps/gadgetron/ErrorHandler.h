@@ -9,7 +9,7 @@
 #include "Channel.h"
 #include "Context.h"
 
-namespace Gadgetron::Server::Connection {
+namespace Gadgetron::Main {
 
     class ErrorReporter {
     public:

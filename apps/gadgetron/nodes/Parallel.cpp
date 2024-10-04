@@ -3,7 +3,7 @@
 #include <map>
 #include <memory>
 
-#include "connection/Loader.h"
+#include "Loader.h"
 
 #include "Channel.h"
 #include "Context.h"
@@ -11,11 +11,11 @@
 namespace {
     using namespace Gadgetron::Core;
     using namespace Gadgetron::Core::Parallel;
-    using namespace Gadgetron::Server::Connection;
-    using namespace Gadgetron::Server::Connection::Nodes;
+    using namespace Gadgetron::Main;
+    using namespace Gadgetron::Main::Nodes;
 
-    using DecoratedBranch = Gadgetron::Server::Connection::Nodes::Parallel::DecoratedBranch;
-    using DecoratedMerge  = Gadgetron::Server::Connection::Nodes::Parallel::DecoratedMerge;
+    using DecoratedBranch = Gadgetron::Main::Nodes::Parallel::DecoratedBranch;
+    using DecoratedMerge  = Gadgetron::Main::Nodes::Parallel::DecoratedMerge;
 
     using branch_factory = Loader::generic_factory<Branch>;
     using merge_factory = Loader::generic_factory<Merge>;
@@ -44,8 +44,8 @@ namespace {
 namespace {
     using namespace Gadgetron::Core;
     using namespace Gadgetron::Core::Parallel;
-    using namespace Gadgetron::Server::Connection;
-    using namespace Gadgetron::Server::Connection::Nodes;
+    using namespace Gadgetron::Main;
+    using namespace Gadgetron::Main::Nodes;
 
     ChannelPair split(const ChannelPair &in) {
         return ChannelPair{ split(in.input), split(in.output) };
@@ -66,7 +66,7 @@ namespace {
     }
 }
 
-namespace Gadgetron::Server::Connection::Nodes {
+namespace Gadgetron::Main::Nodes {
 
     Parallel::Parallel(
             const Config::Parallel &config,

@@ -3,13 +3,6 @@
         xmlns="http://gadgetron.sf.net/gadgetron"
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 
-    <!-- reader -->
-    <reader><slot>1008</slot><dll>gadgetron_mricore</dll><classname>GadgetIsmrmrdAcquisitionMessageReader</classname></reader>
-    <reader><slot>1026</slot><dll>gadgetron_mricore</dll><classname>GadgetIsmrmrdWaveformMessageReader</classname></reader>
-
-    <!-- writer -->
-    <writer><slot>1022</slot><dll>gadgetron_mricore</dll><classname>MRIImageWriter</classname></writer>
-
     <!-- Noise prewhitening -->
     <gadget><name>NoiseAdjust</name><dll>gadgetron_mricore</dll><classname>NoiseAdjustGadget</classname></gadget>
 
@@ -19,7 +12,7 @@
         <dll>gadgetron_spiral</dll>
         <classname>SpiralToGenericGadget</classname>
     </gadget>
-    
+
     <!-- Data accumulation and trigger gadget -->
     <gadget>
         <name>AccTrig</name>
@@ -44,7 +37,7 @@
         <name>GriddingRecon</name>
         <dll>gadgetron_mri_noncartesian</dll>
         <classname>GriddingReconGadget</classname>
-        <property><name>verbose</name><value>true</value></property>	
+        <property><name>verbose</name><value>true</value></property>
         <property><name>perform_timing</name><value>true</value></property>
 
 	<!-- Ignore gridding weights, iterate instead -->
@@ -57,7 +50,7 @@
 	<property><name>snr_frame</name><value>20</value></property>
     </gadget>
 
-    
+
     <!-- Image Array Scaling -->
     <gadget>
         <name>Scaling</name>
@@ -99,7 +92,7 @@
         <property><name>min_intensity</name><value>0</value></property>
         <property><name>intensity_offset</name><value>0</value></property>
     </gadget>
-    
+
     <gadget>
         <name>ImageFinish</name>
         <dll>gadgetron_mricore</dll>

@@ -11,7 +11,7 @@
 #include <cblas.h>
 #endif
 #include <locale>
-namespace Gadgetron::Server {
+namespace Gadgetron::Main {
 
     void configure_blas_libraries() {
 

@@ -4,7 +4,7 @@
 
 #include "nodes/Stream.h"
 
-namespace Gadgetron::Server::Connection {
+namespace Gadgetron::Main {
 
     Loader::Loader(const Core::StreamContext &context) : context(context) {}
 

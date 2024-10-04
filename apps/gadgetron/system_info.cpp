@@ -8,7 +8,9 @@
 #include <unistd.h>
 #include <sys/types.h>
 #include <sys/param.h>
+#include <pwd.h>
 #include <sstream>
+#include <memory>
 #include <boost/filesystem.hpp>
 
 #if defined(BSD)
@@ -21,7 +23,8 @@
 #include <cuda_runtime.h>
 #endif
 
-namespace Gadgetron::Server::Info {
+
+namespace Gadgetron::Main::Info {
 
     std::string gadgetron_version() {
         return GADGETRON_VERSION_STRING;
@@ -58,9 +61,8 @@ namespace Gadgetron::Server::Info {
         return 0L;
     }
 
-#if defined USE_CUDA
     namespace CUDA {
-
+#if defined USE_CUDA
         std::string format_version(int version) {
             std::stringstream stream;
             stream << (version / 1000)  << "." << (version % 100) / 10;
@@ -129,10 +131,7 @@ namespace Gadgetron::Server::Info {
               os << "         + CUDA Device Memory size: " << std::to_string(CUDA::cuda_device_memory(dev) / (1024 * 1024)) << " MB" << std::endl;
             }
         }
-    }
 #else
-    namespace CUDA {
-
         bool cuda_support() {
             return false;
         }
@@ -164,8 +163,8 @@ namespace Gadgetron::Server::Info {
         void print_cuda_information(std::ostream &os) {
             os << "  -- CUDA Support       : NO" << std::endl;
         }
-    }
 #endif
+    } // namespace CUDA
 
     void print_system_information(std::ostream &os) {
         os << "Gadgetron Version Info" << std::endl;
@@ -174,6 +173,64 @@ namespace Gadgetron::Server::Info {
         os << "  -- System Memory size : " << std::to_string(system_memory() / (1024 * 1024)) << " MB" << std::endl;
         CUDA::print_cuda_information(os);
         os << std::endl;
+    }
+
+    namespace {
+
+    #if defined __APPLE__
+        #include <mach-o/dyld.h>
+
+        std::string get_executable_path() {
+            char path[PATH_MAX];
+            char resolved[PATH_MAX];
+            uint32_t size = sizeof(path);
+
+            if ((_NSGetExecutablePath(path, &size) == 0) && (realpath(path, resolved) != NULL)) {
+                return std::string(resolved);
+            } else {
+                throw std::runtime_error("Could not determine location of Gadgetron binary.");
+            }
+        }
+    #else
+        std::string get_executable_path(size_t buffer_size = 1024) {
+
+            auto buffer = std::make_unique<char[]>(buffer_size);
+
+            ssize_t len = readlink("/proc/self/exe", buffer.get(), buffer_size);
+
+            if (len < 0) {
+                throw std::runtime_error("Failed to read /proc/self/exe - cannot determine Gadgetron binary path.");
+            }
+
+            if (size_t(len) == buffer_size) {
+                // Allocated buffer was probably too small. Try again with a bigger buffer.
+                return get_executable_path(buffer_size * 2);
+            }
+
+            return {buffer.get(), size_t(len)};
+        }
+    #endif
+    } // namespace
+
+    const boost::filesystem::path default_gadgetron_home() {
+
+        const char *home = std::getenv("GADGETRON_HOME");
+
+        if (home != nullptr) {
+            return boost::filesystem::path(home);
+        }
+
+        boost::filesystem::path executable_path = get_executable_path();
+
+        GDEBUG_STREAM("Executable path: " << executable_path);
+
+        boost::filesystem::path gadgetron_home = executable_path
+                .parent_path()
+                .parent_path();
+
+        GDEBUG_STREAM("Default Gadgetron home: " << gadgetron_home);
+
+        return gadgetron_home;
     }
 
 } // namespace

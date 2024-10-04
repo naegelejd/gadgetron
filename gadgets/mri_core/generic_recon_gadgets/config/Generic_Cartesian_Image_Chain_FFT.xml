@@ -14,12 +14,6 @@
         Email: hui.xue@nih.gov
     -->
 
-    <!-- reader -->
-    <reader><slot>1022</slot><dll>gadgetron_mricore</dll><classname>MRIImageReader</classname></reader>
-
-    <!-- writer -->
-    <writer><slot>1022</slot><dll>gadgetron_mricore</dll><classname>MRIImageWriter</classname></writer>
-
     <!-- perform FFT on incoming image -->
     <gadget>
         <name>ImageFFT</name>

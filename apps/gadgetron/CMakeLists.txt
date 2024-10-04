@@ -8,24 +8,25 @@ add_executable(gadgetron
         initialization.h
         system_info.cpp
 
-        connection/Core.h
-        connection/Loader.cpp
-        connection/Loader.h
+        Loader.cpp
+        Loader.h
 
-        connection/config/Config.cpp
-        connection/config/Config.h
+        Config.cpp
+        Config.h
 
-        connection/core/Processable.h
-        connection/core/Processable.cpp
+        ErrorHandler.h
 
-        connection/nodes/Stream.cpp
-        connection/nodes/Stream.h
-        connection/nodes/Parallel.cpp
-        connection/nodes/Parallel.h
-        connection/nodes/ParallelProcess.cpp
-        connection/nodes/ParallelProcess.h
-        connection/nodes/PureStream.cpp
-        connection/nodes/PureStream.h
+        nodes/Processable.h
+        nodes/Processable.cpp
+
+        nodes/Stream.cpp
+        nodes/Stream.h
+        nodes/Parallel.cpp
+        nodes/Parallel.h
+        nodes/ParallelProcess.cpp
+        nodes/ParallelProcess.h
+        nodes/PureStream.cpp
+        nodes/PureStream.h
         )
 
 target_link_libraries(gadgetron

@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Stream.h"
-#include "connection/core/Processable.h"
+#include "Processable.h"
 
 #include "parallel/Branch.h"
 #include "parallel/Merge.h"
@@ -9,7 +9,7 @@
 #include "Channel.h"
 #include "Context.h"
 
-namespace Gadgetron::Server::Connection::Nodes {
+namespace Gadgetron::Main::Nodes {
 
     class Parallel : public Processable {
         using Channel = Core::Channel;

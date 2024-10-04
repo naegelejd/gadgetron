@@ -3,23 +3,6 @@
         xmlns="http://gadgetron.sf.net/gadgetron"
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 
-    <reader>
-        <slot>1008</slot>
-        <dll>gadgetron_mricore</dll>
-        <classname>GadgetIsmrmrdAcquisitionMessageReader</classname>
-    </reader>
-    <reader>
-        <slot>1026</slot>
-        <dll>gadgetron_mricore</dll>
-        <classname>GadgetIsmrmrdWaveformMessageReader</classname>
-    </reader>
-
-    <writer>
-      <slot>1022</slot>
-      <dll>gadgetron_mricore</dll>
-      <classname>MRIImageWriter</classname>
-    </writer>
-
     <gadget>
       <name>NoiseAdjust</name>
       <dll>gadgetron_mricore</dll>
@@ -44,16 +27,6 @@
         <dll>gadgetron_epi</dll>
         <classname>FFTXGadget</classname>
     </gadget>
-
-<!--
-    <gadget>
-      <name>IsmrmrdDump</name>
-      <dll>gadgetron_mricore</dll>
-      <classname>IsmrmrdDumpGadget</classname>
-      <property><name>file_prefix</name><value>ISMRMRD_DUMP</value></property>
-      <property><name>append_timestamp</name><value>1</value></property>
-    </gadget>
--->
 
     <gadget>
         <name>AccTrig</name>
@@ -96,7 +69,7 @@
       <dll>gadgetron_mricore</dll>
       <classname>FFTGadget</classname>
     </gadget>
-    
+
     <gadget>
       <name>Combine</name>
       <dll>gadgetron_mricore</dll>
@@ -107,7 +80,7 @@
       <name>Extract</name>
       <dll>gadgetron_mricore</dll>
       <classname>ExtractGadget</classname>
-    </gadget>  
+    </gadget>
 
    <gadget>
       <name>AutoScale</name>
@@ -120,7 +93,7 @@
       <dll>gadgetron_mricore</dll>
       <classname>FloatToUShortGadget</classname>
     </gadget>
- 
+
      <gadget>
       <name>ImageFinish</name>
       <dll>gadgetron_mricore</dll>

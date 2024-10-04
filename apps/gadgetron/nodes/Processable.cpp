@@ -1,7 +1,7 @@
 #include "Processable.h"
 
 
-std::thread Gadgetron::Server::Connection::Processable::process_async(
+std::thread Gadgetron::Main::Processable::process_async(
     std::shared_ptr<Processable> processable,
     Core::GenericInputChannel input,
     Core::OutputChannel output,

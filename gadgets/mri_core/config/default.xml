@@ -2,23 +2,6 @@
 <configuration>
     <version>2</version>
 
-    <readers>
-        <reader>
-            <dll>gadgetron_mricore</dll>
-            <classname>GadgetIsmrmrdAcquisitionMessageReader</classname>
-        </reader>
-        <reader>
-            <dll>gadgetron_mricore</dll>
-            <classname>GadgetIsmrmrdWaveformMessageReader</classname>
-        </reader>
-    </readers>
-    <writers>
-        <writer>
-            <dll>gadgetron_mricore</dll>
-            <classname>MRIImageWriter</classname>
-        </writer>
-    </writers>
-
     <stream>
         <gadget>
             <name>RemoveROOversampling</name>

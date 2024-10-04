@@ -6,7 +6,7 @@
 
 #include "Types.h"
 
-namespace Gadgetron::Server::Connection {
+namespace Gadgetron::Main {
 
     struct Config {
 
@@ -53,8 +53,8 @@ namespace Gadgetron::Server::Connection {
         };
 
         Stream stream;
-    };
 
-    Config parse_config(std::istream &stream);
-    std::string serialize_config(const Config& config);
+        static Config parse(std::istream &stream);
+        static std::string serialize(const Config& config);
+    };
 }

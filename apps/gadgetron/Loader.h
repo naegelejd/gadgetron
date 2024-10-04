@@ -3,7 +3,7 @@
 #include <map>
 #include <memory>
 
-#include "config/Config.h"
+#include "Config.h"
 #include "nodes/Stream.h"
 
 #include "PropertyMixin.h"
@@ -11,15 +11,15 @@
 
 #include <boost/dll.hpp>
 
-namespace Gadgetron::Server::Connection::Nodes {
+namespace Gadgetron::Main::Nodes {
     class Stream;
 }
 
-namespace Gadgetron::Server::Connection {
+namespace Gadgetron::Main {
 
     class Loader {
         using Context = Core::Context;
-        using Stream  = Gadgetron::Server::Connection::Nodes::Stream;
+        using Stream  = Gadgetron::Main::Nodes::Stream;
 
         using GadgetProperties = Core::GadgetProperties;
     public:

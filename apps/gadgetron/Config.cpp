@@ -15,7 +15,7 @@
 #include "Config.h"
 #include "Types.h"
 
-using namespace Gadgetron::Server::Connection;
+using namespace Gadgetron::Main;
 using namespace Gadgetron::Core;
 
 
@@ -212,9 +212,6 @@ namespace {
             std::string dll(gadget_node.child_value("dll"));
             std::string classname(gadget_node.child_value("classname"));
 
-            if (name.empty()) {
-                throw ConfigNodeError("Missing name for Gadget", gadget_node);
-            }
             if (dll.empty()) {
                 throw ConfigNodeError("Missing dll for gadget " + name, gadget_node);
             }
@@ -386,9 +383,9 @@ namespace {
     };
 }
 
-namespace Gadgetron::Server::Connection {
+namespace Gadgetron::Main {
 
-    Config parse_config(std::istream &stream) {
+    Config Config::parse(std::istream &stream) {
 
         auto parsers = {
                 std::make_pair(Legacy::accepts, Legacy::parse),
@@ -408,7 +405,7 @@ namespace Gadgetron::Server::Connection {
         return std::get<1>(*parser)(doc);
     }
 
-    std::string serialize_config(const Config &config) {
+    std::string Config::serialize(const Config &config) {
         pugi::xml_document doc{};
         auto config_node = doc.append_child("configuration");
         config_node.append_child("version").text().set(2);

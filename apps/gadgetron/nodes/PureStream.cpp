@@ -2,7 +2,7 @@
 
 namespace {
     using namespace Gadgetron::Core;
-    using namespace Gadgetron::Server::Connection;
+    using namespace Gadgetron::Main;
 
     std::unique_ptr<GenericPureGadget> load_pure_gadget(const Config::Gadget& conf, const Context& context, Loader& loader) {
         auto factory
@@ -30,13 +30,13 @@ namespace {
     }
 }
 
-Gadgetron::Server::Connection::Nodes::PureStream::PureStream(
-    const Gadgetron::Server::Connection::Config::PureStream& conf,
+Gadgetron::Main::Nodes::PureStream::PureStream(
+    const Gadgetron::Main::Config::PureStream& conf,
     const Gadgetron::Core::Context& context,
     Loader& loader
 ) : pure_gadgets{ load_pure_gadgets(conf.gadgets, context, loader) } {}
 
-Gadgetron::Core::Message Gadgetron::Server::Connection::Nodes::PureStream::process_function(
+Gadgetron::Core::Message Gadgetron::Main::Nodes::PureStream::process_function(
     Gadgetron::Core::Message message
 ) const {
     return std::accumulate(

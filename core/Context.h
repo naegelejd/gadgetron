@@ -11,7 +11,6 @@ namespace Gadgetron::Core {
 
         struct Paths {
             boost::filesystem::path gadgetron_home;
-            boost::filesystem::path working_folder;
         };
 
         Header header;
@@ -33,7 +32,7 @@ namespace Gadgetron::Core {
             },
             args{args} {}
 
-    
+
         Args args;
 
         private:
@@ -44,7 +43,7 @@ namespace Gadgetron::Core {
                 for (auto &arg : params) {
                     parameters[arg.first] = arg.second;
                 }
-            } 
+            }
             return parameters;
         }
 

@@ -1,11 +1,11 @@
 #pragma once
 
 #include "PureStream.h"
-#include "connection/core/Processable.h"
+#include "Processable.h"
 
 #include <future>
 
-namespace Gadgetron::Server::Connection::Nodes {
+namespace Gadgetron::Main::Nodes {
     class ParallelProcess : public Processable {
 
     public:

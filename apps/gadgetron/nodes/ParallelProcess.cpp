@@ -4,7 +4,7 @@
 
 using namespace Gadgetron::Core;
 
-namespace Gadgetron::Server::Connection::Nodes {
+namespace Gadgetron::Main::Nodes {
 
     void ParallelProcess::process_input(GenericInputChannel input, Queue &queue) {
 

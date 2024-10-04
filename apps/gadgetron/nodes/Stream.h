@@ -3,19 +3,19 @@
 
 #include <memory>
 
-#include "connection/Loader.h"
-#include "connection/config/Config.h"
+#include "Loader.h"
+#include "Config.h"
 
-#include "connection/core/Processable.h"
+#include "Processable.h"
 
 #include "Channel.h"
 #include "Context.h"
 
-namespace Gadgetron::Server::Connection {
+namespace Gadgetron::Main {
     class Loader;
 }
 
-namespace Gadgetron::Server::Connection::Nodes {
+namespace Gadgetron::Main::Nodes {
 
     class Stream : public Processable {
     public:
