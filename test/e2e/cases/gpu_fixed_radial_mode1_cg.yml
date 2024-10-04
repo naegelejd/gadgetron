@@ -1,11 +1,11 @@
 reconstruction:
   data: radial_phantom/meas_MID00133_FID20080_CV_Radial_Fixed_Angle_128_x8_32phs_meas1.mrd
-  checksum: 9e4b3e38b55fd63a35b0be69065cf01f
+  checksum: 81761719c6c68fb99bf67813f9ba7578
   run:
   - args: --config fixed_radial_mode1_gpusense_cg.xml
 validation:
   reference: radial_phantom/fixed_radial_mode1_20210923_klk_cg.mrd
-  checksum: cf76f0907460516176204326c6ae9761
+  checksum: a1d7bee9814edf0454d793c866c67609
   tests:
   - image_series: 0
 tags:

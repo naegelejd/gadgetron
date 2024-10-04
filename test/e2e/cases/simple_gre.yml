@@ -1,11 +1,11 @@
 reconstruction:
   data: simple_gre/meas_MiniGadgetron_GRE_meas1.mrd
-  checksum: c3336035af95787dd14bec2360edf486
+  checksum: 4c85e327a28091b1cc673ad1f4071063
   run:
   - args: --config default.xml
 validation:
   reference: simple_gre/simple_gre_out_20210909_klk_default.xml.mrd
-  checksum: 28e574aa057d7fd0185f5e1c922d83f6
+  checksum: b4d93c5af1e1d9a0d1818d4d60c0d0d4
   tests:
   - image_series: 0
     value_comparison_threshold: 1.0e-05

@@ -1,11 +1,11 @@
 reconstruction:
   data: radial_phantom/meas_MID00133_FID20080_CV_Radial_Fixed_Angle_128_x8_32phs_meas1.mrd
-  checksum: 9e4b3e38b55fd63a35b0be69065cf01f
+  checksum: 81761719c6c68fb99bf67813f9ba7578
   run:
   - args: --config fixed_radial_mode1_realtime.xml
 validation:
   reference: radial_phantom/fixed_radial_mode1_20210923_klk_realtime.mrd
-  checksum: 9a19d3291e57f33fa2e5fa8ed830d8a3
+  checksum: 76df5d50f86b1f073cce407a16fd92b4
   tests:
   - image_series: 0
 tags:

@@ -20,15 +20,6 @@ namespace Gadgetron::Server::Connection {
             return config.name.empty() ? config.classname : config.name;
         }
 
-        struct Reader {
-            std::string dll, classname;
-            Core::optional<uint16_t> slot;
-        };
-
-        struct Writer {
-            std::string dll, classname;
-        };
-
         struct Stream {
             std::string key;
             std::vector<Node> nodes;
@@ -44,7 +35,6 @@ namespace Gadgetron::Server::Connection {
             Gadget(std::string name, std::string dll, std::string classname, std::unordered_map<std::string, std::string> properties):
             name(std::move(name)), dll(std::move(dll)), classname(std::move(classname)), properties(std::move(properties))
             {
-
             }
         };
 
@@ -62,8 +52,6 @@ namespace Gadgetron::Server::Connection {
             PureStream stream;
         };
 
-        std::vector<Reader> readers;
-        std::vector<Writer> writers;
         Stream stream;
     };
 

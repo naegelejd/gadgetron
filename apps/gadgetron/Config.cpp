@@ -29,20 +29,14 @@ namespace {
     private:
         static std::string make_message(const std::string &message, const pugi::xml_node &node) {
             std::stringstream stream;
-            stream << message << " ";
-            node.print(stream, "", pugi::format_raw);
+            stream << message << "\n";
+            node.print(stream);
             return stream.str();
         }
     };
 
     template<class ConfigNode>
     constexpr const char *xml_name();
-
-    template<>
-    constexpr const char *xml_name<Config::Reader>() { return "reader"; }
-
-    template<>
-    constexpr const char *xml_name<Config::Writer>() { return "writer"; }
 
     template<>
     constexpr const char *xml_name<Config::Gadget>() { return "gadget"; }
@@ -70,18 +64,6 @@ namespace {
             auto classname = child_node.append_child("classname");
             classname.append_child(pugi::node_pcdata).set_value(configNode.classname.c_str());
             return child_node;
-        }
-
-        static pugi::xml_node add_readers(const std::vector<Config::Reader> &readers, pugi::xml_node &node) {
-            auto readers_node = node.append_child("readers");
-            for (auto &reader : readers) add_basenode(reader, readers_node);
-            return readers_node;
-        }
-
-        static pugi::xml_node add_writers(const std::vector<Config::Writer> &writers, pugi::xml_node &node) {
-            auto writers_node = node.append_child("writers");
-            for (auto &writer : writers) add_basenode(writer, writers_node);
-            return writers_node;
         }
 
         static void add_property(const std::pair<std::string, std::string> &property, pugi::xml_node &node) {
@@ -224,46 +206,23 @@ namespace {
             return value_string;
         }
 
-        static Config::Reader parse_reader(const pugi::xml_node &reader_node) {
-
-            std::string slot_str = reader_node.child_value("slot");
-
-            optional<uint16_t> slot = none;
-            if (!slot_str.empty())
-                slot = static_cast<uint16_t>(std::stoi(slot_str));
-
-            return Config::Reader{reader_node.child_value("dll"),
-                                  reader_node.child_value("classname"),
-                                  slot};
-        }
-
-        static std::vector<Config::Reader> parse_readers(const pugi::xml_node &reader_root) {
-            std::vector<Config::Reader> readers{};
-            for (const auto &node : reader_root.children("reader")) {
-                readers.push_back(parse_reader(node));
-            }
-            return readers;
-        }
-
-        static Config::Writer parse_writer(const pugi::xml_node &writer_node) {
-            return Config::Writer{writer_node.child_value("dll"),
-                                  writer_node.child_value("classname")};
-        }
-
-        static std::vector<Config::Writer> parse_writers(const pugi::xml_node &writer_root) {
-            std::vector<Config::Writer> writers{};
-            for (const auto &node : writer_root.children("writer")) {
-                writers.push_back(parse_writer(node));
-            }
-            return writers;
-        }
-
         template<class NODE>
         NODE parse_node(const pugi::xml_node &gadget_node) {
-            return NODE{gadget_node.child_value("name"),
-                        gadget_node.child_value("dll"),
-                        gadget_node.child_value("classname"),
-                        parse_properties(gadget_node)};
+            std::string name(gadget_node.child_value("name"));
+            std::string dll(gadget_node.child_value("dll"));
+            std::string classname(gadget_node.child_value("classname"));
+
+            if (name.empty()) {
+                throw ConfigNodeError("Missing name for Gadget", gadget_node);
+            }
+            if (dll.empty()) {
+                throw ConfigNodeError("Missing dll for gadget " + name, gadget_node);
+            }
+            if (classname.empty()) {
+                throw ConfigNodeError("Missing classname for gadget " + name, gadget_node);
+            }
+
+            return NODE{name, dll, classname, parse_properties(gadget_node)};
         }
 
     private:
@@ -320,11 +279,7 @@ namespace {
             auto parser = Legacy(config);
             pugi::xml_node root = config.child("gadgetronStreamConfiguration");
 
-            return Config{
-                    parse_readers(root),
-                    parse_writers(root),
-                    parser.parse_stream(root)
-            };
+            return Config{ parser.parse_stream(root) };
         }
 
         static bool accepts(const pugi::xml_document &config) {
@@ -377,11 +332,7 @@ namespace {
             auto parser = V2(config);
             auto root = config.child("configuration");
 
-            return Config{
-                    parse_readers(root.child("readers")),
-                    parse_writers(root.child("writers")),
-                    parser.parse_stream(root.child("stream"))
-            };
+            return Config{ parser.parse_stream(root.child("stream")) };
         }
 
         static bool accepts(const pugi::xml_document &config) {
@@ -461,8 +412,6 @@ namespace Gadgetron::Server::Connection {
         pugi::xml_document doc{};
         auto config_node = doc.append_child("configuration");
         config_node.append_child("version").text().set(2);
-        XMLSerializer::add_readers(config.readers, config_node);
-        XMLSerializer::add_writers(config.writers, config_node);
         XMLSerializer::add_node(config.stream, config_node);
 
         std::stringstream stream;

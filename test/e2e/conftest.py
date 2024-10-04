@@ -25,15 +25,17 @@ def pytest_runtest_teardown(item, nextitem):
         if 'tmp_path' in item.funcargs:
             tmp_path = item.funcargs['tmp_path']
             shutil.copytree(tmp_path, output_path, dirs_exist_ok=True)
-    
+
 
 def pytest_addoption(parser):
     parser.addoption(
-        '--data-host', action='store', default='https://gadgetronmrd2testdata.blob.core.windows.net/gadgetronmrd2testdata/',
+        # '--data-host', action='store', default='https://gadgetronmrd2testdata.blob.core.windows.net/gadgetronmrd2testdata/',
+        # TODO JOE: Fix this once MRD 2 intermediate types are merged and the test data is uploaded and stable
+        '--data-host', action='store', default='NOT-A-VALID-URL---WILL-FIX-WHEN-MRD-INTERMEDIATE-TYPES-ARE-MERGED-AND-MODEL-STABLE/',
         help='Host from which to download test data.'
     )
     parser.addoption(
-        '--cache-disable', action='store_true', default=False, 
+        '--cache-disable', action='store_true', default=False,
         help='Disables local caching of input files.'
     )
     parser.addoption(
@@ -45,11 +47,11 @@ def pytest_addoption(parser):
         help="Run tests regardless of whether Gadgetron has the specified capabilities."
     )
     parser.addoption(
-        '--tags', action='store', nargs='+', 
+        '--tags', action='store', nargs='+',
         help='Only run tests with the specified tags.'
     )
     parser.addoption(
-        '--echo-log-on-failure', action='store_true', default=False, 
+        '--echo-log-on-failure', action='store_true', default=False,
         help='Capture and print Gadgetron logs on test failure.'
     )
     parser.addoption(

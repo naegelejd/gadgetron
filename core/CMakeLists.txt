@@ -46,12 +46,9 @@ install(FILES
         Gadget.h
         Context.h
         Gadget.h
-        Reader.h
         Types.h
         Types.hpp
         TypeTraits.h
-        Writer.h
-        Writer.hpp
         Node.h
         PureGadget.h
         LegacyACE.h

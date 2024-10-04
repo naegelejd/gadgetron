@@ -1,15 +1,15 @@
 dependency:
   data: epi/meas_MID517_nih_ep2d_bold_fa60_FID82077_meas1.mrd
-  checksum: 6925a18e8600daa246ebf8433e3b686f
+  checksum: 75916d7bfc406066db36b98fbafb9dcf
   args: --config default_measurement_dependencies.xml --parameter noisecovarianceout=./mycov.bin
 reconstruction:
   data: epi/meas_MID517_nih_ep2d_bold_fa60_FID82077_meas2.mrd
-  checksum: 1f7e822d690962d015ba27283e3ca44e
+  checksum: a986de56008e58eb3d5e4d5e137a115f
   run:
   - args: --config epi.xml --parameter noisecovariancein=./mycov.bin
 validation:
   reference: epi/epi_2d_out_20161020_pjv_epi.xml.mrd
-  checksum: 846f08273b5e57e562cf701e3dbae7c9
+  checksum: 6af431f7006ce9b78c5c632952e8383d
   tests:
   - image_series: 0
     value_comparison_threshold: 0.001

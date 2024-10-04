@@ -6,7 +6,6 @@
 
 
 #include "io/primitives.h"
-#include "Writer.h"
 #include "Channel.h"
 #include "Context.h"
 
@@ -87,59 +86,4 @@ namespace Gadgetron::Server::Connection {
         const std::string location;
         ErrorReporter &push_error;
     };
-
-    template<class F>
-    void process_input(std::iostream &stream, Core::OutputChannel channel, F handler_factory) {
-
-        bool closed = false;
-        auto handlers = handler_factory([&]() { closed = true; });
-
-        while (!closed) {
-            auto id = Core::IO::read<uint16_t>(stream);
-            handlers.at(id)->handle(stream, channel);
-        }
-    }
-
-    template<class F>
-    void process_output(std::iostream &stream, Core::GenericInputChannel messages, F writer_factory) {
-
-        auto writers = writer_factory();
-
-        for (auto message : messages) {
-
-            auto writer = std::find_if(writers.begin(), writers.end(),
-                                       [&](auto &writer) { return writer->accepts(message); }
-            );
-
-            if (writer != writers.end()) {
-                (*writer)->write(stream, std::move(message));
-            }
-        }
-    }
-
-    template<class F>
-    std::thread start_input_thread(
-            std::iostream &stream,
-            Core::OutputChannel channel,
-            F handler_factory,
-            ErrorHandler &error_handler
-    ) {
-
-        return ErrorHandler(error_handler,"Connection Input Thread").run(
-                [&stream](auto c, auto h) { process_input(stream, std::move(c), h); },
-                std::move(channel), handler_factory);
-    }
-
-    template<class F>
-    std::thread start_output_thread(
-            std::iostream &stream,
-            Core::GenericInputChannel channel,
-            F writer_factory,
-            ErrorHandler &error_handler
-    ) {
-        return ErrorHandler(error_handler,"Connection Output Thread").run(
-                [&stream](auto c, auto w) { process_output(stream, std::move(c), w); },
-                std::move(channel), writer_factory
-        );
-    }
 }
