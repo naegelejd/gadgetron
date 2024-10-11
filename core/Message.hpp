@@ -1,10 +1,9 @@
 #include "Message.h"
 
-#include "GadgetContainerMessage.h"
 #include <boost/hana.hpp>
-
-#include <iostream>
 #include <boost/core/demangle.hpp>
+#include <iostream>
+
 #include "Types.h"
 
 namespace Gadgetron::Core {

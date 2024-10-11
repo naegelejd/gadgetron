@@ -43,7 +43,6 @@
       <name>gpuNlcgSenseGadget_slice0</name>
       <dll>gadgetron_gpuparallelmri</dll>
       <classname>gpuNlcgSenseGadget</classname>
-      <property><name>pass_on_undesired_data</name>  <value>true</value></property>
       <property><name>deviceno</name>                <value>0</value></property>
       <property><name>sliceno</name>                 <value>0</value></property>
       <property><name>number_of_cg_iterations</name> <value>50</value></property>
@@ -58,7 +57,6 @@
       <name>gpuNlcgSenseGadget_slice1</name>
       <dll>gadgetron_gpuparallelmri</dll>
       <classname>gpuNlcgSenseGadget</classname>
-      <property><name>pass_on_undesired_data</name>  <value>true</value></property>
       <property><name>deviceno</name>                <value>0</value></property>
       <property><name>sliceno</name>                 <value>0</value></property>
       <property><name>number_of_cg_iterations</name> <value>50</value></property>
@@ -74,7 +72,6 @@
       <name>gpuNlcgSenseGadget_slice2</name>
       <dll>gadgetron_gpuparallelmri</dll>
       <classname>gpuNlcgSenseGadget</classname>
-      <property><name>pass_on_undesired_data</name>  <value>true</value></property>
       <property><name>deviceno</name>                <value>0</value></property>
       <property><name>sliceno</name>                 <value>0</value></property>
       <property><name>number_of_cg_iterations</name> <value>50</value></property>
@@ -102,12 +99,6 @@
       <name>FloatToShort</name>
       <dll>gadgetron_mricore</dll>
       <classname>FloatToUShortGadget</classname>
-    </gadget>
-
-    <gadget>
-      <name>ImageFinish</name>
-      <dll>gadgetron_mricore</dll>
-      <classname>ImageFinishGadget</classname>
     </gadget>
 
 </gadgetronStreamConfiguration>

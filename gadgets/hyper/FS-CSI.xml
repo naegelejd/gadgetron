@@ -50,7 +50,6 @@
     <property><name>frequency_max</name><value>160</value></property>
     <property><name>frequency_step</name><value>10</value></property-->
     <property><name>frequencies</name><value>-575.1223 -450.1223 -360.1223 -183.1223 140.8777 </value></property>
-    <property><name>pass_on_undesired_data</name>  <value>true</value></property>
     <property><name>deviceno</name>                <value>0</value></property>
     <property><name>number_of_cg_iterations</name>    <value>10</value></property>
     <property><name>number_of_sb_iterations</name>    <value>50</value></property>
@@ -66,22 +65,15 @@
     <dll>gadgetron_mricore</dll>
     <classname>ExtractGadget</classname>
   </gadget>
+
  <gadget>
     <name>AutoScaleGadget</name>
     <dll>gadgetron_mricore</dll>
     <classname>AutoScaleGadget</classname>
      <property>
          <name>max_value</name>
-<!--         <value>499.7415424</value>-->
          <value>512</value>
      </property>
-<!--    <property><name>max_value</name><value>499.74</value></property>-->
   </gadget>
 
-
-  <gadget>
-<name>ImageFinish</name>
-<dll>gadgetron_mricore</dll>
-<classname>ImageFinishGadget</classname>
-</gadget>
 </gadgetronStreamConfiguration>

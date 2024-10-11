@@ -40,8 +40,8 @@ namespace {
                                                                           conf.dll);
         return std::make_shared<NodeProcessable>(
             [=]() {
-                GDEBUG("Loading Gadget %s of class %s from %s\n", conf.name.c_str(), conf.classname.c_str(), conf.dll.c_str());
-                return factory(context, conf.properties);
+                GDEBUG("Loading Gadget %s (class %s) from %s\n", conf.name.c_str(), conf.classname.c_str(), conf.dll.c_str());
+                return factory(context, Config::name(conf), conf.properties);
             },
             Config::name(conf)
         );

@@ -118,7 +118,7 @@ def stream_data_to_gadgetron(echo_handler, storage_address, *, input, output, co
     stream_command += f" | ismrmrd_to_mrd"
 
     commands = [f'gadgetron -E {storage_address} --from_stream -c {configuration["config"]} {configuration["args"]}' for configuration in configurations]
-    
+
     for command in commands:
         stream_command += f" | {command}"
 
@@ -230,18 +230,6 @@ def validate_output(*, output_file, reference_file, output_group, reference_grou
     except RuntimeError as e:
         return Failure, str(e)
 
-    #### TODO Joe: Begin
-
-    # from PIL import Image
-    print(output_data.shape, output_data.dtype, numpy.mean(output_data), numpy.min(output_data), numpy.max(output_data))
-    # output_image = Image.fromarray(output_data)
-    # output_image.save("output.png")
-    print(reference_data.shape, reference_data.dtype, numpy.mean(reference_data), numpy.min(reference_data), numpy.max(reference_data))
-    # reference_image = Image.fromarray(reference_data)
-    # reference_image.save("reference.png")
-
-    #### TODO Joe: End
-
     output = output_data[...].flatten().astype('float32')
     reference = reference_data[...].flatten().astype('float32')
 
@@ -251,7 +239,6 @@ def validate_output(*, output_file, reference_file, output_group, reference_grou
     if value_threshold < norm_diff:
         return Failure, "Comparing values, norm diff: {} (threshold: {})".format(norm_diff, value_threshold)
 
-    ## TODO Joe: Kelvin is opening a PR to fix this vvvvv
     if scale_threshold < abs(1 - scale):
         return Failure, "Comparing image scales, ratio: {} ({}) (threshold: {})".format(scale, abs(1 - scale),
                                                                                         scale_threshold)
@@ -570,7 +557,7 @@ def run_gadgetron_client(args, config, section):
 def interpolate_args(test_args, action_args):
     import re
     pattern = r"\$\{([^\}]+)\}"
-    return re.sub(pattern, lambda match: getattr(test_args, match.group(1)), action_args)    
+    return re.sub(pattern, lambda match: getattr(test_args, match.group(1)), action_args)
 
 def prepare_stream_configurations(args, config, section):
     def prepare_configurations_action(cont, **state):
@@ -636,7 +623,7 @@ def stdout_compliance(args, config):
         files.append(os.path.join(args.test_folder, 'gadgetron.log.out'))
 
         for file in files:
-            if os.path.isfile(file): 
+            if os.path.isfile(file):
                 if os.stat(file).st_size != 0:
                     raise RuntimeError(f"stdout is not empty as indicated by {file}")
 

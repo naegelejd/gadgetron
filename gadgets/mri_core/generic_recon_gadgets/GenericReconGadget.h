@@ -77,7 +77,6 @@ namespace Gadgetron {
         // gadget functions
         // --------------------------------------------------
         // default interface function
-        // virtual int process_config(ACE_Message_Block* mb);
         virtual int process_config(const mrd::Header& header);
         virtual int process(Gadgetron::GadgetContainerMessage< mrd::ReconData >* m1);
         virtual int close(unsigned long flags) { return BaseClass::close(flags); }

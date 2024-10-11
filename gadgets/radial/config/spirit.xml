@@ -59,7 +59,6 @@
     <name>gpuCgSpiritGadget</name>
     <dll>gadgetron_gpuparallelmri</dll>
     <classname>gpuCgSpiritGadget</classname>
-    <property><name>pass_on_undesired_data</name><value>true</value></property>
     <property><name>deviceno</name>                <value>0</value></property>
     <property><name>sliceno</name>                 <value>0</value></property>
     <property><name>number_of_iterations</name>    <value>40</value></property>
@@ -74,12 +73,6 @@
     <name>Extract</name>
     <dll>gadgetron_mricore</dll>
     <classname>ExtractGadget</classname>
-  </gadget>
-
-  <gadget>
-    <name>ImageFinish</name>
-    <dll>gadgetron_mricore</dll>
-    <classname>ImageFinishGadget</classname>
   </gadget>
 
 </gadgetronStreamConfiguration>

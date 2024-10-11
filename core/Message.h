@@ -4,16 +4,11 @@
 #include <vector>
 #include <typeindex>
 #include <numeric>
+
+#include "GadgetContainerMessage.h"
 #include "Types.h"
 
 namespace Gadgetron {
-
-    class GadgetContainerMessageBase;
-
-    template<class T>
-    class GadgetContainerMessage;
-
-    class LegacyGadgetNode;
 
     namespace Core {
         class Message;

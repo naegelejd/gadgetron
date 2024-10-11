@@ -21,7 +21,6 @@ set(gadgetron_mricore_header_files
         ImageArraySplitGadget.h
         SimpleReconGadget.h
         ImageSortGadget.h
-        ImageFinishGadget.h
         NHLBICompression.h
         cpuisa.h
         ImageArraySendMixin.h
@@ -49,7 +48,6 @@ set(gadgetron_mricore_src_files
         PCACoilGadget.cpp
         FFTGadget.cpp
         CombineGadget.cpp
-        ImageFinishGadget.cpp
         ExtractGadget.cpp
         FloatToFixPointGadget.cpp
         RemoveROOversamplingGadget.cpp

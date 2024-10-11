@@ -8,7 +8,7 @@ namespace {
         auto factory
             = loader.load_factory<Loader::generic_factory<Node>>("gadget_factory_export_", conf.classname, conf.dll);
 
-        auto gadget = factory(context, conf.properties);
+        auto gadget = factory(context, Config::name(conf), conf.properties);
 
         if (dynamic_cast<GenericPureGadget*>(gadget.get())) {
             return std::unique_ptr<GenericPureGadget>(dynamic_cast<GenericPureGadget*>(gadget.release()));

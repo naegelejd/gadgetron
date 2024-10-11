@@ -59,11 +59,6 @@
             <classname>ExtractGadget</classname>
         </gadget>
 
-        <gadget>
-            <name>ImageFinish</name>
-            <dll>gadgetron_mricore</dll>
-            <classname>ImageFinishGadget</classname>
-        </gadget>
     </stream>
 
 </configuration>

@@ -202,10 +202,10 @@ namespace Gadgetron {
         std::vector< Image3DType > gfactor_buf_3D_;
     };
 
-    class GenericImageReconGadget : public BasicPropertyGadget, public GenericImageReconGadgetBase
+    class GenericImageReconGadget : public Gadget, public GenericImageReconGadgetBase
     {
     public:
-        typedef BasicPropertyGadget BaseClass;
+        typedef Gadget BaseClass;
         typedef std::vector<ISMRMRD::Waveform> WaveFormType;
 
         GenericImageReconGadget();
@@ -236,7 +236,7 @@ namespace Gadgetron {
 
         virtual int process_config(ACE_Message_Block* mb);
 
-        int process(ACE_Message_Block* mb) override;
+        int process(GadgetContainerMessageBase* mb) override;
 
         virtual int process_image(GadgetContainerMessage< ISMRMRD::ImageHeader >* m1);
 

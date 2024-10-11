@@ -22,12 +22,12 @@ namespace {
 
     std::unique_ptr<DecoratedBranch> load_branch(const Config::Branch &conf, const Context &context, Loader &loader) {
         auto factory = loader.load_factory<branch_factory>("branch_factory_export_", conf.classname, conf.dll);
-        return std::make_unique<DecoratedBranch>(factory(context, conf.properties), Config::name(conf));
+        return std::make_unique<DecoratedBranch>(factory(context, Config::name(conf), conf.properties), Config::name(conf));
     }
 
     std::unique_ptr<DecoratedMerge> load_merge(const Config::Merge &conf, const Context &context, Loader &loader) {
         auto factory = loader.load_factory<merge_factory>("merge_factory_export_", conf.classname, conf.dll);
-        return std::make_unique<DecoratedMerge>(factory(context, conf.properties), Config::name(conf));
+        return std::make_unique<DecoratedMerge>(factory(context, Config::name(conf), conf.properties), Config::name(conf));
     }
 
     template<class KEY, class VALUE, class F>

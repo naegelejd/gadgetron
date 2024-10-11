@@ -30,6 +30,7 @@ namespace Gadgetron::Main {
         template<class RESULT>
         using generic_factory = std::unique_ptr<RESULT>(
                 const Context &,
+                const std::string &,
                 const GadgetProperties &
         );
 

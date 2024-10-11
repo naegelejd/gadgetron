@@ -17,8 +17,9 @@ NoiseCovariancePlottingGadget::NoiseCovariancePlottingGadget()
     : noise_decorrelation_calculated_(false)
     , noise_dwell_time_us_(-1.0f)
     , noiseCovarianceLoaded_(false)
+    , noise_dependency_prefix_("GadgetronNoiseCovarianceMatrix")
+    , noise_dependency_folder_("/tmp/gadgetron/")
 {
-    noise_dependency_prefix_ = "GadgetronNoiseCovarianceMatrix";
     measurement_id_.clear();
     measurement_id_of_noise_dependency_.clear();
 }
@@ -30,15 +31,6 @@ NoiseCovariancePlottingGadget::~NoiseCovariancePlottingGadget()
 
 int NoiseCovariancePlottingGadget::process_config(ACE_Message_Block* mb)
 {
-    if (!workingDirectory.value().empty())
-    {
-        noise_dependency_folder_ = workingDirectory.value();
-    }
-    else
-    {
-        noise_dependency_folder_ =  std::string("/tmp/gadgetron/");
-    }
-
     GDEBUG("Folder to store noise dependencies is %s\n", noise_dependency_folder_.c_str());
 
     if (!noise_dependency_prefix.value().empty()) noise_dependency_prefix_ = noise_dependency_prefix.value();
@@ -103,7 +95,7 @@ std::string NoiseCovariancePlottingGadget::generateMeasurementIdOfNoiseDependenc
             measurementStr.append("_");
             measurementStr.append(noise_id);
         }
-   
+
         return measurementStr;
     }
 

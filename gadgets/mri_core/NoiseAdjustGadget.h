@@ -36,12 +36,10 @@ namespace Gadgetron {
         using NoiseHandler = std::variant<NoiseGatherer, LoadedNoise, Prewhitener, IgnoringNoise>;
 
     protected:
-        NODE_PROPERTY(noise_dependency_prefix, std::string, "Prefix of noise dependency file", "GadgetronNoiseCovarianceMatrix");
         NODE_PROPERTY(perform_noise_adjust, bool, "Whether to actually perform the noise adjust", true);
         NODE_PROPERTY(pass_nonconformant_data, bool, "Whether to pass data that does not conform", true);
         NODE_PROPERTY(noise_dwell_time_us_preset, float, "Preset dwell time for noise measurement", 0.0);
         NODE_PROPERTY(scale_only_channels_by_name, std::string, "List of named channels that should only be scaled", "");
-        NODE_PROPERTY(noise_dependency_folder, boost::filesystem::path, "Path to the working directory", boost::filesystem::temp_directory_path() / "gadgetron");
 
         const float receiver_noise_bandwidth;
 

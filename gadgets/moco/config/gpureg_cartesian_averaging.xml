@@ -45,7 +45,6 @@
     <name>gpuCgSenseGadget</name>
     <dll>gadgetron_gpuparallelmri</dll>
     <classname>gpuCgSenseGadget</classname>
-    <property><name>pass_on_undesired_data</name>  <value>true</value></property>
     <property><name>deviceno</name>                <value>0</value></property>
     <property><name>setno</name>                   <value>0</value></property>
     <property><name>number_of_iterations</name>    <value>20</value></property>
@@ -81,14 +80,6 @@
     <property><name>phase</name><value>phase@PhysioInterpolationGadget</value></property>
   </gadget>
 
-  <!--
-      <gadget>
-      <name>ImageFinishFloat</name>
-      <dll>gadgetron_mricore</dll>
-      <classname>ImageFinishGadgetFLOAT</classname>
-      </gadget>
-  -->
-
   <gadget>
     <name>AutoScale</name>
     <dll>gadgetron_mricore</dll>
@@ -99,12 +90,6 @@
     <name>FloatToShort</name>
     <dll>gadgetron_mricore</dll>
     <classname>FloatToUShortGadget</classname>
-  </gadget>
-
-  <gadget>
-    <name>ImageFinish</name>
-    <dll>gadgetron_mricore</dll>
-    <classname>ImageFinishGadget</classname>
   </gadget>
 
 </gadgetronStreamConfiguration>

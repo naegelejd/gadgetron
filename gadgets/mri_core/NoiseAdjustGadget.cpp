@@ -187,9 +187,8 @@ namespace Gadgetron {
         if (!perform_noise_adjust)
             return;
 
-        GDEBUG("Folder to store noise dependencies is %s\n", noise_dependency_folder.c_str());
-        GDEBUG("NoiseAdjustGadget::perform_noise_adjust_ is %d\n", perform_noise_adjust);
-        GDEBUG("NoiseAdjustGadget::pass_nonconformant_data_ is %d\n", pass_nonconformant_data);
+        GDEBUG("perform_noise_adjust_ is %d\n", perform_noise_adjust);
+        GDEBUG("pass_nonconformant_data_ is %d\n", pass_nonconformant_data);
         GDEBUG("receiver_noise_bandwidth_ is %f\n", receiver_noise_bandwidth);
 
 #ifdef USE_OMP

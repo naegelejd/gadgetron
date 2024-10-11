@@ -45,7 +45,6 @@ install(FILES
         Types.h
         Node.h
         PureGadget.h
-        LegacyACE.h
         PropertyMixin.h
         GadgetContainerMessage.h
         ChannelAlgorithms.h
