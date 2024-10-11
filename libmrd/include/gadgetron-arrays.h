@@ -152,8 +152,20 @@ class NDArray : public Gadgetron::hoNDArray<T> {
   NDArray() : BaseType() {}
 
   NDArray(BaseType const& other) : BaseType(other) {
-      if (this->get_number_of_dimensions() != N) {
-          throw std::runtime_error("Number of dimensions does not match");
+      if (this->empty()) {
+        std::vector<size_t> dims(N, 0);
+        this->reshape(dims);
+      } else if (this->get_number_of_dimensions() < N) {
+          std::vector<size_t> dims(this->get_dimensions());
+          for (size_t i = 0; i < N - this->get_number_of_dimensions(); i++) {
+              dims.push_back(1);
+          }
+          this->reshape(dims);
+      } else if (this->get_number_of_dimensions() > N) {
+          std::stringstream ss;
+          ss << "Can't construct yardl::NDArray<T, " << N << "> from hoNDArray<T> with "
+             << this->get_number_of_dimensions() << " dimensions";
+          throw std::runtime_error(ss.str());
       }
   }
 

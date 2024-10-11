@@ -1,6 +1,7 @@
 #pragma once
 
 #include "log.h"
+
 #include <boost/python.hpp>
 namespace bp = boost::python;
 
@@ -19,32 +20,30 @@ void add_python_path(const std::string& path);
 /// Extracts the exception/traceback to build and return a std::string
 std::string pyerr_to_string(void);
 
-}
-
-// Include converters after declaring above functions
-namespace Gadgetron {
 /// Utility class for RAII handling of the Python GIL. Usage:
 ///
 ///    GILLock lg;  // at the top of a block
 ///
-    class GILLock {
-    public:
-        GILLock() { gstate_ = PyGILState_Ensure(); }
+class GILLock {
+public:
+    GILLock() { gstate_ = PyGILState_Ensure(); }
 
-        ~GILLock() { PyGILState_Release(gstate_); }
+    ~GILLock() { PyGILState_Release(gstate_); }
 
-    private:
-        // noncopyable
-        GILLock(const GILLock &);
+private:
+    // noncopyable
+    GILLock(const GILLock &);
 
-        GILLock &operator=(const GILLock &);
+    GILLock &operator=(const GILLock &);
 
-        PyGILState_STATE gstate_;
+    PyGILState_STATE gstate_;
 
-    };
+};
 
-}
+} // namespace Gadgetron
 
+
+// Include all Gadgetron converter definitions
 #include "python_converters.h"
 
 
@@ -184,9 +183,4 @@ public:
     }
 };
 
-}
-
-namespace boost { namespace python {
-    bool hasattr(object o, const char* name);
-} }
-
+} // namespace Gadgetron
