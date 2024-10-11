@@ -11,18 +11,17 @@
 
 namespace {
     using namespace Gadgetron;
-    using namespace Gadgetron::Core;
     using namespace Gadgetron::Grappa;
 }
 
 namespace Gadgetron::Grappa {
 
     SliceAccumulator::SliceAccumulator(
-            const Context &context,
+            const Core::Context &context,
             const std::unordered_map<std::string, std::string> &props
     ) : ChannelGadget(context,props), context(context) {}
 
-    void SliceAccumulator::process(InputChannel<AnnotatedAcquisition> &in, OutputChannel &out) {
+    void SliceAccumulator::process(Core::InputChannel<AnnotatedAcquisition> &in, Core::OutputChannel &out) {
 
         std::vector<AnnotatedAcquisition> acquisitions{};
 

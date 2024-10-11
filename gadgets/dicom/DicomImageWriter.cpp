@@ -23,10 +23,8 @@
 
 namespace Gadgetron {
     void DicomImageWriter::serialize(std::ostream& stream, const DcmFileFormat& dcmInput,
-        const Core::optional<std::string>& dcm_filename_message,
-        const Core::optional<ISMRMRD::MetaContainer>& dcm_meta_message) {
-        using namespace Gadgetron::Core;
-
+        const std::optional<std::string>& dcm_filename_message,
+        const std::optional<ISMRMRD::MetaContainer>& dcm_meta_message) {
 
         auto dcmFile = DcmFileFormat(dcmInput); //Copy here, because DCMTK has decided that the const keyword is bad
         // Initialize transfer state of DcmDataset

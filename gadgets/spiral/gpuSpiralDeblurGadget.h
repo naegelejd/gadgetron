@@ -6,7 +6,6 @@
 #include "cuNFFT.h"
 #include "hoNDArray.h"
 #include "vector_td.h"
-#include "mri_core_data.h"
 #include <complex>
 #include <boost/shared_ptr.hpp>
 #include <boost/shared_array.hpp>
@@ -16,12 +15,10 @@ using namespace std;
 namespace Gadgetron{
 
   class gpuSpiralDeblurGadget :
-    public Gadget1< ReconData >
+    public Gadget1< mrd::ReconData >
   {
 
   public:
-    GADGET_DECLARE(gpuSpiralDeblurGadget);
-
     gpuSpiralDeblurGadget();
     virtual ~gpuSpiralDeblurGadget();
 
@@ -36,7 +33,7 @@ namespace Gadgetron{
 
     virtual int process_config(const mrd::Header& header);
 
-    virtual int process(Gadgetron::GadgetContainerMessage< ReconData >* m1);
+    virtual int process(Gadgetron::GadgetContainerMessage< mrd::ReconData >* m1);
 
 
 
@@ -106,8 +103,8 @@ namespace Gadgetron{
 
   mrd::ImageHeader get_image_header(mrd::AcquisitionHeader& curr_header, int series_index);
   void Calc_B0Map(hoNDArray<std::complex<float>>& B0_data, hoNDArray<float>* B0_map);
-  void Prepare_Plan(DataBuffered& data);
-  void Prepare_B0_Plan(DataBuffered& data);
+  void Prepare_Plan(mrd::BufferedData& data);
+  void Prepare_B0_Plan(mrd::BufferedData& data);
   };
 }
 #endif //gpuSpiralDeblurGadget_H

@@ -8,7 +8,7 @@ validation:
   checksum: 11e905b0073ebecdec6aa90fccc4ee3c
   tests:
   - image_series: 2
-tags:
-- slow
 requirements:
   system_memory: 8192
+tags:
+- slow

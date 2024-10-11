@@ -6,7 +6,7 @@
 namespace Gadgetron {
     using TriggerDimension = AcquisitionAccumulateTriggerGadget::TriggerDimension;
     namespace {
-        bool is_noise(Core::Acquisition& acq) {
+        bool is_noise(mrd::Acquisition& acq) {
             return acq.head.flags.HasFlags(mrd::AcquisitionFlags::kIsNoiseMeasurement);
         }
 
@@ -38,10 +38,10 @@ namespace Gadgetron {
         struct EqualityTrigger {
             explicit EqualityTrigger(TriggerDimension trig) : trigger{ trig } {}
             const TriggerDimension trigger;
-            Core::optional<unsigned int> previous_trigger;
+            std::optional<unsigned int> previous_trigger;
             bool trigger_before(const mrd::Acquisition& acq) {
                 auto acq_index   = get_index(acq.head, trigger);
-                auto result      = (previous_trigger != acq_index && previous_trigger != Core::none);
+                auto result      = (previous_trigger != acq_index && previous_trigger != std::nullopt);
                 previous_trigger = acq_index;
                 return result;
             }
@@ -82,7 +82,7 @@ namespace Gadgetron {
             }
         };
 
-        using Trigger = Core::variant<EqualityTrigger, NumAcquisitionsTrigger, NoneTrigger>;
+        using Trigger = std::variant<EqualityTrigger, NumAcquisitionsTrigger, NoneTrigger>;
 
         Trigger get_trigger(const AcquisitionAccumulateTriggerGadget& gadget) {
             switch (gadget.trigger_dimension) {
@@ -111,15 +111,15 @@ namespace Gadgetron {
         }
 
         bool trigger_before(Trigger& trigger, const mrd::Acquisition& acq) {
-            return Core::visit([&](auto& var) { return var.trigger_before(acq); }, trigger);
+            return std::visit([&](auto& var) { return var.trigger_before(acq); }, trigger);
         }
         bool trigger_after(Trigger& trigger, const mrd::Acquisition& acq) {
-            return Core::visit([&](auto& var) { return var.trigger_after(acq); }, trigger);
+            return std::visit([&](auto& var) { return var.trigger_after(acq); }, trigger);
         }
     }
 
-    void AcquisitionAccumulateTriggerGadget::send_data(Core::OutputChannel& out, std::map<unsigned int, AcquisitionBucket>& buckets,
-                                                       std::vector<Core::Waveform>& waveforms)
+    void AcquisitionAccumulateTriggerGadget::send_data(Core::OutputChannel& out, std::map<unsigned int, mrd::AcquisitionBucket>& buckets,
+                                                       std::vector<mrd::WaveformUint32>& waveforms)
     {
         trigger_events++;
         GDEBUG_STREAM("Trigger " << trigger_events << " occurred, sending out " << buckets.size() << " buckets, " << waveforms.size() << " waveforms ... ");
@@ -133,20 +133,20 @@ namespace Gadgetron {
 
         buckets.clear();
     }
-    void AcquisitionAccumulateTriggerGadget::process(Core::InputChannel<Core::variant<Core::Acquisition, Core::Waveform>>& in, Core::OutputChannel& out)
+    void AcquisitionAccumulateTriggerGadget::process(Core::InputChannel<std::variant<mrd::Acquisition, mrd::WaveformUint32>>& in, Core::OutputChannel& out)
     {
-        auto waveforms = std::vector<Core::Waveform>{};
-        auto buckets   = std::map<unsigned int, AcquisitionBucket>{};
+        auto waveforms = std::vector<mrd::WaveformUint32>{};
+        auto buckets   = std::map<unsigned int, mrd::AcquisitionBucket>{};
         auto trigger   = get_trigger(*this);
 
         size_t count = 0;
         for (auto message : in) {
-            if (Core::holds_alternative<Core::Waveform>(message)) {
-                waveforms.emplace_back(std::move(Core::get<Core::Waveform>(message)));
+            if (std::holds_alternative<mrd::WaveformUint32>(message)) {
+                waveforms.emplace_back(std::move(std::get<mrd::WaveformUint32>(message)));
                 continue;
             }
 
-            auto& acq = Core::get<Core::Acquisition>(message);
+            auto& acq = std::get<mrd::Acquisition>(message);
             if (is_noise(acq)) {
                 continue;
             }
@@ -157,7 +157,7 @@ namespace Gadgetron {
             // It is enough to put the first one, since they are linked
             auto sorting_index = get_index(acq.head, sorting_dimension);
 
-            AcquisitionBucket& bucket = buckets[sorting_index];
+            mrd::AcquisitionBucket& bucket = buckets[sorting_index];
             Gadgetron::add_acquisition_to_bucket(bucket, std::move(acq));
 
             if (trigger_after(trigger, acq)) {

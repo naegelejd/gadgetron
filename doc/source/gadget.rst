@@ -1,7 +1,7 @@
 Writing a Gadget
 ================
 
-A Gadget is a :cpp:class:`Node<Gadgetron::Core::Node>` in the Gadgetron chain, 
+A Gadget is a :cpp:class:`Node<Gadgetron::Core::Node>` in the Gadgetron chain,
 which processes data coming in through an :cpp:class:`GenericInputChannel<Gadgetron::Core::GenericInputChannel>` and
 sends the processed data to the next :cpp:class:`Node<Gadgetron::Core::Node>` in the chain using an
  :cpp:class:`OutputChannel<Gadgetron::Core::OutputChannel>`.
@@ -13,8 +13,8 @@ PureGadget
 ----------
 
 A :cpp:class:`PureGadget<Gadgetron::Core::PureGadget>` is a Gadget which processes Messages one at a time,
-and holds no state. Examples could be a Gadget which removes oversampling on :cpp:class:`Acquisitions<Gadgetron::Core::Acquisition>`,
-or one which takes an :cpp:class:`Image<Gadgetron::Core::Image>` and performs autoscaling.
+and holds no state. Examples could be a Gadget which removes oversampling on :cpp:class:`Acquisitions<mrd::Acquisition>`,
+or one which takes an :cpp:class:`Image<mrd::Image>` and performs autoscaling.
 
 A PureGadget inheritss from :cpp:class:`PureGadget\<OUTPUT,INPUT\><Gadgetron::Core::PureGadget>`,
 where OUTPUT and INPUT are the output type and input type of the Gadget.
@@ -40,7 +40,7 @@ ChannelGadget
 one message per input.
 This makes it easier to reason about and implement, but is also limiting in cases where we want to accumulate multiple
 messages for processing. In this case, :cpp:class:`ChannelGadget<Gadgetron::Core::ChannelGadget>` should be used.
-If we want to create a Gadget which takes several :cpp:class:`Acquisitions<Gadgetron::Core::Acquisition>` and
+If we want to create a Gadget which takes several :cpp:class:`Acquisitions<mrd::Acquisition>` and
 reconstruct them, we inherit from :cpp:class:`ChannelGadget\<Acquisition\><Gadgetron::Core::ChannelGadget>`.
 
 .. code-block:: cpp
@@ -152,4 +152,3 @@ We want to gather acquisitions until we have enough for a (possibly undersampled
 
     GADGETRON_GADGET_EXPORT(SimpleRecon)
 
-   

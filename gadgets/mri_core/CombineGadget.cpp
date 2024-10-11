@@ -1,16 +1,15 @@
 #include "CombineGadget.h"
 
 using namespace Gadgetron;
-using namespace Gadgetron::Core;
 
 namespace {
-    template <class T> Image<T> combine(Image<T>& image) {
+    template <class T> mrd::Image<T> combine(mrd::Image<T>& image) {
         GDEBUG("CombineGadget is not well defined for real-valued images. Doing nothing.");
         return image;
     }
 
     template <class T>
-    Image<std::complex<T>> combine(Image<std::complex<T>>& image) {
+    mrd::Image<std::complex<T>> combine(mrd::Image<std::complex<T>>& image) {
         // Get the dimensions
         size_t nx = image.data.get_size(0);
         size_t ny = image.data.get_size(1);
@@ -52,8 +51,8 @@ namespace {
 } // namespace
 
 namespace Gadgetron {
-    AnyImage CombineGadget::process_function(AnyImage image) const {
-        return visit([&](auto& image) -> AnyImage { return combine(image); }, image);
+    Core::AnyImage CombineGadget::process_function(Core::AnyImage image) const {
+        return visit([&](auto& image) -> Core::AnyImage { return combine(image); }, image);
     }
     GADGETRON_GADGET_EXPORT(CombineGadget);
 } // namespace Gadgetron

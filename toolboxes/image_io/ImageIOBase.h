@@ -10,7 +10,6 @@
 
 #include "NDArray.h"
 #include "complext.h"
-#include "GadgetronException.h"
 
 #include "hoNDArray.h"
 #include "hoNDImage.h"

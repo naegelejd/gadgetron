@@ -181,12 +181,12 @@ typedef cuNFFT_impl<_real,2> plan_type;
 
 
 
-    int gpuSpiralDeblurGadget::process(Gadgetron::GadgetContainerMessage< ReconData >* m1)
+    int gpuSpiralDeblurGadget::process(Gadgetron::GadgetContainerMessage< mrd::ReconData >* m1)
     {
 		//Image data in rbit_[0].data_.data_
 		//Map data in rbit_[0].ref_->data_ (N dimension should be "set", 0th N-dim is TE0, 1st N-dim is TE1)
 
-		ReconData* recon_bit_ = m1->getObjectPtr();
+		mrd::ReconData* recon_bit_ = m1->getObjectPtr();
 
 		// Allocate various counters if they are NULL
 		if( !image_counter_.get() ){
@@ -350,7 +350,7 @@ typedef cuNFFT_impl<_real,2> plan_type;
 
 	}
 
-	void gpuSpiralDeblurGadget::Prepare_Plan(DataBuffered& data){
+	void gpuSpiralDeblurGadget::Prepare_Plan(mrd::BufferedData& data){
 			size_t R0 = data.data.get_size(0);
 			size_t E1 = data.data.get_size(1);
 			size_t E2 = data.data.get_size(2);
@@ -412,7 +412,7 @@ typedef cuNFFT_impl<_real,2> plan_type;
 		prepared_ = true;
 	}
 
-	void gpuSpiralDeblurGadget::Prepare_B0_Plan(DataBuffered& data){
+	void gpuSpiralDeblurGadget::Prepare_B0_Plan(mrd::BufferedData& data){
 		mrd::AcquisitionHeader& B0_header = data.headers(0,0,0,0,0);
 		size_t R0 = data.data.get_size(0);
 		size_t E1 = data.data.get_size(1);

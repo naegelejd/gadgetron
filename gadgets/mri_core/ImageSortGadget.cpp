@@ -3,17 +3,15 @@
 #include "Types.h"
 #include "log.h"
 
-using namespace Gadgetron::Core;
-
 namespace Gadgetron {
 
-    ImageSortGadget::ImageSortGadget(const Context &context, const GadgetProperties &properties)
+    ImageSortGadget::ImageSortGadget(const Core::Context &context, const Core::GadgetProperties &properties)
         : ChannelGadget(context, properties) {}
 
-    void ImageSortGadget::process(InputChannel<Core::AnyImage> &input, OutputChannel &output) {
-        
+    void ImageSortGadget::process(Core::InputChannel<Core::AnyImage> &input, Core::OutputChannel &output) {
+
         // Lambda, gets index from correct field in ImageHeader based on parameterized sorting dimension
-        auto getImageIndex = [&](const auto& i){   
+        auto getImageIndex = [&](const auto& i){
           auto &header = i.head;
           if (sorting_dimension.size() == 0) {
               return uint32_t(-1);
@@ -35,8 +33,8 @@ namespace Gadgetron {
           return uint32_t(-1);
         };
 
-        // Lambda, adds image and correct index to vector of ImageEntries 
-        auto addToImages = [&](auto image){ 
+        // Lambda, adds image and correct index to vector of ImageEntries
+        auto addToImages = [&](auto image){
           if (getImageIndex(image) < 0) {
             output.push(image);
           }
@@ -51,7 +49,7 @@ namespace Gadgetron {
           visit(addToImages, image);
         }
 
-        // If vector of ImageEntries isn't empty, sort them and write to output channel 
+        // If vector of ImageEntries isn't empty, sort them and write to output channel
         if (images_.size()) {
           std::sort(images_.begin(),images_.end(), image_entry_compare);
           for (auto it = images_.begin(); it != images_.end(); it++) {

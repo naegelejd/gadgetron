@@ -3,7 +3,7 @@
 
     The images, headers, and hoNDArrays are streamed out using the MRD protocol.
 
-    ToBeImplemented: The waveforms are streamed out as the MRD Waveform. 
+    ToBeImplemented: The waveforms are streamed out as the MRD Waveform.
 
     \author Hui Xue
 */
@@ -14,22 +14,21 @@
 
 #include "hoNDArray.h"
 #include "mri_core_def.h"
-#include "mri_core_data.h"
 #include "io/primitives.h"
 
 #include "mrd/binary/protocols.h"
 
 
-namespace Gadgetron 
+namespace Gadgetron
 {
-    class GenericReconIsmrmrdStreamer
+    class GenericReconMrdStreamer
     {
     public:
 
-        GenericReconIsmrmrdStreamer();
-        GenericReconIsmrmrdStreamer(const std::map<std::string, std::string>& parameters);
+        GenericReconMrdStreamer();
+        GenericReconMrdStreamer(const std::map<std::string, std::string>& parameters);
 
-        ~GenericReconIsmrmrdStreamer();
+        ~GenericReconMrdStreamer();
 
         bool verbose_;
 
@@ -41,7 +40,7 @@ namespace Gadgetron
         void stream_mrd_header(const mrd::Header& hdr);
 
         // stream of ND array buffer
-        template <typename DataType> 
+        template <typename DataType>
         void stream_to_array_buffer(const std::string& name, const hoNDArray<DataType>& data)
         {
             if (this->buffer_names_.find(name)!=this->buffer_names_.end())
@@ -66,7 +65,7 @@ namespace Gadgetron
         }
 
         // stream to mrd image stream, e.g. for coil maps, g-maps and reconed images
-        template <typename DataType> 
+        template <typename DataType>
         void stream_to_mrd_image_buffer(const std::string& name, const hoNDArray<DataType>& img, const hoNDArray< mrd::ImageHeader >& headers, const hoNDArray< mrd::ImageMeta >& meta)
         {
             if (this->buffer_names_.find(name) != this->buffer_names_.end())

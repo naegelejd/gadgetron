@@ -86,7 +86,7 @@ namespace Gadgetron {
         return GADGET_OK;
     }
 
-    void GenericReconCartesianNonLinearSpirit2DTGadget::perform_unwrapping(ReconBit& recon_bit, ReconObjType& recon_obj, size_t e)
+    void GenericReconCartesianNonLinearSpirit2DTGadget::perform_unwrapping(mrd::ReconBit& recon_bit, ReconObjType& recon_obj, size_t e)
     {
         try
         {
@@ -255,7 +255,7 @@ namespace Gadgetron {
         }
     };
 
-    void GenericReconCartesianNonLinearSpirit2DTGadget::perform_nonlinear_spirit_unwrapping(hoNDArray< std::complex<float> >& kspace, 
+    void GenericReconCartesianNonLinearSpirit2DTGadget::perform_nonlinear_spirit_unwrapping(hoNDArray< std::complex<float> >& kspace,
         hoNDArray< std::complex<float> >& kerIm, hoNDArray< std::complex<float> >& ref2DT, hoNDArray< std::complex<float> >& coilMap2DT, hoNDArray< std::complex<float> >& res, size_t e)
     {
         try
@@ -475,7 +475,7 @@ namespace Gadgetron {
                     if (this->verbose.value())
                     {
                         GDEBUG_STREAM("SPIRIT Non linear, computes eigen values for all 2D kspaces ... ");
-                        std::stringstream stream; 
+                        std::stringstream stream;
                         eigenValues.print(stream);
                         GDEBUG(stream.str().c_str());
 

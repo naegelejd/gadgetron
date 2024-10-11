@@ -42,30 +42,30 @@ include_directories(
         ${CMAKE_SOURCE_DIR}/toolboxes/gadgettools
         ${CMAKE_SOURCE_DIR}/apps/gadgetron
         ${CMAKE_SOURCE_DIR}/apps/matlab
-        ${CMAKE_SOURCE_DIR}/gadgets/mri_core 
+        ${CMAKE_SOURCE_DIR}/gadgets/mri_core
         ${ARMADILLO_INCLUDE_DIRS}
         )
 
-set(gadgetron_dicom_header_files 
-    DicomFinishGadget.h 
-    DicomImageWriter.h 
+set(gadgetron_dicom_header_files
+    DicomFinishGadget.h
+    DicomImageWriter.h
     dicom_ismrmrd_utility.h )
 
-set(gadgetron_dicom_src_files 
-    DicomFinishGadget.cpp 
-    DicomImageWriter.cpp 
+set(gadgetron_dicom_src_files
+    DicomFinishGadget.cpp
+    DicomImageWriter.cpp
     dicom_ismrmrd_utility.cpp )
 
 set(gadgetron_dicom_config_files dicom.xml )
 
 add_library(gadgetron_dicom SHARED
             ${gadgetron_dicom_header_files}
-            ${gadgetron_dicom_src_files} 
+            ${gadgetron_dicom_src_files}
             ${gadgetron_dicom_config_files} )
 
 set_target_properties(gadgetron_dicom PROPERTIES VERSION ${GADGETRON_VERSION_STRING} SOVERSION ${GADGETRON_SOVERSION})
 
-target_link_libraries(gadgetron_dicom 
+target_link_libraries(gadgetron_dicom
     gadgetron_core
     gadgetron_mricore
     gadgetron_toolbox_log
@@ -78,7 +78,7 @@ if(ARMADILLO_FOUND)
 endif()
 
 install(
-    FILES ${gadgetron_dicom_header_files} 
+    FILES ${gadgetron_dicom_header_files}
     DESTINATION ${GADGETRON_INSTALL_INCLUDE_PATH} COMPONENT main)
 
 install(TARGETS gadgetron_dicom

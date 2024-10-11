@@ -1,7 +1,6 @@
 #include "ImageAccumulator.h"
 
 #include <chrono>
-#include <ismrmrd/ismrmrd.h>
 #include <boost/range/algorithm/copy.hpp>
 
 #include "Unmixing.h"
@@ -16,7 +15,6 @@
 
 namespace {
     using namespace Gadgetron;
-    using namespace Gadgetron::Core;
     using namespace Gadgetron::Grappa;
 
 
@@ -54,7 +52,7 @@ namespace Gadgetron::Grappa {
             const std::unordered_map<std::string, std::string> &props
     ) : ChannelGadget<Slice>(context,props), context(context) {}
 
-    void ImageAccumulator::process(InputChannel<Slice> &in, OutputChannel &out) {
+    void ImageAccumulator::process(Core::InputChannel<Slice> &in, Core::OutputChannel &out) {
 
         AcquisitionBuffer buffer{context};
 

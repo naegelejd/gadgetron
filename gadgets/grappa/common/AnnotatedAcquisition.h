@@ -11,7 +11,7 @@ namespace Gadgetron::Grappa {
     };
 
     /** TODO: The ChannelReorderer is no longer used, so all Gadgets using this
-     *      AnnotatedAcquisition can be updated to just use Core::Acquisition.
+     *      AnnotatedAcquisition can be updated to just use mrd::Acquisition.
      */
-    using AnnotatedAcquisition = Core::tuple<Core::Acquisition, Core::optional<ChannelAnnotation>>;
+    using AnnotatedAcquisition = std::tuple<mrd::Acquisition, std::optional<ChannelAnnotation>>;
 }

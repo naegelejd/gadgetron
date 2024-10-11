@@ -40,8 +40,8 @@ namespace Gadgetron {
         }
     }
 
-    ImageArray GenericReconPartialFourierHandlingGadget::process_function(ImageArray recon_res) const {
-        Core::optional<GadgetronTimer> gt_timer;
+    mrd::ImageArray GenericReconPartialFourierHandlingGadget::process_function(mrd::ImageArray recon_res) const {
+        std::optional<GadgetronTimer> gt_timer;
         if (perform_timing) {
             gt_timer = GadgetronTimer("GenericReconPartialFourierHandlingGadget::process");
         }

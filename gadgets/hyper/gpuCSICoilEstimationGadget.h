@@ -10,7 +10,6 @@
 
 #include "Gadget.h"
 #include <tuple>
-#include "mri_core_data.h"
 #include "cuNDArray.h"
 
 namespace Gadgetron {

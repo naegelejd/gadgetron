@@ -31,11 +31,11 @@ inline void from_string(const std::string& str, PhysioInterpolationMethod& metho
     else throw std::invalid_argument(str + " is not a valid input for PhysioInterpolationMethod");
 }
 
-class PhysioInterpolationGadget : public Core::ChannelGadget<Core::Image<std::complex<float>>>
+class PhysioInterpolationGadget : public Core::ChannelGadget<mrd::Image<std::complex<float>>>
     {
     public:
 
-        using Core::ChannelGadget<Core::Image<std::complex<float>>>::ChannelGadget;
+        using Core::ChannelGadget<mrd::Image<std::complex<float>>>::ChannelGadget;
 
         ~PhysioInterpolationGadget() override = default;
 
@@ -49,7 +49,7 @@ class PhysioInterpolationGadget : public Core::ChannelGadget<Core::Image<std::co
         NODE_PROPERTY(time_stamp_resolution_, double, "Time stamp resolution in ms", 2.5);
 
       public:
-        void process(Core::InputChannel<Core::Image<std::complex<float>>>& in, Core::OutputChannel& out) override;
+        void process(Core::InputChannel<mrd::Image<std::complex<float>>>& in, Core::OutputChannel& out) override;
 
 };
 }

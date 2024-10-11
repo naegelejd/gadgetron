@@ -1,5 +1,5 @@
 /** \file   GenericReconEigenChannelGadget.h
-    \brief  This is the class gadget for both 2DT and 3DT cartesian reconstruction to convert the data into eigen channel, working on the IsmrmrdReconData.
+    \brief  This is the class gadget for both 2DT and 3DT cartesian reconstruction to convert the data into eigen channel, working on the mrd::ReconData.
             If incoming data has the ref, ref data will be used to compute KLT coefficients
     \author Hui Xue
 */
@@ -17,8 +17,6 @@ namespace Gadgetron {
     class GenericReconEigenChannelGadget : public GenericReconDataBase
     {
     public:
-        GADGET_DECLARE(GenericReconEigenChannelGadget);
-
         typedef GenericReconDataBase BaseClass;
         typedef hoNDKLT< std::complex<float> > KLTType;
 
@@ -74,6 +72,6 @@ namespace Gadgetron {
         // default interface function
         // virtual int process_config(ACE_Message_Block* mb);
         virtual int process_config(const mrd::Header& header);
-        virtual int process(Gadgetron::GadgetContainerMessage< ReconData >* m1);
+        virtual int process(Gadgetron::GadgetContainerMessage< mrd::ReconData >* m1);
     };
 }

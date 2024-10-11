@@ -19,7 +19,7 @@ namespace Gadgetron {
     }
 
     DenoiseSupportedTypes DenoiseGadget::process_function(DenoiseSupportedTypes input) const {
-        return Core::visit(
+        return std::visit(
             [&,this](auto& image) { return DenoiseSupportedTypes(this->denoise(std::move(image))); }, input);
     }
 

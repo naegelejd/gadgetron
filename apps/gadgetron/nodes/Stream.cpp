@@ -63,7 +63,7 @@ namespace Gadgetron::Main::Nodes {
     Stream::Stream(const Config::Stream &config, const Core::StreamContext &context, Loader &loader) : key(config.key) {
         for (auto &node_config : config.nodes) {
             nodes.emplace_back(
-                    Core::visit([&](auto n) { return load_node(n, context, loader); }, node_config)
+                    std::visit([&](auto n) { return load_node(n, context, loader); }, node_config)
             );
         }
     }

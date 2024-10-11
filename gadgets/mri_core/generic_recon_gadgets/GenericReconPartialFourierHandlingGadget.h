@@ -20,25 +20,24 @@
 #include "hoNDFFT.h"
 
 #include "mri_core_partial_fourier.h"
-#include "mri_core_data.h"
 #include "PureGadget.h"
 
 namespace Gadgetron {
 
-class GenericReconPartialFourierHandlingGadget : public Core::PureGadget<ImageArray,ImageArray>
+class GenericReconPartialFourierHandlingGadget : public Core::PureGadget<mrd::ImageArray, mrd::ImageArray>
     {
     public:
 
         typedef float real_value_type;
         typedef std::complex<real_value_type> ValueType;
         typedef ValueType T;
-        using BaseClass = Core::PureGadget<ImageArray,ImageArray>;
+        using BaseClass = Core::PureGadget<mrd::ImageArray,mrd::ImageArray>;
 
         GenericReconPartialFourierHandlingGadget(const Core::Context& context, const Core::GadgetProperties& props);
 
         virtual ~GenericReconPartialFourierHandlingGadget() = default;
 
-        ImageArray process_function(ImageArray array) const override;
+        mrd::ImageArray process_function(mrd::ImageArray array) const override;
         /// ------------------------------------------------------------------------------------
         /// parameters to control the reconstruction
         /// ------------------------------------------------------------------------------------

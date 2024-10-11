@@ -1,10 +1,10 @@
 /******************************************************************************
  * Description: Gadget using the Berkeley Advanced Reconstruction Toolbox (BART)
- * Authors: 
+ * Authors:
  *   Mahamadou Diakite, PhD. [1]
  *   Nguyen Damien, PhD. [2]
  *   Francesco Santini, PhD. [2]
- * Institutions: 
+ * Institutions:
  *   [1] National Institutes of Health (NIH)
  *   [2] University of Basel, Switzerland
  * Lang: C++
@@ -16,7 +16,6 @@
 #define BART_GADGET_H
 
 #include "generic_recon_gadgets/GenericReconGadget.h"
-#include "mri_core_data.h"
 
 #include <vector>
 #include <cassert>
@@ -32,7 +31,7 @@ namespace Gadgetron {
      namespace fs = boost::filesystem;
 
      // The user is free to add more parameters as the need arises.
-     struct Default_parameters 
+     struct Default_parameters
      {
 	  uint16_t recon_matrix_x;
 	  uint16_t recon_matrix_y;
@@ -46,16 +45,14 @@ namespace Gadgetron {
 	  uint16_t reference_lines_PE2;
 	  std::string reference_data;
 	  std::string input_data;
-	  std::string traj_data;		
+	  std::string traj_data;
      };
 
      class BartGadget final : public GenericReconGadget
      {
      public:
 	  enum bart_memory_behaviour {BART_ALL_IN_MEM, BART_ALL_ON_DISK, BART_MIX_DISK_MEM};
-	  
-	  GADGET_DECLARE(BartGadget);
-		
+
 	  using BaseClass = GenericReconGadget;
 
 	  BartGadget();
@@ -75,34 +72,34 @@ namespace Gadgetron {
 	  GADGET_PROPERTY(BartPrintfDebugLevel, std::string, "Debug level for BART outputs (DP_ERROR, DP_WARN, DP_INFO, DP_DEBUG1,etc.)", "DP_INFO");
 
 	  int process_config(ACE_Message_Block* mb);
-	  int process(GadgetContainerMessage<IsmrmrdReconData>* m1);		
+	  int process(GadgetContainerMessage<IsmrmrdReconData>* m1);
 
      private:
 
-	  static constexpr auto memonly_cfl = 
+	  static constexpr auto memonly_cfl =
 #ifdef MEMONLY_CFL
 	       true
 #else
 	       false
 #endif /* MEMONLY_CFL */
 	       ;
-	
+
 	  Default_parameters dp;
 	  bart_memory_behaviour memory_behaviour_;
 	  fs::path command_script_;
 
 	  void replace_default_parameters(std::string &str);
-	  
+
      };
 
      bool call_BART(const std::string &cmdline);
 
-     // Read BART files     
+     // Read BART files
      template <typename int_t>
      std::vector<int_t> read_BART_hdr(fs::path &filename)
      {
 	  std::vector<int_t> DIMS;
-	  
+
 	  std::ifstream infile((filename += ".hdr").c_str());
 	  if (infile)
 	  {
@@ -157,7 +154,7 @@ namespace Gadgetron {
 	       return std::make_pair(DIMS, Data);
 	  }
      }
-     
+
      // For convenience
      std::vector<size_t> read_BART_hdr(boost::filesystem::path &filename);
      std::pair< std::vector<size_t>, std::vector<std::complex<float> > > read_BART_files(fs::path &filename);
@@ -189,7 +186,7 @@ namespace Gadgetron {
 	       GERROR("Failed to write into file: %s\n", filename);
 	  pFile.write(reinterpret_cast<const char*>(&DATA[0]), DATA.size() * sizeof(std::complex<float>));
      }
-     
+
      template<typename int_t>
      void write_BART_Files(fs::path filename, const std::vector<int_t>&DIMS, const hoNDArray<std::complex<float>>& DATA)
      {

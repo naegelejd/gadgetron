@@ -50,7 +50,7 @@ void fill_image_array(const hoNDArray<std::complex<float>>& imgs, hoNDArray< mrd
     }
 }
 
-void remove_parameter_files(const std::map<std::string, std::string>& parameters) 
+void remove_parameter_files(const std::map<std::string, std::string>& parameters)
 {
     for (auto &m : parameters)
     {
@@ -58,12 +58,12 @@ void remove_parameter_files(const std::map<std::string, std::string>& parameters
     }
 }
 
-TEST(GenericReconIsmrmrdStreamerTest, test_streamer)
+TEST(GenericReconMrdStreamerTest, test_streamer)
 {
     std::string tmp_path = std::string(std::filesystem::temp_directory_path());
 
     std::map<std::string, std::string> parameters;
-    parameters[GENERIC_RECON_STREAM_ISMRMRD_HEADER] = tmp_path + "/recon_header.dat";
+    parameters[GENERIC_RECON_STREAM_MRD_HEADER] = tmp_path + "/recon_header.dat";
     parameters[GENERIC_RECON_STREAM_UNDERSAMPLED_KSPACE] = tmp_path + "/undersampled_kspace.dat";
     parameters[GENERIC_RECON_STREAM_REF_KSPACE] = tmp_path + "/ref_kspace.dat";
     parameters[GENERIC_RECON_STREAM_REF_KSPACE_FOR_COILMAP] = tmp_path + "/ref_kspace_for_coil_map.dat";
@@ -75,7 +75,7 @@ TEST(GenericReconIsmrmrdStreamerTest, test_streamer)
 
     try
     {
-        GenericReconIsmrmrdStreamer gt_streamer(parameters);
+        GenericReconMrdStreamer gt_streamer(parameters);
         gt_streamer.verbose_ = true;
 
         mrd::Header hdr;
@@ -131,7 +131,7 @@ TEST(GenericReconIsmrmrdStreamerTest, test_streamer)
 
         // deserialize and check ref kspace
         mrd::binary::MrdReader fd_ref_reader(parameters[GENERIC_RECON_STREAM_REF_KSPACE]);
-        fd_ref_reader.ReadHeader(unused); 
+        fd_ref_reader.ReadHeader(unused);
         while (fd_ref_reader.ReadData(item)) {
             auto dat = std::get<mrd::ArrayComplexFloat>(item);
             Gadgetron::subtract(ref, dat, diff);

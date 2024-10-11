@@ -16,7 +16,7 @@ namespace Gadgetron
 {
 
     template<typename T, typename Base >
-    void FloatToFixPointGadget<T, Base>::process(Core::InputChannel<Core::Image<float>> &input, Core::OutputChannel &output) {
+    void FloatToFixPointGadget<T, Base>::process(Core::InputChannel<mrd::Image<float>> &input, Core::OutputChannel &output) {
 
         auto self = static_cast<Base&>(*this);
 

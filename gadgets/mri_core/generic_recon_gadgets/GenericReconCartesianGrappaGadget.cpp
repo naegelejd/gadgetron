@@ -44,20 +44,20 @@ namespace Gadgetron {
         return GADGET_OK;
     }
 
-    int GenericReconCartesianGrappaGadget::process(Gadgetron::GadgetContainerMessage<ReconData> *m1)
+    int GenericReconCartesianGrappaGadget::process(Gadgetron::GadgetContainerMessage<mrd::ReconData> *m1)
     {
         if (perform_timing.value()) { gt_timer_local_.start("GenericReconCartesianGrappaGadget::process"); }
 
         process_called_times_++;
 
-        ReconData *recon_data = m1->getObjectPtr();
+        mrd::ReconData *recon_data = m1->getObjectPtr();
         if (recon_data->rbits.size() > num_encoding_spaces_) {
             GWARN_STREAM("Incoming recon_bit has more encoding spaces than the protocol : " << recon_data->rbits.size()
                                                                                             << " instead of "
                                                                                             << num_encoding_spaces_);
         }
 
-        GadgetContainerMessage<std::vector<Core::Waveform>>* wav = AsContainerMessage<std::vector<Core::Waveform>>(m1->cont());
+        GadgetContainerMessage<std::vector<mrd::WaveformUint32>>* wav = AsContainerMessage<std::vector<mrd::WaveformUint32>>(m1->cont());
         if (wav)
         {
             if (verbose.value())
@@ -167,7 +167,7 @@ namespace Gadgetron {
 
                 // ---------------------------------------------------------------
 
-                recon_data->rbits[e].ref = Core::none;
+                recon_data->rbits[e].ref = std::nullopt;
             }
 
             if (recon_data->rbits[e].data.data.size() > 0) {
@@ -209,7 +209,7 @@ namespace Gadgetron {
                 // ---------------------------------------------------------------
                 if (send_out_gfactor.value() && recon_obj_[e].gfactor_.get_number_of_elements() > 0 &&
                     (acceFactorE1_[e] * acceFactorE2_[e] > 1)) {
-                    ImageArray res;
+                    mrd::ImageArray res;
                     Gadgetron::real_to_complex(recon_obj_[e].gfactor_, res.data);
                     res.headers = recon_obj_[e].recon_res_.headers;
                     res.meta = recon_obj_[e].recon_res_.meta;
@@ -250,7 +250,7 @@ namespace Gadgetron {
 
                         if (perform_timing.value()) { gt_timer_.start("send out gfactor array, snr map"); }
 
-                        ImageArray res;
+                        mrd::ImageArray res;
                         res.data = snr_map;
                         res.headers = recon_obj_[e].recon_res_.headers;
                         res.meta = recon_obj_[e].recon_res_.meta;
@@ -384,7 +384,7 @@ namespace Gadgetron {
         }
     }
 
-    void GenericReconCartesianGrappaGadget::perform_calib(ReconBit &recon_bit, ReconObjType &recon_obj, size_t e)
+    void GenericReconCartesianGrappaGadget::perform_calib(mrd::ReconBit &recon_bit, ReconObjType &recon_obj, size_t e)
     {
         size_t RO = recon_bit.data.data.get_size(0);
         size_t E1 = recon_bit.data.data.get_size(1);
@@ -562,7 +562,7 @@ namespace Gadgetron {
 
     }
 
-    void GenericReconCartesianGrappaGadget::perform_unwrapping(ReconBit &recon_bit, ReconObjType &recon_obj, size_t e)
+    void GenericReconCartesianGrappaGadget::perform_unwrapping(mrd::ReconBit &recon_bit, ReconObjType &recon_obj, size_t e)
     {
         hoNDArray<std::complex<float>>& data_in = recon_bit.data.data;
 

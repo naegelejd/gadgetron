@@ -12,9 +12,9 @@ validation:
   checksum: d9c1e6a4a65d79394a9e3e9323492421
   tests:
   - image_series: 1
-tags:
-- fast
 requirements:
   system_memory: 2048
   gpu_support: 1
   gpu_memory: 1024
+tags:
+- fast

@@ -5,7 +5,7 @@
 namespace Gadgetron {
 
 CoilReductionGadget::CoilReductionGadget(const Core::Context& context, const Core::GadgetProperties& props)
-    : Core::ChannelGadget<Core::Acquisition>(context, props)
+    : Core::ChannelGadget<mrd::Acquisition>(context, props)
 {
     auto h = context.header;
     coils_in_ = h.acquisition_system_information->receiver_channels.value_or(128);
@@ -15,7 +15,7 @@ CoilReductionGadget::CoilReductionGadget(const Core::Context& context, const Cor
             GERROR("Invalid number of output coils %d\n", coils_out);
         }
         coil_mask_ = std::vector<unsigned short>(coils_out, 1);
-    } 
+    }
     else {
         std::vector<std::string> chm;
         boost::split(chm, coil_mask, boost::is_any_of(" "));
@@ -51,7 +51,7 @@ CoilReductionGadget::CoilReductionGadget(const Core::Context& context, const Cor
     GDEBUG("Coil reduction from %d to %d\n", coils_in_, coils_out_);
 }
 
-void CoilReductionGadget::process(Core::InputChannel<Core::Acquisition>& in, Core::OutputChannel& out) {
+void CoilReductionGadget::process(Core::InputChannel<mrd::Acquisition>& in, Core::OutputChannel& out) {
     for (auto acq : in) {
         if (acq.Coils() == coils_out_) {
             // No need to do anything
@@ -86,9 +86,9 @@ void CoilReductionGadget::process(Core::InputChannel<Core::Acquisition>& in, Cor
         }
 
         acq.data = std::move(reduced);
-        
+
         out.push(std::move(acq));
     }
 }
 GADGETRON_GADGET_EXPORT(CoilReductionGadget)
-} 
+}

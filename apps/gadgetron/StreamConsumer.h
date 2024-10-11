@@ -9,7 +9,6 @@
 #include <boost/program_options/variables_map.hpp>
 
 #include <mrd/binary/protocols.h>
-#include "mri_core_data.h"
 
 #include "Channel.h"
 #include "ErrorHandler.h"

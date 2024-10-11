@@ -21,8 +21,6 @@ namespace Gadgetron{
   {
 
   public:
-    GADGET_DECLARE(gpuSbSenseGadget);
-
     gpuSbSenseGadget();
     virtual ~gpuSbSenseGadget();
 
@@ -81,7 +79,7 @@ namespace Gadgetron{
     boost::shared_ptr< cuPartialDerivativeOperator2<float_complext,3> > Rt2_;
     boost::shared_ptr< cuDWTOperator<float_complext,3> > W_;
     boost::shared_ptr< cuDWTOperator<float_complext,3> > W2_;
-	
+
   };
 }
 #endif //gpuSbSenseGadget

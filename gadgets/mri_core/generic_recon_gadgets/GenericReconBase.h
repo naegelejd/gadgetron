@@ -12,7 +12,6 @@
 #include "GadgetronTimer.h"
 
 #include "mri_core_def.h"
-#include "mri_core_data.h"
 #include "mri_core_utility.h"
 #include "mri_core_stream.h"
 
@@ -24,12 +23,10 @@
 
 namespace Gadgetron {
 
-    template <typename T> 
+    template <typename T>
     class GenericReconBase : public Gadget1<T>
     {
     public:
-        GADGET_DECLARE(GenericReconBase);
-
         typedef Gadget1<T> BaseClass;
 
         GenericReconBase();
@@ -69,7 +66,7 @@ namespace Gadgetron {
         // --------------------------------------------------
         // data stream
         // --------------------------------------------------
-        GenericReconIsmrmrdStreamer gt_streamer_;
+        GenericReconMrdStreamer gt_streamer_;
 
         // --------------------------------------------------
         // gadget functions
@@ -82,8 +79,6 @@ namespace Gadgetron {
     class GenericReconKSpaceReadoutBase :public GenericReconBase < mrd::AcquisitionHeader >
     {
     public:
-        GADGET_DECLARE(GenericReconKSpaceReadoutBase);
-
         typedef GenericReconBase < mrd::AcquisitionHeader > BaseClass;
 
         GenericReconKSpaceReadoutBase();
@@ -91,24 +86,20 @@ namespace Gadgetron {
         virtual int close(unsigned long flags) { return BaseClass::close(flags); }
     };
 
-    class GenericReconDataBase :public GenericReconBase < ReconData >
+    class GenericReconDataBase :public GenericReconBase < mrd::ReconData >
     {
     public:
-        GADGET_DECLARE(GenericReconDataBase);
-
-        typedef GenericReconBase < ReconData > BaseClass;
+        typedef GenericReconBase < mrd::ReconData > BaseClass;
 
         GenericReconDataBase();
         virtual ~GenericReconDataBase();
         virtual int close(unsigned long flags) { return BaseClass::close(flags); }
     };
 
-    class GenericReconImageBase :public GenericReconBase < ImageArray >
+    class GenericReconImageBase :public GenericReconBase < mrd::ImageArray >
     {
     public:
-        GADGET_DECLARE(GenericReconImageBase);
-
-        typedef GenericReconBase < ImageArray > BaseClass;
+        typedef GenericReconBase < mrd::ImageArray > BaseClass;
 
         GenericReconImageBase();
         virtual ~GenericReconImageBase();
@@ -118,8 +109,6 @@ namespace Gadgetron {
     class GenericReconImageHeaderBase :public GenericReconBase < mrd::ImageHeader >
     {
     public:
-        GADGET_DECLARE(GenericReconImageHeaderBase);
-
         typedef GenericReconBase < mrd::ImageHeader > BaseClass;
 
         GenericReconImageHeaderBase();

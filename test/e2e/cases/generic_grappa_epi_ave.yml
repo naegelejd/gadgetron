@@ -8,7 +8,7 @@ validation:
   checksum: ae1e2ebf21249016726bcc86bf7ea5b2
   tests:
   - image_series: 1
-tags:
-- generic
 requirements:
   system_memory: 4096
+tags:
+- generic

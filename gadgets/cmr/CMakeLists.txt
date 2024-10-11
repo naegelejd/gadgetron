@@ -56,8 +56,6 @@ if (BUILD_PYTHON_SUPPORT)
         config/LandmarkDetection/stream_image_array.xml
         )
 
-    set( config_cmr_files ${config_cmr_files} ${config_LandmarkDetection_files})
-
     set( python_LandmarkDetection_files
         config/LandmarkDetection/gadgetron_cmr_landmark_detection.py
         config/LandmarkDetection/gadgetron_cmr_landmark_detection_util.py

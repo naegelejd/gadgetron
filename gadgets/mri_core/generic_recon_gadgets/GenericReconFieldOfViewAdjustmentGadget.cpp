@@ -73,7 +73,7 @@ namespace Gadgetron {
         return GADGET_OK;
     }
 
-    int GenericReconFieldOfViewAdjustmentGadget::process(Gadgetron::GadgetContainerMessage< ImageArray >* m1)
+    int GenericReconFieldOfViewAdjustmentGadget::process(Gadgetron::GadgetContainerMessage< mrd::ImageArray >* m1)
     {
         if (perform_timing.value()) { gt_timer_.start("GenericReconFieldOfViewAdjustmentGadget::process"); }
 
@@ -81,7 +81,7 @@ namespace Gadgetron {
 
         process_called_times_++;
 
-        ImageArray* recon_res_ = m1->getObjectPtr();
+        mrd::ImageArray* recon_res_ = m1->getObjectPtr();
 
         // print out recon info
         if (verbose.value())
@@ -156,7 +156,7 @@ namespace Gadgetron {
         }
     }
 
-    int GenericReconFieldOfViewAdjustmentGadget::adjust_FOV(ImageArray& recon_res)
+    int GenericReconFieldOfViewAdjustmentGadget::adjust_FOV(mrd::ImageArray& recon_res)
     {
 //        try
         {

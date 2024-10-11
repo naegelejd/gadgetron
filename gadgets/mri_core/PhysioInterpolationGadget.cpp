@@ -78,7 +78,7 @@ namespace Gadgetron {
 
         auto spline_interpolate_series = [](const auto &buffer, const auto &relative_cycle_time,
                                             const auto &recon_cycle_time,
-                                            std::vector<Core::Image<std::complex<float>>> &output) {
+                                            std::vector<mrd::Image<std::complex<float>>> &output) {
             GadgetronTimer interptime("Interpolation Time");
 
 
@@ -106,7 +106,7 @@ namespace Gadgetron {
 
         auto bspline_interpolate_series = [](const auto &buffer, const auto &relative_cycle_time,
                                              const auto &recon_cycle_time,
-                                             std::vector<Core::Image<std::complex<float>>> &output) {
+                                             std::vector<mrd::Image<std::complex<float>>> &output) {
 
             GadgetronTimer interptime("Interpolation Time using BSpline");
             size_t inelem = relative_cycle_time.size();
@@ -152,7 +152,7 @@ namespace Gadgetron {
     }
 
 
-    void PhysioInterpolationGadget::process(Core::InputChannel<Core::Image<std::complex<float>>> &in,
+    void PhysioInterpolationGadget::process(Core::InputChannel<mrd::Image<std::complex<float>>> &in,
                                             Core::OutputChannel &out) {
 
 
@@ -160,7 +160,7 @@ namespace Gadgetron {
         auto slc_limit = e_limits.slice ? e_limits.slice->maximum + 1 : 1;
 
 
-        auto buffers = std::map<int, std::vector<Core::Image<std::complex<float>>>>{};
+        auto buffers = std::map<int, std::vector<mrd::Image<std::complex<float>>>>{};
         auto time_stamp_buffer = std::map<int, std::vector<float>>{};
 
         for (auto image: in) {
@@ -229,7 +229,7 @@ namespace Gadgetron {
 
             using namespace ranges;
 
-            auto image_generator = [&](float cycle_time) -> Core::Image<std::complex<float>> {
+            auto image_generator = [&](float cycle_time) -> mrd::Image<std::complex<float>> {
                 const auto& ref = buffer.front();
                 auto header = ref.head;
                 auto meta = ref.meta;
@@ -266,7 +266,7 @@ namespace Gadgetron {
 
                     meta[GADGETRON_IMAGEPROCESSINGHISTORY].push_back("Interp");
 
-                Core::Image<std::complex<float>> out;
+                mrd::Image<std::complex<float>> out;
                 out.head = header;
                 out.data = hoNDArray<std::complex<float>>(ref.data.dimensions());
                 out.meta = meta;

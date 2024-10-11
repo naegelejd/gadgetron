@@ -1,10 +1,5 @@
-find_package(ZFP)
-
-include_directories(${HDF5_INCLUDE_DIRS} ${CMAKE_SOURCE_DIR}/core/io)
-
 set_source_files_properties(CompressedFloatBufferSse41.cpp PROPERTIES COMPILE_FLAGS "-msse4.1")
 set_source_files_properties(CompressedFloatBufferAvx2.cpp PROPERTIES COMPILE_FLAGS "-mavx2 -mfma")
-
 
 set(gadgetron_mricore_header_files
         AugmentImageMetadataGadget.h
@@ -35,15 +30,17 @@ set(gadgetron_mricore_header_files
         DenoiseGadget.h
         FlagTriggerGadget.h
         ImageIndexGadget.h
-        # AccumulatorGadget.h
-        # CropAndCombineGadget.h
-        # NoiseAdjustGadget_unoptimized.h
-        # ScaleGadget.h
-        # ImageAccumulatorGadget.h
-        # ImageResizingGadget.h
+        AccumulatorGadget.h
+        ScaleGadget.h
+
+        # These Gadgets are NOT TESTED and have not been upgraded to MRD v2
         # CoilComputationGadget.h
+        # CropAndCombineGadget.h
+        # ImageAccumulatorGadget.h
         # ImageFFTGadget.h
-        # IsmrmrdDumpGadget.h
+        # ImageResizingGadget.h
+        # NoiseAdjustGadget_unoptimized.h
+        # PartialFourierAdjustROGadget.h
         )
 
 set(gadgetron_mricore_src_files
@@ -75,15 +72,17 @@ set(gadgetron_mricore_src_files
         DenoiseGadget.cpp
         FlagTriggerGadget.cpp
         ImageIndexGadget.cpp
-        # AccumulatorGadget.cpp
-        # CropAndCombineGadget.cpp
-        # NoiseAdjustGadget_unoptimized.cpp
-        # ScaleGadget.cpp
-        # ImageAccumulatorGadget.cpp
-        # ImageResizingGadget.cpp
+        AccumulatorGadget.cpp
+        ScaleGadget.cpp
+
+        # These Gadgets are NOT TESTED and have not been upgraded to MRD v2
         # CoilComputationGadget.cpp
+        # CropAndCombineGadget.cpp
+        # ImageAccumulatorGadget.cpp
         # ImageFFTGadget.cpp
-        # IsmrmrdDumpGadget.cpp
+        # ImageResizingGadget.cpp
+        # NoiseAdjustGadget_unoptimized.cpp
+        # PartialFourierAdjustROGadget.cpp
         )
 
 set(gadgetron_mricore_config_files
@@ -109,6 +108,8 @@ set(gadgetron_mricore_generic_recon_gadgets_header_files
         generic_recon_gadgets/GenericReconEigenChannelGadget.h
         generic_recon_gadgets/GenericReconNoiseStdMapComputingGadget.h
         generic_recon_gadgets/GenericReconStreamDef.h
+
+        # These Gadgets are NOT TESTED and have not been upgraded to MRD v2
         # generic_recon_gadgets/GenericReconAccumulateImageTriggerGadget.h
         # generic_recon_gadgets/GenericReconCartesianFFTGadget.h
         # generic_recon_gadgets/GenericReconImageToImageArrayGadget.h
@@ -132,6 +133,8 @@ set(gadgetron_mricore_generic_recon_gadgets_src_files
         generic_recon_gadgets/GenericReconImageArrayScalingGadget.cpp
         generic_recon_gadgets/GenericReconEigenChannelGadget.cpp
         generic_recon_gadgets/GenericReconNoiseStdMapComputingGadget.cpp
+
+        # These Gadgets are NOT TESTED and have not been upgraded to MRD v2
         # generic_recon_gadgets/GenericReconAccumulateImageTriggerGadget.cpp
         # generic_recon_gadgets/GenericReconCartesianFFTGadget.cpp
         # generic_recon_gadgets/GenericReconImageToImageArrayGadget.cpp
@@ -163,9 +166,9 @@ set(gadgetron_mricore_generic_recon_gadgets_config_files
 )
 
 # if there is python, add gadgets using python
-if (Boost_PYTHON3_FOUND AND PYTHONLIBS_FOUND AND NUMPY_FOUND)
+if (BUILD_PYTHON_SUPPORT)
+    message(STATUS "Build python generic gadgets ... ")
 
-    message("Build python generic gadgets ... ")
     include_directories(
       ${CMAKE_SOURCE_DIR}/core
       ${CMAKE_SOURCE_DIR}/toolboxes/python
@@ -197,7 +200,6 @@ target_link_libraries(gadgetron_mricore
         gadgetron_toolbox_cpufft
         gadgetron_toolbox_image_analyze_io
         gadgetron_toolbox_denoise
-        gadgetron_toolbox_hostutils
         gadgetron_toolbox_cpuoperator
         gadgetron_toolbox_cpuklt
         gadgetron_toolbox_mri_core
@@ -207,27 +209,11 @@ target_include_directories(gadgetron_mricore
         PUBLIC
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>)
 
-if (ZFP_FOUND)
-    message("ZFP Found")
-    add_definitions(-DGADGETRON_COMPRESSION_ZFP)
-    target_include_directories(
-            gadgetron_mricore
-            PUBLIC
-            ${ZFP_INCLUDE_DIR})
+if (BUILD_PYTHON_SUPPORT)
+    target_link_libraries(gadgetron_mricore gadgetron_toolbox_python)
 
-    target_link_libraries(gadgetron_mricore ${ZFP_LIBRARIES})
-else ()
-    message("ZFP NOT Found")
-endif ()
-
-if (Boost_PYTHON3_FOUND AND PYTHONLIBS_FOUND AND NUMPY_FOUND)
-   target_link_libraries(gadgetron_mricore
-                        gadgetron_toolbox_python
-                         )
-
-install(FILES
-        ${gadgetron_python_models_files}
-        DESTINATION ${GADGETRON_INSTALL_PYTHON_MODULE_PATH} COMPONENT main)
+    install(FILES ${gadgetron_python_models_files}
+            DESTINATION ${GADGETRON_INSTALL_PYTHON_MODULE_PATH} COMPONENT main)
 endif ()
 
 install(FILES

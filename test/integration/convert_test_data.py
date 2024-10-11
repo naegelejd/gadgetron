@@ -1,5 +1,5 @@
 # Observations:
-# 
+#
 # - Every dependency section is a `siemens` action and has a `data_file`/`measurement`
 # - Every reconstruction section has either a
 #   1. `siemens` action and `data_file`/`measurement`, OR
@@ -17,6 +17,7 @@ import sys
 import glob
 import yaml
 import hashlib
+import tempfile
 import subprocess
 import configparser
 
@@ -75,7 +76,7 @@ def convert(config, force=False):
 
     config.remove_section('dependency.adapter')
     config.remove_section('reconstruction.adapter')
-        
+
     if config.has_section('dependency.siemens'):
         dep = config['dependency.siemens']
         df = dep['data_file']
@@ -88,7 +89,7 @@ def convert(config, force=False):
 
         stream = config['dependency.stream']
         cfg = stream['configuration']
-        args = stream['args']
+        args = stream.get('args', None)
 
         config.remove_section('dependency.stream')
 
@@ -213,14 +214,14 @@ def convert(config, force=False):
     validation['tests'] = tests
     d['validation'] = validation
 
-    d['tags'] = tags
-    config.remove_section('tags')
-
     requirements = {}
     for req in config['requirements']:
         requirements[req] = config['requirements'].getint(req)
     d['requirements'] = requirements
     config.remove_section('requirements')
+
+    d['tags'] = tags
+    config.remove_section('tags')
 
     assert len(config.sections()) == 0
 
@@ -240,28 +241,22 @@ def compute_checksum(filename):
         return hashlib.md5(f.read()).hexdigest()
 
 def siemens_to_mrd(input_path, output_path, xml, xsl, meas, dcf):
-    # print(f"Converting {input_path} to {output_path}")
+    with tempfile.NamedTemporaryFile() as tmpfile:
+        command = ["siemens_to_ismrmrd", "-X",
+                "-f", input_path,
+                "-m", xml,
+                "-x", xsl,
+                "-o", tmpfile.name,
+                "-z", meas] + ([dcf] if dcf else [])
+        print(' '.join(command))
+        if not SKIP_DATA_CONVERSION:
+            res = subprocess.run(command, capture_output=True, check=True)
 
-    tmpfile = 'tmpfile.dat'
-    if os.path.exists(tmpfile):
-        os.remove(tmpfile)
-
-    command = ["siemens_to_ismrmrd", "-X",
-               "-f", input_path,
-               "-m", xml,
-               "-x", xsl,
-               "-o", tmpfile,
-               "-z", meas] + ([dcf] if dcf else [])
-    print(' '.join(command))
-    if not SKIP_DATA_CONVERSION:
-        res = subprocess.run(command, capture_output=True, check=True)
-
-    ismrmrd_to_mrd(tmpfile, output_path)
+        ismrmrd_to_mrd(tmpfile.name, output_path)
 
 
 def ismrmrd_to_mrd(input_path, output_path, group=None, series=None):
     # print(f"Converting {input_path} to {output_path}")
-
     checksum = None
     if os.path.isfile(output_path):
         checksum = compute_checksum(output_path)

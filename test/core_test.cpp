@@ -49,7 +49,7 @@ TEST(TypeTests, optionaltype) {
     outputChannel.push(std::string("test"), int(1));
     {
         auto message = inputChannel.pop();
-        bool convertible = convertible_to<std::string, optional<int>>(message);
+        bool convertible = convertible_to<std::string, std::optional<int>>(message);
         EXPECT_TRUE(convertible);
     }
 
@@ -57,7 +57,7 @@ TEST(TypeTests, optionaltype) {
         outputChannel.push(std::string("test"), std::string("test"));
 
         auto message = inputChannel.pop();
-        bool convertible = convertible_to<std::string, optional<int>, std::string>(message);
+        bool convertible = convertible_to<std::string, std::optional<int>, std::string>(message);
         EXPECT_TRUE(convertible);
     }
 
@@ -75,7 +75,7 @@ TEST(TypeTests, optionaltype2) {
         outputChannel.push(std::string("test"));
 
         auto message = inputChannel.pop();
-        bool convertible = convertible_to<std::string, optional<int>>(message);
+        bool convertible = convertible_to<std::string, std::optional<int>>(message);
         EXPECT_TRUE(convertible);
     }
 }
@@ -114,7 +114,7 @@ TEST(TypeTests, optionaltype3) {
 
     auto message = inputChannel.pop();
 
-    bool convertible = convertible_to<optional<std::string>, std::string>(message);
+    bool convertible = convertible_to<std::optional<std::string>, std::string>(message);
     EXPECT_TRUE(convertible);
 }
 
@@ -130,7 +130,7 @@ TEST(TypeTests, varianttype) {
     {
         auto message = inputChannel.pop();
 
-        bool convertible = convertible_to<variant<std::string, int>>(message);
+        bool convertible = convertible_to<std::variant<std::string, int>>(message);
         EXPECT_TRUE(convertible);
     }
 
@@ -139,7 +139,7 @@ TEST(TypeTests, varianttype) {
 
         auto message = inputChannel.pop();
 
-        bool convertible = convertible_to<variant<int, std::string>>(message);
+        bool convertible = convertible_to<std::variant<int, std::string>>(message);
         EXPECT_TRUE(convertible);
     }
 }
@@ -156,7 +156,7 @@ TEST(TypeTests, varianttype2) {
     {
         auto message = inputChannel.pop();
 
-        auto variation = force_unpack<variant<std::string, int>>(std::move(message));
+        auto variation = force_unpack<std::variant<std::string, int>>(std::move(message));
         EXPECT_EQ(variation.index(), 0);
     }
 
@@ -174,7 +174,7 @@ TEST(TypeTests, tupletype) {
 
     auto message = inputChannel.pop();
 
-    bool convertible = convertible_to<tuple<std::string, float, int>>(message);
+    bool convertible = convertible_to<std::tuple<std::string, float, int>>(message);
     EXPECT_TRUE(convertible);
 }
 
@@ -190,7 +190,7 @@ TEST(TypeTests, tuplevarianttype) {
 
     auto message = inputChannel.pop();
 
-    bool convertible = convertible_to<variant<tuple<std::string, float, int>, float>>(message);
+    bool convertible = convertible_to<std::variant<std::tuple<std::string, float, int>, float>>(message);
     EXPECT_TRUE(convertible);
 }
 
@@ -205,7 +205,7 @@ TEST(TypeTests, tupletype2) {
 
     auto message = inputChannel.pop();
 
-    bool convertible = convertible_to<tuple<std::string, float, int>>(message);
+    bool convertible = convertible_to<std::tuple<std::string, float, int>>(message);
     EXPECT_TRUE(convertible);
 }
 
@@ -221,7 +221,7 @@ TEST(TypeTests, tupletype3) {
 
     auto message = inputChannel.pop();
 
-    auto converted = force_unpack<tuple<std::string, float, int>>(std::move(message));
+    auto converted = force_unpack<std::tuple<std::string, float, int>>(std::move(message));
 
     EXPECT_EQ(std::get<1>(converted), 1.0f);
 }

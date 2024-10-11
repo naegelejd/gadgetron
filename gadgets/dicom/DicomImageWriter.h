@@ -8,11 +8,11 @@
 namespace Gadgetron {
 
     class DicomImageWriter
-        : public Core::TypedWriter<DcmFileFormat, Core::optional<std::string>, Core::optional<ISMRMRD::MetaContainer>> {
+        : public Core::TypedWriter<DcmFileFormat, std::optional<std::string>, std::optional<ISMRMRD::MetaContainer>> {
     protected:
         void serialize(std::ostream& stream, const DcmFileFormat&,
-            const Core::optional<std::string>&,
-            const Core::optional<ISMRMRD::MetaContainer>& args) override;
+            const std::optional<std::string>&,
+            const std::optional<ISMRMRD::MetaContainer>& args) override;
 
     protected:
     public:

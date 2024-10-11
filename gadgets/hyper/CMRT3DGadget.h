@@ -12,13 +12,12 @@
 
 namespace Gadgetron {
 
-  class CMRT3DGadget : 
+  class CMRT3DGadget :
     public Gadget2< ISMRMRD::ImageHeader, hoNDArray< std::complex<float> > >
-  {  
+  {
   public:
     CMRT3DGadget() : images_received_(0), images_used_(0), tot_images_(0) {};
     ~CMRT3DGadget() {};
-	GADGET_DECLARE(CMRT3DGADGET);
 
   protected:
 

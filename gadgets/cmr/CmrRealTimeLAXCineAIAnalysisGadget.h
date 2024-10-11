@@ -15,8 +15,6 @@ namespace Gadgetron {
     class CmrRealTimeLAXCineAIAnalysisGadget : public GenericReconImageBase
     {
     public:
-        GADGET_DECLARE(CmrRealTimeLAXCineAIAnalysisGadget);
-
         typedef GenericReconImageBase BaseClass;
         typedef hoNDImageContainer2D < hoMRImage<float, 2> > ImageContainerMagType;
 

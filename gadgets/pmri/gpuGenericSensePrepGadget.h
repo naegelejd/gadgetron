@@ -18,13 +18,11 @@ namespace Gadgetron{
   class gpuGenericSensePrepGadget :
     public Gadget1< mrd::Acquisition >
   {
-    
+
   public:
     using ReadoutMessage = GadgetContainerMessage<hoNDArray<std::complex<float>>>;
     using TrajectoryMessage = GadgetContainerMessage<hoNDArray<float>>;
     using ImageHeaderMessage = GadgetContainerMessage<mrd::ImageHeader>;
-
-    GADGET_DECLARE(gpuGenericSensePrepGadget);
 
     gpuGenericSensePrepGadget();
     virtual ~gpuGenericSensePrepGadget();
@@ -63,22 +61,22 @@ namespace Gadgetron{
     boost::shared_array<bool> reconfigure_;
     virtual void reconfigure(unsigned int set, unsigned int slice);
 
-    template<class T> GadgetContainerMessage< hoNDArray<T> >* 
+    template<class T> GadgetContainerMessage< hoNDArray<T> >*
       duplicate_array( const hoNDArray<T>& array );
-    
-    boost::shared_ptr< hoNDArray<float_complext> > 
+
+    boost::shared_ptr< hoNDArray<float_complext> >
       extract_samples_from_queue ( std::queue<std::unique_ptr<ReadoutMessage>> &queue,
 				   bool sliding_window, unsigned int set, unsigned int slice );
-    
-    boost::shared_ptr< hoNDArray<float> > 
+
+    boost::shared_ptr< hoNDArray<float> >
       extract_trajectory_from_queue ( std::queue<std::unique_ptr<TrajectoryMessage>> &queue,
 				      bool sliding_window, unsigned int set, unsigned int slice );
-      
+
     void extract_trajectory_and_dcw_from_queue
       ( std::queue<std::unique_ptr<TrajectoryMessage>> &queue, bool sliding_window, unsigned int set, unsigned int slice,
 	unsigned int samples_per_frame, unsigned int num_frames,
 	cuNDArray<floatd2> *traj, cuNDArray<float> *dcw );
-    
+
     int slices_;
     int sets_;
     int device_number_;
@@ -88,12 +86,12 @@ namespace Gadgetron{
     boost::shared_array<long> readouts_per_frame_;  // for an undersampled frame
     boost::shared_array<long> frames_per_rotation_; // representing a fully sampled frame
 
-    // The number of rotations to batch per reconstruction. 
+    // The number of rotations to batch per reconstruction.
     // Set to '0' to reconstruct frames individually.
-    long rotations_per_reconstruction_; 
+    long rotations_per_reconstruction_;
 
     // The number of buffer cycles
-    long buffer_length_in_rotations_; 
+    long buffer_length_in_rotations_;
 
     boost::shared_array<long> buffer_frames_per_rotation_; // the number of buffer subcycles
 
@@ -126,7 +124,7 @@ namespace Gadgetron{
 
     boost::shared_array< hoNDArray<float_complext> > csm_host_;
     boost::shared_array< hoNDArray<float_complext> > reg_host_;
-    
+
     boost::shared_array< cuSenseBuffer<float,2> > acc_buffer_;
     boost::shared_array< cuSenseBufferCg<float,2> > acc_buffer_cg_;
 

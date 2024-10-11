@@ -13,16 +13,16 @@
 namespace Gadgetron::Core::IO {
 
     template<class T>
-    std::enable_if_t<Gadgetron::Core::is_trivially_copyable_v<T>> read(std::istream &stream, T &t);
+    std::enable_if_t<std::is_trivially_copyable_v<T>> read(std::istream &stream, T &t);
 
     template<class T>
-    std::enable_if_t<Gadgetron::Core::is_trivially_copyable_v<T>> read(std::istream &stream, T *data, size_t elements);
+    std::enable_if_t<std::is_trivially_copyable_v<T>> read(std::istream &stream, T *data, size_t elements);
 
     template<class T>
-    std::enable_if_t<!Gadgetron::Core::is_trivially_copyable_v<T>> read(std::istream &stream, T *data, size_t elements);
+    std::enable_if_t<!std::is_trivially_copyable_v<T>> read(std::istream &stream, T *data, size_t elements);
 
     template<class T>
-    void read(std::istream &stream, Core::optional<T> &opt);
+    void read(std::istream &stream, std::optional<T> &opt);
 
     template<class T>
     void read(std::istream &stream, std::vector<T> &vec);
@@ -40,7 +40,7 @@ namespace Gadgetron::Core::IO {
     void read(std::istream &stream, Gadgetron::hoNDArray< Gadgetron::hoNDImage<T, D> > &array);
 
     template<class... ARGS>
-    void read(std::istream& stream, Core::tuple<ARGS...>& tup);
+    void read(std::istream& stream, std::tuple<ARGS...>& tup);
 
     template<class T>
     std::enable_if_t<boost::hana::Struct<T>::value> read(std::istream &istream, T &x);
@@ -60,11 +60,11 @@ namespace Gadgetron::Core::IO {
     template<class T = uint64_t >
     std::string read_string_from_stream(std::istream &stream);
 
-    template<class T, class V = std::enable_if_t<is_trivially_copyable_v<T>>>
+    template<class T, class V = std::enable_if_t<std::is_trivially_copyable_v<T>>>
     void write(std::ostream &stream, const T &value);
 
     template<class T>
-    void write(std::ostream &ostream, const Core::optional<T> &val);
+    void write(std::ostream &ostream, const std::optional<T> &val);
 
     template<class T>
     void write(std::ostream &ostream, const std::vector<T> &val);
@@ -79,11 +79,11 @@ namespace Gadgetron::Core::IO {
     std::enable_if_t<boost::hana::Struct<T>::value, void> write(std::ostream &ostream, const T &x);
 
     template<class T>
-    std::enable_if_t<Gadgetron::Core::is_trivially_copyable_v<T>>
+    std::enable_if_t<std::is_trivially_copyable_v<T>>
     write(std::ostream &stream, const T *data, size_t number_of_elements);
 
     template<class T>
-    std::enable_if_t<!Gadgetron::Core::is_trivially_copyable_v<T>>
+    std::enable_if_t<!std::is_trivially_copyable_v<T>>
     write(std::ostream &stream, const T *data, size_t number_of_elements);
 
     template<class iterator_type>

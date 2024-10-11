@@ -3,7 +3,6 @@
 //
 #pragma once
 
-#include "mri_core_data.h"
 #include <vector>
 
 

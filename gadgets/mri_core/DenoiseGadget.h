@@ -6,13 +6,12 @@
 #include "hoNDArray.h"
 
 #include "PureGadget.h"
-#include <mri_core_data.h>
 #include <string>
 
 namespace Gadgetron {
 
     using DenoiseSupportedTypes =
-        Core::variant<mrd::Image<float>, mrd::Image<std::complex<float>>, mrd::ImageArray>;
+        std::variant<mrd::Image<float>, mrd::Image<std::complex<float>>, mrd::ImageArray>;
 
     class DenoiseGadget
         : public Core::PureGadget<DenoiseSupportedTypes, DenoiseSupportedTypes> {

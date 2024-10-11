@@ -22,7 +22,6 @@
 #include "hoNDObjectArray.h"
 #include "mri_core_def.h"
 #include "mri_core_kspace_filter.h"
-#include "mri_core_data.h"
 #include "mri_core_utility.h"
 #include "ImageIOAnalyze.h"
 #include "GadgetronTimer.h"
@@ -206,8 +205,6 @@ namespace Gadgetron {
     class GenericImageReconGadget : public BasicPropertyGadget, public GenericImageReconGadgetBase
     {
     public:
-        GADGET_DECLARE(GenericImageReconGadget);
-
         typedef BasicPropertyGadget BaseClass;
         typedef std::vector<ISMRMRD::Waveform> WaveFormType;
 

@@ -9,7 +9,6 @@
 
 #include "ChannelAlgorithms.h"
 #include "io/from_string.h"
-#include "mri_core_data.h"
 #include "mri_core_utility.h"
 
 #include <boost/config/warning_disable.hpp>
@@ -170,7 +169,7 @@ auto const expression_def = andop | orop | negateop | term | x3::lit('(') >> exp
 BOOST_SPIRIT_DEFINE(expression, andop, orop, negateop, term);
 
 } // namespace boolean_grammer
-std::function<bool(const Core::Acquisition& acq)>
+std::function<bool(const mrd::Acquisition& acq)>
 FlagTriggerGadget::create_trigger_filter(const std::string& trigger_string) {
     namespace x3 = boost::spirit::x3;
 
@@ -183,16 +182,16 @@ FlagTriggerGadget::create_trigger_filter(const std::string& trigger_string) {
     if (!r || iter != last) {
         throw std::runtime_error("Not passing");
     }
-    return [expression](const Core::Acquisition& acq) {
+    return [expression](const mrd::Acquisition& acq) {
         ast::eval eval;
         return eval(expression, acq.head.flags.Value());
     };
 }
 
-void Gadgetron::FlagTriggerGadget::process(Core::InputChannel<Core::Acquisition>& in, Core::OutputChannel& out) {
+void Gadgetron::FlagTriggerGadget::process(Core::InputChannel<mrd::Acquisition>& in, Core::OutputChannel& out) {
 
     for (const auto& group : Core::Algorithm::buffer(in, this->predicate)) {
-        auto bucket = AcquisitionBucket();
+        auto bucket = mrd::AcquisitionBucket();
         for (auto acq : group) {
             Gadgetron::add_acquisition_to_bucket(bucket, acq);
         }

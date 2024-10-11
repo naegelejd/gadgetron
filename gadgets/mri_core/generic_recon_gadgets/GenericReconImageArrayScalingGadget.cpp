@@ -52,7 +52,7 @@ namespace Gadgetron {
         return GADGET_OK;
     }
 
-    int GenericReconImageArrayScalingGadget::process(Gadgetron::GadgetContainerMessage< ImageArray >* m1)
+    int GenericReconImageArrayScalingGadget::process(Gadgetron::GadgetContainerMessage< mrd::ImageArray >* m1)
     {
         if (perform_timing.value()) { gt_timer_.start("GenericReconImageArrayScalingGadget::process"); }
 
@@ -60,7 +60,7 @@ namespace Gadgetron {
 
         process_called_times_++;
 
-        ImageArray* recon_res_ = m1->getObjectPtr();
+        mrd::ImageArray* recon_res_ = m1->getObjectPtr();
 
         size_t encoding = (size_t)std::get<long>(recon_res_->meta[0]["encoding"].front());
         GADGET_CHECK_RETURN(encoding<num_encoding_spaces_, GADGET_FAIL);
@@ -152,7 +152,7 @@ namespace Gadgetron {
         return GADGET_OK;
     }
 
-    int GenericReconImageArrayScalingGadget::compute_and_apply_scaling_factor(ImageArray& res, size_t encoding)
+    int GenericReconImageArrayScalingGadget::compute_and_apply_scaling_factor(mrd::ImageArray& res, size_t encoding)
     {
         // if the scaling factor for this encoding space has not been set yet (it was initialized negative),
         //   compute it.  If it has already been set (therefore, it will be positive), only compute again if

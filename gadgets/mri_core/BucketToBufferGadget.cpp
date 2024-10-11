@@ -30,7 +30,7 @@ namespace Gadgetron {
         mrd::ReconBit& getRBit(std::map<BufferKey, mrd::ReconData>& recon_data_buffers,
             const BufferKey& key, uint32_t espace) {
 
-            // Look up the DataBuffered entry corresponding to this encoding space
+            // Look up the mrd::BufferedData entry corresponding to this encoding space
             // create if needed and set the fields of view and matrix size
             if (recon_data_buffers[key].rbits.size() < (espace + 1)) {
                 recon_data_buffers[key].rbits.resize(espace + 1);
@@ -41,7 +41,7 @@ namespace Gadgetron {
 
     }
 
-    void BucketToBufferGadget::process(Core::InputChannel<AcquisitionBucket>& input, Core::OutputChannel& out) {
+    void BucketToBufferGadget::process(Core::InputChannel<mrd::AcquisitionBucket>& input, Core::OutputChannel& out) {
 
         for (auto acq_bucket : input) {
             std::map<BufferKey, mrd::ReconData> recon_data_buffers;
@@ -133,7 +133,7 @@ namespace Gadgetron {
     }
 
     namespace {
-        uint32_t getSizeFromDimension(BucketToBufferGadget::Dimension dimension, const AcquisitionBucketStats& stats) {
+        uint32_t getSizeFromDimension(BucketToBufferGadget::Dimension dimension, const mrd::AcquisitionBucketStats& stats) {
             switch (dimension) {
             case BucketToBufferGadget::Dimension::phase: return stats.phase.maximum - stats.phase.minimum + 1;
             case BucketToBufferGadget::Dimension::contrast:
@@ -151,7 +151,7 @@ namespace Gadgetron {
     }
 
     mrd::BufferedData BucketToBufferGadget::makeDataBuffer(const mrd::Acquisition& acq,
-        mrd::EncodingType encoding, const AcquisitionBucketStats& stats, bool forref) const
+        mrd::EncodingType encoding, const mrd::AcquisitionBucketStats& stats, bool forref) const
     {
         // Allocate the reference data array
         // 7D,  fixed order [E0, E1, E2, CHA, N, S, LOC]
@@ -192,7 +192,7 @@ namespace Gadgetron {
     }
 
     uint32_t BucketToBufferGadget::getNLOC(
-        const mrd::EncodingType& encoding, const AcquisitionBucketStats& stats) const {
+        const mrd::EncodingType& encoding, const mrd::AcquisitionBucketStats& stats) const {
         uint32_t NLOC;
         if (split_slices) {
             NLOC = 1;
@@ -212,14 +212,14 @@ namespace Gadgetron {
         return NLOC;
     }
     uint32_t BucketToBufferGadget::getNE2(
-        const mrd::EncodingType& encoding, const AcquisitionBucketStats& stats, bool forref) const {
+        const mrd::EncodingType& encoding, const mrd::AcquisitionBucketStats& stats, bool forref) const {
         uint32_t NE2;
 
         /** TODO: This is ugly... */
 
         if (encoding.trajectory == mrd::Trajectory::kCartesian || encoding.trajectory == mrd::Trajectory::kEpi) {
             if (encoding.parallel_imaging) {
-                if (forref && encoding.parallel_imaging->calibration_mode && 
+                if (forref && encoding.parallel_imaging->calibration_mode &&
                         (encoding.parallel_imaging->calibration_mode.value() == mrd::CalibrationMode::kSeparate ||
                         encoding.parallel_imaging->calibration_mode.value() == mrd::CalibrationMode::kExternal)) {
                     NE2 = encoding.encoding_limits.kspace_encoding_step_2->maximum
@@ -246,7 +246,7 @@ namespace Gadgetron {
         return NE2;
     }
     uint32_t BucketToBufferGadget::getNE1(
-        const mrd::EncodingType& encoding, const AcquisitionBucketStats& stats, bool forref) const {
+        const mrd::EncodingType& encoding, const mrd::AcquisitionBucketStats& stats, bool forref) const {
         uint32_t NE1;
 
         /** TODO: This is also ugly... */
@@ -295,7 +295,7 @@ namespace Gadgetron {
     }
 
     mrd::SamplingDescription BucketToBufferGadget::createSamplingDescription(const mrd::EncodingType& encoding,
-        const AcquisitionBucketStats& stats, const mrd::Acquisition& acq, bool forref) const
+        const mrd::AcquisitionBucketStats& stats, const mrd::Acquisition& acq, bool forref) const
     {
         mrd::SamplingDescription sampling;
         sampling.encoded_fov    = encoding.encoded_space.field_of_view_mm;
@@ -394,8 +394,8 @@ namespace Gadgetron {
         return sampling;
     }
 
-    void BucketToBufferGadget::add_acquisition(mrd::BufferedData& dataBuffer, const Core::Acquisition& acq,
-        mrd::EncodingType encoding, const AcquisitionBucketStats& stats, bool forref) {
+    void BucketToBufferGadget::add_acquisition(mrd::BufferedData& dataBuffer, const mrd::Acquisition& acq,
+        mrd::EncodingType encoding, const mrd::AcquisitionBucketStats& stats, bool forref) {
 
         uint16_t NE0  = (uint16_t)dataBuffer.data.get_size(0);
         uint16_t NE1  = (uint16_t)dataBuffer.data.get_size(1);

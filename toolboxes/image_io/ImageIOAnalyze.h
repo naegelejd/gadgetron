@@ -2,11 +2,11 @@
     \brief      Implement the suppor for the Analzye75 medical image format
     \author     Hui Xue
 
-    The ISMRMRD dimensions are mapped to Analyze75 format.
+    The MRD dimensions are mapped to Analyze75 format.
 
     Ref to:
     http://eeg.sourceforge.net/ANALYZE75.pdf
-    http://ismrmrd.sourceforge.net/
+    http://github.com/ismrmrd/mrd/
 */
 
 #pragma once
@@ -83,7 +83,7 @@ struct dsr
     struct data_history hist;
 };
 
-// to suppor the ISMRMRD format
+// to support the MRD format
 // [Ro E1 Cha Slice E2 Con Phase Rep Set Seg]
 
 namespace Gadgetron {

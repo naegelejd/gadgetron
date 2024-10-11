@@ -10,7 +10,7 @@ validation:
   - image_series: 0
     value_comparison_threshold: 1.0e-05
     scale_comparison_threshold: 1.0e-05
-tags:
-- fast
 requirements:
   system_memory: 2048
+tags:
+- fast

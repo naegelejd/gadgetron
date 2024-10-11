@@ -60,7 +60,7 @@ namespace Gadgetron {
         return GADGET_OK;
     }
 
-    int CmrParametricMappingGadget::process(Gadgetron::GadgetContainerMessage< ImageArray >* m1)
+    int CmrParametricMappingGadget::process(Gadgetron::GadgetContainerMessage< mrd::ImageArray >* m1)
     {
         if (perform_timing.value()) { gt_timer_local_.start("CmrParametricMappingGadget::process"); }
 
@@ -72,7 +72,7 @@ namespace Gadgetron {
 
         // -------------------------------------------------------------
 
-        ImageArray* data = m1->getObjectPtr();
+        mrd::ImageArray* data = m1->getObjectPtr();
 
         // print out data info
         if (verbose.value())
@@ -148,7 +148,7 @@ namespace Gadgetron {
         // -------------------------------------------------------------
 
         // calling the mapping
-        ImageArray map, para, map_sd, para_sd;
+        mrd::ImageArray map, para, map_sd, para_sd;
 
         int status = this->perform_mapping(*data, map, para, map_sd, para_sd);
 
@@ -186,7 +186,7 @@ namespace Gadgetron {
             // ----------------------------------------------------------
             if ( send_sd_map.value() && (this->fill_sd_header(map_sd) == GADGET_OK) )
             {
-                Gadgetron::GadgetContainerMessage<ImageArray>* cm2 = new Gadgetron::GadgetContainerMessage<ImageArray>();
+                Gadgetron::GadgetContainerMessage<mrd::ImageArray>* cm2 = new Gadgetron::GadgetContainerMessage<mrd::ImageArray>();
                 *(cm2->getObjectPtr()) = map_sd;
                 if (this->next()->putq(cm2) == -1)
                 {
@@ -197,7 +197,7 @@ namespace Gadgetron {
 
             if (send_map.value() && (this->fill_map_header(map) == GADGET_OK))
             {
-                Gadgetron::GadgetContainerMessage<ImageArray>* cm1 = new Gadgetron::GadgetContainerMessage<ImageArray>();
+                Gadgetron::GadgetContainerMessage<mrd::ImageArray>* cm1 = new Gadgetron::GadgetContainerMessage<mrd::ImageArray>();
                 *(cm1->getObjectPtr()) = map;
                 if (this->next()->putq(cm1) == -1)
                 {
@@ -225,7 +225,7 @@ namespace Gadgetron {
         return GADGET_OK;
     }
 
-    int CmrParametricMappingGadget::fill_map_header(ImageArray& map)
+    int CmrParametricMappingGadget::fill_map_header(mrd::ImageArray& map)
     {
         try
         {
@@ -283,7 +283,7 @@ namespace Gadgetron {
         return GADGET_OK;
     }
 
-    int CmrParametricMappingGadget::fill_sd_header(ImageArray& map_sd)
+    int CmrParametricMappingGadget::fill_sd_header(mrd::ImageArray& map_sd)
     {
         try
         {

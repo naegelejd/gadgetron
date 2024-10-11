@@ -140,10 +140,10 @@ namespace Gadgetron {
         return GADGET_OK;
     }
 
-    int GenericReconGadget::process(Gadgetron::GadgetContainerMessage<ReconData>* m1) {
+    int GenericReconGadget::process(Gadgetron::GadgetContainerMessage<mrd::ReconData>* m1) {
         process_called_times_++;
 
-        ReconData* recon_data = m1->getObjectPtr();
+        mrd::ReconData* recon_data = m1->getObjectPtr();
         if (recon_data->rbits.size() > num_encoding_spaces_) {
             GWARN_STREAM("Incoming recon_bit has more encoding spaces than the protocol : "
                          << recon_data->rbits.size() << " instead of " << num_encoding_spaces_);
@@ -215,7 +215,7 @@ namespace Gadgetron {
 
     // ----------------------------------------------------------------------------------------
 
-    void GenericReconGadget::make_ref_coil_map(DataBuffered& ref, std::vector<size_t> recon_dims,
+    void GenericReconGadget::make_ref_coil_map(mrd::BufferedData& ref, std::vector<size_t> recon_dims,
         hoNDArray<std::complex<float>>& ref_calib, hoNDArray<std::complex<float>>& ref_coil_map, size_t encoding)
     {
         hoNDArray<std::complex<float>>& ref_data = ref.data;
@@ -428,7 +428,7 @@ namespace Gadgetron {
         }
     }
 
-    void GenericReconGadget::compute_image_header(ReconBit& recon_bit, ImageArray& res, size_t e)
+    void GenericReconGadget::compute_image_header(mrd::ReconBit& recon_bit, mrd::ImageArray& res, size_t e)
     {
         size_t RO  = res.data.get_size(0);
         size_t E1  = res.data.get_size(1);
@@ -615,7 +615,7 @@ namespace Gadgetron {
         }
     }
 
-    void GenericReconGadget::compute_snr_scaling_factor(ReconBit& recon_bit, float& effective_acce_factor, float& snr_scaling_ratio)
+    void GenericReconGadget::compute_snr_scaling_factor(mrd::ReconBit& recon_bit, float& effective_acce_factor, float& snr_scaling_ratio)
     {
         size_t RO     = recon_bit.data.data.get_size(0);
         size_t E1     = recon_bit.data.data.get_size(1);
@@ -669,10 +669,10 @@ namespace Gadgetron {
         }
     }
 
-    void GenericReconGadget::send_out_image_array(ImageArray& res, size_t encoding, int series_num, const std::string& data_role)
+    void GenericReconGadget::send_out_image_array(mrd::ImageArray& res, size_t encoding, int series_num, const std::string& data_role)
     {
         this->prepare_image_array(res, encoding, series_num, data_role);
-        this->next()->putq(new GadgetContainerMessage<ImageArray>(res));
+        this->next()->putq(new GadgetContainerMessage<mrd::ImageArray>(res));
     }
 
     GADGET_FACTORY_DECLARE(GenericReconGadget)

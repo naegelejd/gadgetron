@@ -16,8 +16,6 @@ namespace Gadgetron {
     class GenericReconFieldOfViewAdjustmentGadget : public GenericReconImageBase
     {
     public:
-        GADGET_DECLARE(GenericReconFieldOfViewAdjustmentGadget);
-
         typedef GenericReconImageBase BaseClass;
 
         GenericReconFieldOfViewAdjustmentGadget();
@@ -59,11 +57,11 @@ namespace Gadgetron {
 
         // default interface function
         virtual int process_config(const mrd::Header& header);
-        virtual int process(Gadgetron::GadgetContainerMessage< ImageArray >* m1);
+        virtual int process(Gadgetron::GadgetContainerMessage< mrd::ImageArray >* m1);
         virtual int close(unsigned long flags=1);
 
         // adjust FOV
-        int adjust_FOV(ImageArray& data);
+        int adjust_FOV(mrd::ImageArray& data);
 
         // perform fft or ifft
         void perform_fft(size_t E2, const hoNDArray< std::complex<float> >& input, hoNDArray< std::complex<float> >& output);

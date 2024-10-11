@@ -8,7 +8,7 @@ namespace Gadgetron {
 #define M_PI 3.14159265358979323846
 
 MaxwellCorrectionGadget::MaxwellCorrectionGadget(const Core::Context& context, const Core::GadgetProperties& props)
-    : Core::ChannelGadget<Core::Image<std::complex<float>>>(context, props) {
+    : Core::ChannelGadget<mrd::Image<std::complex<float>>>(context, props) {
     maxwell_coefficients_present_ = false;
     maxwell_coefficients_ = std::vector<double>(4, 0);
     auto h = (context.header);
@@ -90,7 +90,7 @@ void MaxwellCorrectionGadget::patient_to_physical_coordinate(std::vector<float>&
     }
 }
 
-void MaxwellCorrectionGadget::find_flow_dir(Core::Image<std::complex<float>> image) {
+void MaxwellCorrectionGadget::find_flow_dir(mrd::Image<std::complex<float>> image) {
     float flow_encoding_dir[3];
 
     if (this->FlowDirection_ == 1) {
@@ -116,7 +116,7 @@ void MaxwellCorrectionGadget::find_flow_dir(Core::Image<std::complex<float>> ima
     this->FlipPhaseDirection_ = std::signbit(flow_encoding_dir[max_element_index]);
 }
 
-void MaxwellCorrectionGadget::process(Core::InputChannel<Core::Image<std::complex<float>>>& in,
+void MaxwellCorrectionGadget::process(Core::InputChannel<mrd::Image<std::complex<float>>>& in,
                                       Core::OutputChannel& out) {
     for (auto image : in) {
         if (maxwell_coefficients_present_) {

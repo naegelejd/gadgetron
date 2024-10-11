@@ -7,7 +7,7 @@
 
 namespace Gadgetron {
 
-void FlowPhaseSubtractionGadget::process(Core::InputChannel<Core::Image<std::complex<float>>>& in,
+void FlowPhaseSubtractionGadget::process(Core::InputChannel<mrd::Image<std::complex<float>>>& in,
                                          Core::OutputChannel& out) {
 
     const auto e_limits = this->header.encoding[0].encoding_limits;
@@ -21,7 +21,7 @@ void FlowPhaseSubtractionGadget::process(Core::InputChannel<Core::Image<std::com
         return;
     }
 
-    std::map<int, std::queue<Core::Image<std::complex<float>>>> queues;
+    std::map<int, std::queue<mrd::Image<std::complex<float>>>> queues;
 
     for (auto image : in) {
         queues[image.head.set.value_or(0)].emplace(image);

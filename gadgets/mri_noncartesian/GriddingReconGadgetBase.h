@@ -8,7 +8,6 @@ namespace Gadgetron {
 	class GriddingReconGadgetBase : public ImageArraySendMixin<GriddingReconGadgetBase<ARRAY>>, public Gadget1<IsmrmrdReconData>
 	{
 	public:
-//		GADGET_DECLARE(GriddingReconGadgetBase);
 		GriddingReconGadgetBase();
 		~GriddingReconGadgetBase();
 

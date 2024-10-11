@@ -20,17 +20,17 @@ namespace {
 
 namespace Gadgetron {
     AsymmetricEchoAdjustROGadget::AsymmetricEchoAdjustROGadget(const Core::Context& context, const Core::GadgetProperties& props)
-        : Core::ChannelGadget<Core::Acquisition>(context, props)
+        : Core::ChannelGadget<mrd::Acquisition>(context, props)
     {
-        auto current_ismrmrd_header = (context.header);
-        maxRO_.resize(current_ismrmrd_header.encoding.size());
-        for (size_t e = 0; e < current_ismrmrd_header.encoding.size(); e++) {
-            mrd::EncodingSpaceType e_space = current_ismrmrd_header.encoding[e].encoded_space;
+        auto current_mrd_header = (context.header);
+        maxRO_.resize(current_mrd_header.encoding.size());
+        for (size_t e = 0; e < current_mrd_header.encoding.size(); e++) {
+            mrd::EncodingSpaceType e_space = current_mrd_header.encoding[e].encoded_space;
             maxRO_[e] = e_space.matrix_size.x;
             GDEBUG_STREAM("max RO for encoding space  " << e << " : " << maxRO_[e]);
         }
     }
-    void AsymmetricEchoAdjustROGadget::process(Core::InputChannel<Core::Acquisition>& in, Core::OutputChannel& out) {
+    void AsymmetricEchoAdjustROGadget::process(Core::InputChannel<mrd::Acquisition>& in, Core::OutputChannel& out) {
         for (auto acq : in) {
             bool is_noise = acq.head.flags.HasFlags(mrd::AcquisitionFlags::kIsNoiseMeasurement);
             size_t channels = acq.Coils();

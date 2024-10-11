@@ -157,7 +157,7 @@ namespace Gadgetron
         /// get the sub image
         void get_sub_image(const std::vector<size_t>& start, std::vector<size_t>& size, Self& out);
 
-        /// ismrmrd image header structure
+        /// mrd image header structure
         mrd::ImageHeader header_;
 
         /// meta attributes

@@ -8,7 +8,6 @@
 #include "GadgetronTimer.h"
 
 #include "mri_core_def.h"
-#include "mri_core_data.h"
 #include "mri_core_utility.h"
 #include "hoNDBSpline.h"
 

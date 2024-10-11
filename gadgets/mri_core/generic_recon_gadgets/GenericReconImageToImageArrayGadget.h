@@ -13,15 +13,12 @@
 #include "hoNDArray.h"
 
 #include "mri_core_def.h"
-#include "mri_core_data.h"
 
-namespace Gadgetron { 
+namespace Gadgetron {
 
 class GenericReconImageToImageArrayGadget : public Gadget3<ISMRMRD::ImageHeader, hoNDArray<std::complex<float>>, ISMRMRD::MetaContainer>
 {
 public:
-    GADGET_DECLARE(GenericReconImageToImageArrayGadget);
-
     typedef std::complex<float> ValueType;
     typedef Gadget3< ISMRMRD::ImageHeader, hoNDArray< ValueType >, ISMRMRD::MetaContainer > BaseClass;
 

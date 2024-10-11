@@ -8,8 +8,8 @@ validation:
   checksum: 0004a0979ff779879a0c947655899ece
   tests:
   - image_series: 1
+requirements:
+  system_memory: 4096
 tags:
 - slow
 - generic
-requirements:
-  system_memory: 4096

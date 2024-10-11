@@ -37,8 +37,8 @@ TEST(AcquisitionAccumulateTriggerTest, slice_trigger) {
         ASSERT_EQ(ec, std::future_status::ready);
         auto message = message_future.get();
 
-        ASSERT_TRUE(Core::convertible_to<AcquisitionBucket>(message));
-        auto bucket = Core::force_unpack<AcquisitionBucket>(std::move(message));
+        ASSERT_TRUE(Core::convertible_to<mrd::AcquisitionBucket>(message));
+        auto bucket = Core::force_unpack<mrd::AcquisitionBucket>(std::move(message));
         ASSERT_EQ(bucket.data.size(), 11);
     } catch (const Core::ChannelClosed&){}
 

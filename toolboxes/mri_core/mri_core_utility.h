@@ -7,8 +7,10 @@
 #pragma once
 
 #include "hoNDArray.h"
-#include "mri_core_data.h"
 #include "hoNDKLT.h"
+
+#include "mrd/types.h"
+
 
 namespace Gadgetron
 {

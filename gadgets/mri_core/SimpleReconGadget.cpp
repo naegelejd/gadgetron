@@ -28,7 +28,7 @@ namespace Gadgetron {
                 auto S = dbuff.data.get_size(5);
                 auto LOC = dbuff.data.get_size(6);
 
-                ImageArray imarray;
+                mrd::ImageArray imarray;
 
                 // The image array data will be [E0,E1,E2,1,N,S,LOC] big
                 // Will collapse across coils at the end

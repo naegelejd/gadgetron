@@ -609,8 +609,6 @@ namespace Gadgetron {
 }
 
 
-#define GADGET_DECLARE(GADGET)
-
 #define GADGET_FACTORY_DECLARE(GadgetClass)                                         \
 std::unique_ptr<Gadgetron::Core::Node> legacy_gadget_factory_##GadgetClass(         \
         const Gadgetron::Core::Context &context,                                    \

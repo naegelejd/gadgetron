@@ -68,20 +68,20 @@ namespace Gadgetron {
         return GADGET_OK;
     }
 
-    int GenericReconCartesianReferencePrepGadget::process(Gadgetron::GadgetContainerMessage< ReconData >* m1)
+    int GenericReconCartesianReferencePrepGadget::process(Gadgetron::GadgetContainerMessage< mrd::ReconData >* m1)
     {
         if (perform_timing.value()) { gt_timer_.start("GenericReconCartesianReferencePrepGadget::process"); }
 
         process_called_times_++;
 
-        ReconData* recon_data = m1->getObjectPtr();
+        mrd::ReconData* recon_data = m1->getObjectPtr();
         if (recon_data->rbits.size() > num_encoding_spaces_)
         {
             GWARN_STREAM("Incoming recon_bit has more encoding spaces than the protocol : " << recon_data->rbits.size() << " instead of " << num_encoding_spaces_);
         }
 
-        GadgetContainerMessage<std::vector<Core::Waveform>>* wav =
-            AsContainerMessage<std::vector<Core::Waveform>>(m1->cont());
+        GadgetContainerMessage<std::vector<mrd::WaveformUint32>>* wav =
+            AsContainerMessage<std::vector<mrd::WaveformUint32>>(m1->cont());
         if (wav)
         {
             if (verbose.value())
@@ -121,7 +121,7 @@ namespace Gadgetron {
                     if (rbit.ref)
                     {
                         // remove the ref
-                        rbit.ref = Core::none;
+                        rbit.ref = std::nullopt;
                     }
                 }
 
@@ -149,8 +149,8 @@ namespace Gadgetron {
             size_t SLC = ref.get_size(6);
 
             // -----------------------------------------
-            // 1) average or pick the ref according to the input parameters; 
-            //    if interleaved mode, sampling times for every E1/E2 location is detected and line by line averaging is performed 
+            // 1) average or pick the ref according to the input parameters;
+            //    if interleaved mode, sampling times for every E1/E2 location is detected and line by line averaging is performed
             //    this is required when irregular cartesian sampling is used or number of frames cannot be divided in full by acceleration factor
             // 2) detect the sampled region and crop the ref data if needed
             // 3) update the sampling_limits

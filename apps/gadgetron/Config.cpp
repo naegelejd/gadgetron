@@ -16,8 +16,6 @@
 #include "Types.h"
 
 using namespace Gadgetron::Main;
-using namespace Gadgetron::Core;
-
 
 namespace {
 
@@ -162,15 +160,15 @@ namespace {
 
 
     template<class Source>
-    optional<Property> make_property(const pugi::xml_node &node) {
-        if (!Source::accepts(node)) return none;
+    std::optional<Property> make_property(const pugi::xml_node &node) {
+        if (!Source::accepts(node)) return std::nullopt;
         return Property{Source::name(node), Source::value(node)};
     }
 
 
     template<class... Sources>
     Property parse_property(const pugi::xml_node &node) {
-        std::vector<optional<Property>> potentials = {make_property<Sources>(node)...};
+        std::vector<std::optional<Property>> potentials = {make_property<Sources>(node)...};
         auto to_bool = [](auto &potential) { return bool(potential); };
 
         auto n_valid = boost::count_if(potentials, to_bool);

@@ -16,15 +16,15 @@ namespace Gadgetron
     */
 
     template <typename T, typename Base >
-    class FloatToFixPointGadget: public Core::ChannelGadget<Core::Image<float>>
+    class FloatToFixPointGadget: public Core::ChannelGadget<mrd::Image<float>>
     {
     public:
 
-        using Core::ChannelGadget<Core::Image<float>>::ChannelGadget;
+        using Core::ChannelGadget<mrd::Image<float>>::ChannelGadget;
 
         ~FloatToFixPointGadget() override = default ;
 
-        void process(Core::InputChannel<Core::Image<float>>& input, Core::OutputChannel& output) override;
+        void process(Core::InputChannel<mrd::Image<float>>& input, Core::OutputChannel& output) override;
     };
 
     class FloatToShortGadget :public FloatToFixPointGadget < short,FloatToShortGadget >

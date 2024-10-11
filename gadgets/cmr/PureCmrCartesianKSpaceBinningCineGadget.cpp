@@ -8,7 +8,7 @@
 namespace {
     using namespace Gadgetron;
     void set_time_stamps(
-        ImageArray& res, const hoNDArray<float>& acq_time, const hoNDArray<float>& cpt_time, float time_tick) {
+        mrd::ImageArray& res, const hoNDArray<float>& acq_time, const hoNDArray<float>& cpt_time, float time_tick) {
 
         size_t N   = res.headers.get_size(0);
         size_t S   = res.headers.get_size(1);
@@ -28,9 +28,8 @@ namespace {
 
 }
 
-Gadgetron::ImageArray Gadgetron::PureCmrCartesianKSpaceBinningCineGadget::process_function(
-    Gadgetron::ReconData args) const {
-
+mrd::ImageArray Gadgetron::PureCmrCartesianKSpaceBinningCineGadget::process_function(mrd::ReconData args) const
+{
     if (args.rbits.size() > 1)
         throw std::runtime_error("Only single encoding space supported");
     size_t encoding = 0;
@@ -89,7 +88,7 @@ CmrKSpaceBinning<float> PureCmrCartesianKSpaceBinningCineGadget::create_binner()
     return binner;
 }
 PureCmrCartesianKSpaceBinningCineGadget::BinningResult PureCmrCartesianKSpaceBinningCineGadget::perform_binning(
-    ReconBit recon_bit, size_t encoding) const {
+    mrd::ReconBit recon_bit, size_t encoding) const {
     size_t RO  = recon_bit.data.data.get_size(0);
     size_t E1  = recon_bit.data.data.get_size(1);
     size_t E2  = recon_bit.data.data.get_size(2);
@@ -187,7 +186,7 @@ PureCmrCartesianKSpaceBinningCineGadget::PureCmrCartesianKSpaceBinningCineGadget
 }
 
 void PureCmrCartesianKSpaceBinningCineGadget::set_image_header(
-    const ReconBit& recon_bit, ImageArray& res, size_t enc) const {
+    const mrd::ReconBit& recon_bit, mrd::ImageArray& res, size_t enc) const {
     size_t RO  = res.data.get_size(0);
     size_t E1  = res.data.get_size(1);
     size_t E2  = res.data.get_size(2);

@@ -14,8 +14,8 @@ validation:
   - image_series: 1
     value_comparison_threshold: 0.075
     scale_comparison_threshold: 0.075
+requirements:
+  system_memory: 4096
 tags:
 - fast
 - generic
-requirements:
-  system_memory: 4096

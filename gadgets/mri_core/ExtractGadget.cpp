@@ -49,7 +49,7 @@ namespace Gadgetron {
 
     }
 
-    void ExtractGadget::process(Core::InputChannel<Core::Image<std::complex<float>>>& in, Core::OutputChannel& out) {
+    void ExtractGadget::process(Core::InputChannel<mrd::Image<std::complex<float>>>& in, Core::OutputChannel& out) {
         size_t count = 0;
         for (auto image : in) {
             for (auto imtype : image_types) {
@@ -66,7 +66,7 @@ namespace Gadgetron {
     }
 
     ExtractGadget::ExtractGadget(const Core::Context& context, const Core::GadgetProperties& props)
-        : Core::ChannelGadget<Core::Image<std::complex<float>>>(context, props) {
+        : Core::ChannelGadget<mrd::Image<std::complex<float>>>(context, props) {
 
         for (int i = 0; i < extract_mask.size(); i++) {
             if (extract_mask[i])

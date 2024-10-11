@@ -8,8 +8,8 @@ validation:
   checksum: d2dcced1b4e868f6b5b0c7ddd693ead2
   tests:
   - image_series: 0
-tags: []
 requirements:
   system_memory: 2048
   gpu_support: 1
   gpu_memory: 1024
+tags: []

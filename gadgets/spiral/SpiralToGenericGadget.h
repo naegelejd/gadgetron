@@ -16,8 +16,6 @@ namespace Gadgetron {
             public Gadget1<mrd::Acquisition> {
 
     public:
-        GADGET_DECLARE(SpiralToGenericGadget);
-
         SpiralToGenericGadget();
 
         virtual ~SpiralToGenericGadget();

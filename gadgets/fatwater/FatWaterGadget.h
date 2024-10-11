@@ -5,15 +5,13 @@
 #include "Gadget.h"
 #include "hoNDArray.h"
 
-#include "mri_core_data.h"
 #include "vector_td_io.h"
 namespace Gadgetron{
 
-  class FatWaterGadget : 
+  class FatWaterGadget :
   public Gadget1<IsmrmrdImageArray>
     {
     public:
-      GADGET_DECLARE(FatWaterGadget)
       FatWaterGadget();
 
       using value_range = vector_td<float,2>;
@@ -33,13 +31,13 @@ namespace Gadgetron{
       GADGET_PROPERTY(sample_time_us, float, "Sample time in microseconds for frequency offset correction. Set to 0 for disabled",0);
 
 
-	
+
     protected:
       virtual int process(GadgetContainerMessage<IsmrmrdImageArray>* m1);
       virtual int process_config(ACE_Message_Block* mb);
 
 
-      
+
 
     private:
       std::vector<float> echoTimes_;

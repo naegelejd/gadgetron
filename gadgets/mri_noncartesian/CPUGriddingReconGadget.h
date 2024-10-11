@@ -1,12 +1,12 @@
 /**
 	\brief CPU Gridding reconstruction gadget
 
-	Handles reconstruction of 2D float data with 
-	density compensation provided. Iterative reconstruction 
+	Handles reconstruction of 2D float data with
+	density compensation provided. Iterative reconstruction
 	can be easily integrated
 */
 
-#pragma once 
+#pragma once
 #include "generic_recon_gadgets/GenericReconGadget.h"
 #include "hoNDArray.h"
 #include "GriddingReconGadgetBase.h"
@@ -17,13 +17,8 @@ namespace Gadgetron{
 
 	public:
 
-		GADGET_DECLARE(CPUGriddingReconGadget);
-
 		CPUGriddingReconGadget();
 
 		~CPUGriddingReconGadget();
-	
-
-
 	};
 }

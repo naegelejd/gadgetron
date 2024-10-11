@@ -34,17 +34,17 @@ template<template<class> class ARRAY> 	int GriddingReconGadgetBase<ARRAY>::proce
 
 		image_dims_.push_back(matrixsize.x);
 		image_dims_.push_back(matrixsize.y);
-		
-		//Figure out what the oversampled matrix size should be taking the warp size into consideration. 
+
+		//Figure out what the oversampled matrix size should be taking the warp size into consideration.
 		unsigned int warp_size = 32;
 		image_dims_os_ = uint64d2
 			(((static_cast<size_t>(std::ceil(image_dims_[0]*oversampling_factor_))+warp_size-1)/warp_size)*warp_size,
 			 ((static_cast<size_t>(std::ceil(image_dims_[1]*oversampling_factor_))+warp_size-1)/warp_size)*warp_size);
-		
+
 		// In case the warp_size constraint kicked in
 		oversampling_factor_ = float(image_dims_os_[0])/float(image_dims_[0]);
 		this->initialize_encoding_space_limits(h);
-		
+
 		return GADGET_OK;
 	}
 
@@ -63,7 +63,7 @@ template<template<class> class ARRAY> 	int GriddingReconGadgetBase<ARRAY>::proce
 		for (size_t e = 0; e < recon_bit_->rbit_.size(); e++)
 		{
 
-			IsmrmrdDataBuffered* buffer = &(recon_bit_->rbit_[e].data_);
+			mrd::BufferedData* buffer = &(recon_bit_->rbit_[e].data_);
 
 			size_t RO = buffer->data_.get_size(0);
 			size_t E1 = buffer->data_.get_size(1);
@@ -78,8 +78,8 @@ template<template<class> class ARRAY> 	int GriddingReconGadgetBase<ARRAY>::proce
 				m1->release();
 				return GADGET_FAIL;
 			}
-			
-			if (buffer->trajectory_ == Core::none) {
+
+			if (buffer->trajectory_ == std::nullopt) {
 				GERROR("Trajectories not found. Bailing out.\n");
 				m1->release();
 				return GADGET_FAIL;
@@ -92,7 +92,7 @@ template<template<class> class ARRAY> 	int GriddingReconGadgetBase<ARRAY>::proce
 			boost::shared_ptr<ARRAY<floatd2>> traj;
 
 			auto & trajectory = *buffer->trajectory_;
-			
+
 			if (buffer->headers_[0].trajectory_dimensions == 3){
 				auto traj_dcw = separate_traj_and_dcw(&trajectory);
 				dcw = boost::make_shared<ARRAY<float>>(*std::get<1>(traj_dcw).get());
@@ -108,7 +108,7 @@ template<template<class> class ARRAY> 	int GriddingReconGadgetBase<ARRAY>::proce
 
 			auto permuted = permute(*(hoNDArray<float_complext>*)&buffer->data_,new_order);
 			ARRAY<float_complext> data(permuted);
-			
+
 			if (dcw){
 				float scale_factor = float(prod(image_dims_os_))/asum(dcw.get());
 				*dcw *= scale_factor;
@@ -155,7 +155,7 @@ template<template<class> class ARRAY> 	boost::shared_ptr<ARRAY<float_complext> >
 		size_t ncoils ) {
 		GadgetronTimer timer("Reconstruct");
 		//We have density compensation and iteration is set to false
-		if (!iterate.value() && dcw) { 
+		if (!iterate.value() && dcw) {
 
 			auto plan = NFFT<ARRAY,float,2>::make_plan(from_std_vector<size_t,2>(image_dims_),image_dims_os_,kernel_width_);
 			std::vector<size_t> recon_dims = image_dims_;
@@ -165,12 +165,12 @@ template<template<class> class ARRAY> 	boost::shared_ptr<ARRAY<float_complext> >
 			std::vector<size_t> flat_dims = {traj->get_number_of_elements()};
 			ARRAY<floatd2> flat_traj(flat_dims,traj->get_data_ptr());
 
-			
+
 			plan->preprocess(flat_traj,NFFT_prep_mode::NC2C);
 			plan->compute(*data,*result,dcw,NFFT_comp_mode::BACKWARDS_NC2C);
 
 			return boost::shared_ptr<ARRAY<float_complext>>(result);
-			
+
 		} else { //No density compensation, we have to do iterative reconstruction.
 			std::vector<size_t> recon_dims = image_dims_;
 			recon_dims.push_back(ncoils);

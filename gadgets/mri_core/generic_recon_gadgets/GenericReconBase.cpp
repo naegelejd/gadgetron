@@ -62,8 +62,8 @@ namespace Gadgetron {
         return GADGET_OK;
     }
 
-    template class GenericReconBase<ReconData>;
-    template class GenericReconBase<ImageArray>;
+    template class GenericReconBase<mrd::ReconData>;
+    template class GenericReconBase<mrd::ImageArray>;
     template class GenericReconBase<mrd::ImageHeader>;
 
     GenericReconKSpaceReadoutBase::GenericReconKSpaceReadoutBase() : BaseClass()

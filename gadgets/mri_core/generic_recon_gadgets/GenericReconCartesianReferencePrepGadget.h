@@ -15,8 +15,6 @@ namespace Gadgetron {
     class GenericReconCartesianReferencePrepGadget : public GenericReconDataBase
     {
     public:
-        GADGET_DECLARE(GenericReconCartesianReferencePrepGadget);
-
         typedef GenericReconDataBase BaseClass;
 
         GenericReconCartesianReferencePrepGadget();
@@ -67,6 +65,6 @@ namespace Gadgetron {
         // --------------------------------------------------
         // default interface function
         virtual int process_config(const mrd::Header& header);
-        virtual int process(Gadgetron::GadgetContainerMessage< ReconData >* m1);
+        virtual int process(Gadgetron::GadgetContainerMessage< mrd::ReconData >* m1);
     };
 }

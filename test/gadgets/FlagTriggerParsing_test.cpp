@@ -10,7 +10,7 @@ TEST(FlagTrigger,simple){
 
     auto func = Gadgetron::FlagTriggerGadget::create_trigger_filter("last_in_slice");
 
-    auto acquisition = Core::Acquisition();
+    auto acquisition = mrd::Acquisition();
     auto& head = acquisition.head;
 
     ASSERT_FALSE(func(acquisition));
@@ -30,7 +30,7 @@ TEST(FlagTrigger,or_test){
 
     auto func = Gadgetron::FlagTriggerGadget::create_trigger_filter("last_in_slice  ||   last_in_repetition");
 
-    auto acquisition = Core::Acquisition();
+    auto acquisition = mrd::Acquisition();
     auto& head = acquisition.head;
 
     ASSERT_FALSE(func(acquisition));
@@ -50,7 +50,7 @@ TEST(FlagTrigger,and_test){
 
     auto func = Gadgetron::FlagTriggerGadget::create_trigger_filter("last_in_slice  &&   last_in_repetition");
 
-    auto acquisition = Core::Acquisition();
+    auto acquisition = mrd::Acquisition();
     auto& head = acquisition.head;
 
     ASSERT_FALSE(func(acquisition));
@@ -69,7 +69,7 @@ TEST(FlagTrigger,and_test){
 TEST(FlagTrigger,not_test){
     auto func = Gadgetron::FlagTriggerGadget::create_trigger_filter("last_in_slice   &&  !last_in_repetition");
 
-    auto acquisition = Core::Acquisition();
+    auto acquisition = mrd::Acquisition();
     auto& head = acquisition.head;
 
     ASSERT_FALSE(func(acquisition));
@@ -90,7 +90,7 @@ TEST(FlagTrigger,presedence_test){
 
     auto func = Gadgetron::FlagTriggerGadget::create_trigger_filter("last_in_slice || last_in_repetition && first_in_slice");
 
-    auto acquisition = Core::Acquisition();
+    auto acquisition = mrd::Acquisition();
     auto& head = acquisition.head;
 
     ASSERT_FALSE(func(acquisition));
@@ -113,7 +113,7 @@ TEST(FlagTrigger,parenthesis_test){
 
     auto func = Gadgetron::FlagTriggerGadget::create_trigger_filter("( last_in_slice || last_in_repetition ) && first_in_slice");
 
-    auto acquisition = Core::Acquisition();
+    auto acquisition = mrd::Acquisition();
     auto& head = acquisition.head;
 
     ASSERT_FALSE(func(acquisition));

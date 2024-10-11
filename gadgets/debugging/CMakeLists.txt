@@ -1,16 +1,12 @@
 include_directories(${HDF5_INCLUDE_DIRS})
 
 set(gadgetron_debugging_header_files
-        AcquisitionPassthroughGadget.h
-        CplxDumpGadget.h
         PseudoReplicatorGadget.h
         RateLimitGadget.h
         WhiteNoiseInjectorGadget.h
         )
 
 set(gadgetron_debugging_src_files
-        AcquisitionPassthroughGadget.cpp
-        CplxDumpGadget.cpp
         PseudoReplicatorGadget.cpp
         RateLimitGadget.cpp
         WhiteNoiseInjectorGadget.cpp
@@ -23,19 +19,7 @@ add_library(gadgetron_debugging SHARED
 
 set_target_properties(gadgetron_debugging PROPERTIES VERSION ${GADGETRON_VERSION_STRING} SOVERSION ${GADGETRON_SOVERSION})
 
-target_link_libraries(gadgetron_debugging
-        gadgetron_core
-        gadgetron_mricore
-        gadgetron_toolbox_log
-        gadgetron_toolbox_cpucore
-        gadgetron_toolbox_cpufft
-        gadgetron_toolbox_image_analyze_io
-        gadgetron_toolbox_denoise
-        gadgetron_toolbox_hostutils
-        gadgetron_toolbox_cpuoperator
-        gadgetron_toolbox_cpuklt
-        gadgetron_toolbox_mri_core
-        )
+target_link_libraries(gadgetron_debugging gadgetron_core)
 
 target_include_directories(gadgetron_debugging
         PUBLIC

@@ -14,8 +14,6 @@ namespace Gadgetron {
     class NoiseCovariancePlottingGadget : public Gadget2<ISMRMRD::ImageHeader, hoNDArray< std::complex<float> > >
     {
     public:
-        GADGET_DECLARE(NoiseCovariancePlottingGadget);
-
         typedef Gadget2<ISMRMRD::ImageHeader, hoNDArray< std::complex<float> > > BaseClass;
 
         NoiseCovariancePlottingGadget();

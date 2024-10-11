@@ -23,8 +23,6 @@ namespace Gadgetron {
             public Gadget1<mrd::Acquisition> {
 
     public:
-        GADGET_DECLARE(gpuSpiralSensePrepGadget);
-
         gpuSpiralSensePrepGadget();
 
         virtual ~gpuSpiralSensePrepGadget();

@@ -10,16 +10,16 @@ set(plplot_files ${header_files} ${src_files} )
 
 source_group(plplot FILES ${header_files} ${src_files})
 
-add_library(gadgetron_toolbox_plplot SHARED 
+add_library(gadgetron_toolbox_plplot SHARED
             ${plplot_files} )
 
 set_target_properties(gadgetron_toolbox_plplot PROPERTIES VERSION ${GADGETRON_VERSION_STRING} SOVERSION ${GADGETRON_SOVERSION})
 
-target_link_libraries(gadgetron_toolbox_plplot 
+target_link_libraries(gadgetron_toolbox_plplot
                       ${PLPLOT_LIBRARIES}
                       gadgetron_toolbox_cpucore
                       gadgetron_toolbox_log
-                      gadgetron_toolbox_cpucore_math 
+                      gadgetron_toolbox_cpucore_math
                       gadgetron_toolbox_mri_core
                       gadgetron_toolbox_cpucore_math )
 
@@ -34,13 +34,8 @@ install(TARGETS gadgetron_toolbox_plplot
 	COMPONENT main
 )
 
-
-install (FILES  
-        ${header_files} 
+install (FILES
+        ${header_files}
         DESTINATION ${GADGETRON_INSTALL_INCLUDE_PATH} COMPONENT main)
-
-if (GTEST_FOUND)
-#    add_subdirectory(ut)
-endif ()
 
 set(GADGETRON_BUILD_RPATH "${CMAKE_CURRENT_BINARY_DIR};${GADGETRON_BUILD_RPATH}" PARENT_SCOPE)

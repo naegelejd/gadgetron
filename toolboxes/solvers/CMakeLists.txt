@@ -1,6 +1,4 @@
-
-
-install(FILES 
+install(FILES
   solver.h
   linearOperatorSolver.h
   cgSolver.h
@@ -12,14 +10,13 @@ install(FILES
   cgCallback.h
   cgPreconditioner.h
   lwSolver.h
-  lbfgsSolver.h
   gpSolver.h
   gpBbSolver.h
   eigenTester.h
   osMOMSolver.h
   osSPSSolver.h
   osLALMSolver.h
-        
+
   DESTINATION ${GADGETRON_INSTALL_INCLUDE_PATH} COMPONENT main)
 
 add_library(gadgetron_toolbox_solvers INTERFACE)

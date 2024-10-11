@@ -70,7 +70,7 @@ namespace Gadgetron { namespace Test {
     }
 
 
-    inline Core::Acquisition generate_acquisition(size_t number_of_samples, size_t channels, size_t measurement_uid = 42){
+    inline mrd::Acquisition generate_acquisition(size_t number_of_samples, size_t channels, size_t measurement_uid = 42){
         mrd::Acquisition acq;
         acq.head.channel_order = std::vector<uint32_t>(channels, 1);
         acq.head.center_sample = number_of_samples / 2;

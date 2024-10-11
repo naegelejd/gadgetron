@@ -31,7 +31,7 @@ set(test_src_files
         gadgets/FlagTriggerParsing_test.cpp
     )
 
-if (PYTHONLIBS_FOUND)
+if (BUILD_PYTHON_SUPPORT)
     set(test_src_files ${test_src_files} python_converter_test.cpp)
 endif ()
 
@@ -80,8 +80,8 @@ target_link_libraries(test_all
         GTest::gmock
     )
 
-if (PYTHONLIBS_FOUND)
-target_link_libraries(test_all gadgetron_toolbox_python python)
+if (BUILD_PYTHON_SUPPORT)
+    target_link_libraries(test_all gadgetron_toolbox_python python)
 endif ()
 
 gtest_discover_tests(test_all DISCOVERY_MODE PRE_TEST)

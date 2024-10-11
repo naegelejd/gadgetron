@@ -16,9 +16,6 @@ namespace Gadgetron
     class ImageResizingGadget :public Gadget2<ISMRMRD::ImageHeader, hoNDArray< std::complex<float> > >
     {
     public:
-
-        GADGET_DECLARE(ImageResizingGadget);
-
         typedef std::complex<float> ValueType;
         typedef hoNDArray< ValueType > ArrayType;
 

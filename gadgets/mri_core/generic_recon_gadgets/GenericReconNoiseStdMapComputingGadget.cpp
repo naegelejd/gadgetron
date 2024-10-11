@@ -42,13 +42,13 @@ namespace Gadgetron {
         return GADGET_OK;
     }
 
-    int GenericReconNoiseStdMapComputingGadget::process(Gadgetron::GadgetContainerMessage< ImageArray >* m1)
+    int GenericReconNoiseStdMapComputingGadget::process(Gadgetron::GadgetContainerMessage< mrd::ImageArray >* m1)
     {
         GDEBUG_CONDITION_STREAM(verbose.value(), "GenericReconNoiseStdMapComputingGadget::process(...) starts ... ");
 
         process_called_times_++;
 
-        ImageArray* recon_res_ = m1->getObjectPtr();
+        mrd::ImageArray* recon_res_ = m1->getObjectPtr();
 
         // print out recon info
         if (verbose.value())
@@ -101,7 +101,7 @@ namespace Gadgetron {
         }
 
         // make a copy for results
-        Gadgetron::GadgetContainerMessage<ImageArray>* cm1 = new Gadgetron::GadgetContainerMessage<ImageArray>();
+        Gadgetron::GadgetContainerMessage<mrd::ImageArray>* cm1 = new Gadgetron::GadgetContainerMessage<mrd::ImageArray>();
         *(cm1->getObjectPtr()) = *(m1->getObjectPtr());
 
         // pass on the incoming image array

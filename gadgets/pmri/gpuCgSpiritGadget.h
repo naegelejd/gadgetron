@@ -21,9 +21,6 @@ namespace Gadgetron{
    {
 
   public:
-
-    GADGET_DECLARE(gpuCgSpiritGadget);
-
     gpuCgSpiritGadget();
     virtual ~gpuCgSpiritGadget();
   protected:
@@ -55,7 +52,7 @@ namespace Gadgetron{
 
     // Define regularization image operator
     //boost::shared_ptr< cuImageOperator<float_complext> > R_;
-    
+
   };
 }
 #endif //gpuCgSpiritGadget

@@ -82,19 +82,19 @@ namespace Gadgetron {
         return GADGET_OK;
     }
 
-    int GenericReconCartesianSpiritGadget::process(Gadgetron::GadgetContainerMessage< ReconData >* m1)
+    int GenericReconCartesianSpiritGadget::process(Gadgetron::GadgetContainerMessage< mrd::ReconData >* m1)
     {
         if (perform_timing.value()) { gt_timer_local_.start("GenericReconCartesianSpiritGadget::process"); }
 
         process_called_times_++;
 
-        ReconData* recon_bit_ = m1->getObjectPtr();
+        mrd::ReconData* recon_bit_ = m1->getObjectPtr();
         if (recon_bit_->rbits.size() > num_encoding_spaces_)
         {
             GWARN_STREAM("Incoming recon_bit has more encoding spaces than the protocol : " << recon_bit_->rbits.size() << " instead of " << num_encoding_spaces_);
         }
 
-        GadgetContainerMessage<std::vector<Core::Waveform>>* wav = AsContainerMessage<std::vector<Core::Waveform>>(m1->cont());
+        GadgetContainerMessage<std::vector<mrd::WaveformUint32>>* wav = AsContainerMessage<std::vector<mrd::WaveformUint32>>(m1->cont());
         if (wav)
         {
             if (verbose.value())
@@ -145,7 +145,7 @@ namespace Gadgetron {
 
                 // ---------------------------------------------------------------
 
-                // recon_bit_->rbit_[e].ref_ = Core::none;
+                // recon_bit_->rbit_[e].ref_ = std::nullopt;
             }
 
             if (recon_bit_->rbits[e].data.data.get_number_of_elements() > 0)
@@ -173,7 +173,7 @@ namespace Gadgetron {
                 if (perform_timing.value()) { gt_timer_.stop(); }
             }
 
-            recon_bit_->rbits[e].ref = Core::none;
+            recon_bit_->rbits[e].ref = std::nullopt;
             recon_obj_[e].recon_res_.data.clear();
             recon_obj_[e].recon_res_.headers.clear();
             recon_obj_[e].recon_res_.meta.clear();
@@ -186,7 +186,7 @@ namespace Gadgetron {
         return GADGET_OK;
     }
 
-    void GenericReconCartesianSpiritGadget::perform_calib(ReconBit& recon_bit, ReconObjType& recon_obj, size_t e)
+    void GenericReconCartesianSpiritGadget::perform_calib(mrd::ReconBit& recon_bit, ReconObjType& recon_obj, size_t e)
     {
         try
         {
@@ -308,7 +308,7 @@ namespace Gadgetron {
         }
     }
 
-    void GenericReconCartesianSpiritGadget::perform_unwrapping(ReconBit& recon_bit, ReconObjType& recon_obj, size_t e)
+    void GenericReconCartesianSpiritGadget::perform_unwrapping(mrd::ReconBit& recon_bit, ReconObjType& recon_obj, size_t e)
     {
         try
         {
@@ -606,7 +606,7 @@ namespace Gadgetron {
             {
                 hoNDArray< std::complex<float> > complexImBuf(RO, E1, E2, dstCHA);
 
-#pragma omp for 
+#pragma omp for
                 for (ii = 0; ii < num; ii++)
                 {
                     size_t slc = ii / (N*S);
@@ -674,7 +674,7 @@ namespace Gadgetron {
             dim[1] = E1;
             dim[2] = CHA;
 
-#pragma omp parallel default(none) private(ii) shared(num, N, S, RO, E1, CHA, dim, ref_N, ref_S, kspace, res, kspace_Shifted, ker_Shifted, iter_max, iter_thres, print_iter) num_threads(numThreads) if(num>1) 
+#pragma omp parallel default(none) private(ii) shared(num, N, S, RO, E1, CHA, dim, ref_N, ref_S, kspace, res, kspace_Shifted, ker_Shifted, iter_max, iter_thres, print_iter) num_threads(numThreads) if(num>1)
             {
                 boost::shared_ptr< hoSPIRIT2DOperator< std::complex<float> > > oper(new hoSPIRIT2DOperator< std::complex<float> >(dim));
                 hoSPIRIT2DOperator< std::complex<float> >& spirit = *oper;
@@ -696,7 +696,7 @@ namespace Gadgetron {
                 hoNDArray< std::complex<float> > b(RO, E1, CHA);
                 hoNDArray< std::complex<float> > unwarppedKSpace(RO, E1, CHA);
 
-#pragma omp for 
+#pragma omp for
                 for (ii = 0; ii < num; ii++)
                 {
                     size_t slc = ii / (N*S);

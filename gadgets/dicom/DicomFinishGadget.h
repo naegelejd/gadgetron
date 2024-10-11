@@ -38,8 +38,6 @@ namespace Gadgetron
 
         typedef Gadget1<ISMRMRD::ImageHeader> BaseClass;
 
-        GADGET_DECLARE(DicomFinishGadget);
-
         DicomFinishGadget()
             : BaseClass()
             , dcmFile()

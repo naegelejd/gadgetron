@@ -12,8 +12,8 @@ validation:
   checksum: d27c490cb888b690edcd7440802724b1
   tests:
   - image_series: 300
+requirements:
+  system_memory: 4096
 tags:
 - fast
 - generic
-requirements:
-  system_memory: 4096

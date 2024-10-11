@@ -1,5 +1,5 @@
 /** \file   GenericReconNoiseStdMapComputingGadget.h
-    \brief  This is the class gadget to compute standard deviation map, working on the IsmrmrdImageArray.
+    \brief  This is the class gadget to compute standard deviation map, working on the mrd::ImageArray.
 
             This class is a part of general cartesian recon chain. It computes the std map on incoming SNR images.
 
@@ -15,8 +15,6 @@ namespace Gadgetron {
     class GenericReconNoiseStdMapComputingGadget : public GenericReconImageBase
     {
     public:
-        GADGET_DECLARE(GenericReconNoiseStdMapComputingGadget);
-
         typedef float real_value_type;
         typedef std::complex<real_value_type> ValueType;
         typedef ValueType T;
@@ -44,7 +42,7 @@ namespace Gadgetron {
 
         // default interface function
         virtual int process_config(const mrd::Header& header);
-        virtual int process(Gadgetron::GadgetContainerMessage< ImageArray >* m1);
+        virtual int process(Gadgetron::GadgetContainerMessage< mrd::ImageArray >* m1);
 
     };
 }

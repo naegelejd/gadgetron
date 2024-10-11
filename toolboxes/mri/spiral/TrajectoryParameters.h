@@ -1,6 +1,5 @@
 #pragma once
 
-#include <ismrmrd/xml.h>
 #include "log.h"
 #include "Gadget.h"
 #include "vds.h"
@@ -17,7 +16,7 @@ namespace Spiral {
         calculate_trajectories_and_weight(const mrd::Acquisition &acq);
 
     private:
-        Core::optional<hoNDArray<std::complex<float>>> girf_kernel;
+        std::optional<hoNDArray<std::complex<float>>> girf_kernel;
         float girf_sampling_time_us;
         long Tsamp_ns_;
         long Nints_;

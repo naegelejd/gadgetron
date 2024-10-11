@@ -14,6 +14,6 @@ validation:
   - image_series: 0
     value_comparison_threshold: 0.001
     scale_comparison_threshold: 0.001
-tags: []
 requirements:
   system_memory: 1024
+tags: []

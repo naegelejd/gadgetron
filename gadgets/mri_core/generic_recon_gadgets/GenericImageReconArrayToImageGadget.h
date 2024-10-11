@@ -13,8 +13,6 @@ namespace Gadgetron {
     class GenericImageReconArrayToImageGadget : public GenericImageReconGadget
     {
     public:
-        GADGET_DECLARE(GenericImageReconArrayToImageGadget);
-
         typedef GenericImageReconGadget BaseClass;
 
         typedef BaseClass::ValueType ValueType;

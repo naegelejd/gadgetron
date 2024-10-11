@@ -8,12 +8,10 @@
 #include "mri_core_utility.h"
 
 using namespace Gadgetron;
-using namespace Gadgetron::Core;
-
 namespace {
 
     template<class T>
-    Image<T> merge(const Image<T> &a, const Image<T> &b)
+    mrd::Image<T> merge(const mrd::Image<T> &a, const mrd::Image<T> &b)
     {
         const auto& data_a = a.data;
         const auto& data_b = b.data;
@@ -38,23 +36,23 @@ namespace {
     }
 
     template<class A, class B>
-    Image<A> merge(const Image<A> &, const Image<B> &) {
+    mrd::Image<A> merge(const mrd::Image<A> &, const mrd::Image<B> &) {
         throw std::runtime_error("Images have different types; merging will be a hassle.");
     }
 }
 
 namespace Gadgetron::Examples {
 
-    ImageLayerer::ImageLayerer(const Context &, const GadgetProperties &properties) : Merge(properties) {}
+    ImageLayerer::ImageLayerer(const Core::Context &, const Core::GadgetProperties &properties) : Merge(properties) {}
 
-    void ImageLayerer::process(std::map<std::string, GenericInputChannel> input, OutputChannel output) {
+    void ImageLayerer::process(std::map<std::string, Core::GenericInputChannel> input, Core::OutputChannel output) {
 
-        auto unchanged = InputChannel<AnyImage>(input.at("unchanged"), output);
-        auto inverted = InputChannel<AnyImage>(input.at("inverted"), output);
+        auto unchanged = Core::InputChannel<Core::AnyImage>(input.at("unchanged"), output);
+        auto inverted = Core::InputChannel<Core::AnyImage>(input.at("inverted"), output);
 
         for (auto image : unchanged) {
-            auto merged = Core::visit(
-                    [](const auto &a, const auto &b) -> AnyImage { return merge(a, b); },
+            auto merged = std::visit(
+                    [](const auto &a, const auto &b) -> Core::AnyImage { return merge(a, b); },
                     image,
                     inverted.pop()
             );

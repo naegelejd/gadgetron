@@ -25,12 +25,9 @@ add_subdirectory(denoise)
 
 add_subdirectory(image_io)
 add_subdirectory(T1)
-# Should we compile the python toolbox
+
 if (BUILD_PYTHON_SUPPORT)
-    message("Find python; build gadgetron toolbox python")
     add_subdirectory(python)
-else ()
-    message("Cannot find python; do not build gadgetron toolbox python")
 endif ()
 
 if (ARMADILLO_FOUND AND Boost_FOUND AND PLPLOT_FOUND)
@@ -44,7 +41,7 @@ if(CUDA_FOUND)
     # (e.g. https://github.com/NVIDIA/cub/blob/48768e86a40c25d231a6ff1e04107a60016314a7/cub/util_device.cuh#L208)
     # that when used from multiple libraries can cause crashes.
     # See https://github.com/NVIDIA/thrust/issues/1401 for more information.
-    cuda_add_library(gadgetron_toolbox_gpu SHARED 
+    cuda_add_library(gadgetron_toolbox_gpu SHARED
         core/gpu/check_CUDA.h
         core/gpu/CUBLASContextProvider.cpp
         core/gpu/CUBLASContextProvider.h
@@ -161,7 +158,7 @@ if(CUDA_FOUND)
 
     set_target_properties(gadgetron_toolbox_gpu PROPERTIES VERSION ${GADGETRON_VERSION_STRING} SOVERSION ${GADGETRON_SOVERSION})
 
-    target_link_libraries(gadgetron_toolbox_gpu 
+    target_link_libraries(gadgetron_toolbox_gpu
         gadgetron_toolbox_cpucore
         gadgetron_toolbox_cpucore_math
         gadgetron_toolbox_log
@@ -169,8 +166,8 @@ if(CUDA_FOUND)
         gadgetron_toolbox_operator
         gadgetron_toolbox_sdc
         ${CUDA_LIBRARIES}
-        ${CUDA_CUFFT_LIBRARIES} 
-        ${CUDA_CUBLAS_LIBRARIES} 
+        ${CUDA_CUFFT_LIBRARIES}
+        ${CUDA_CUBLAS_LIBRARIES}
         ${CUDA_CUSPARSE_LIBRARIES}
         ${MKL_LIBRARIES}
     )
@@ -198,7 +195,7 @@ if(CUDA_FOUND)
         core/gpu/cuNDArray.h
         core/gpu/cuSparseMatrix.h
         core/gpu/GadgetronCuException.h
-        core/gpu/GPUTimer.h				
+        core/gpu/GPUTimer.h
         core/gpu/hoCuNDArray_blas.h
         core/gpu/hoCuNDArray_elemwise.h
         core/gpu/hoCuNDArray_math.h
@@ -228,7 +225,7 @@ if(CUDA_FOUND)
         mri/pmri/gpu/sense_utilities.h
         mri/pmri/gpu/senseOperator.h
         mri/sdc/gpu/cuSDC.h
-        nfft/gpu/cuGriddingConvolution.h 
+        nfft/gpu/cuGriddingConvolution.h
         nfft/gpu/cuNFFT.h
         operators/gpu/cuConvolutionOperator.h
         operators/gpu/cuDiagonalOperator.h
@@ -273,5 +270,5 @@ if(CUDA_FOUND)
         DESTINATION ${GADGETRON_INSTALL_INCLUDE_PATH} COMPONENT main)
 
 else()
-    message("CUDA not found, not compiling gpu toolbox")
+    message(STATUS "CUDA not found, not compiling gpu toolbox")
 endif()

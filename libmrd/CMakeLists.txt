@@ -14,16 +14,21 @@ set(mrd_generated_files
     binary/protocols.cc
 )
 
+set(mrd_model_dir ${CMAKE_CURRENT_SOURCE_DIR}/mrd/model)
 set(mrd_include_dir ${CMAKE_CURRENT_BINARY_DIR}/generated)
 set(mrd_generated_dir ${mrd_include_dir}/mrd)
 
+file(GLOB mrd_model_files ${mrd_model_dir}/*.yml)
+message(STATUS "mrd_model_files: ${mrd_model_files}")
+
 list(TRANSFORM mrd_generated_files PREPEND ${mrd_generated_dir}/)
+message(STATUS "mrd_generated_files: ${mrd_generated_files}")
 
 add_custom_command(
     OUTPUT ${mrd_generated_files}
-    COMMAND yardl generate -c cpp.overrideArrayHeader=gadgetron-arrays.h -c cpp.sourcesOutputDir="${mrd_generated_dir}"
-    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/mrd/model
-    # DEPENDS
+    COMMAND yardl generate -c cpp.overrideArrayHeader=gadgetron-arrays.h -c cpp.sourcesOutputDir=${mrd_generated_dir}
+    WORKING_DIRECTORY ${mrd_model_dir}
+    DEPENDS ${mrd_model_files}
     VERBATIM
 )
 
@@ -43,7 +48,7 @@ target_link_libraries(gadgetron_mrd
 )
 
 install(TARGETS gadgetron_mrd
-		EXPORT gadgetron-export
+    EXPORT gadgetron-export
 	LIBRARY DESTINATION lib
 	ARCHIVE DESTINATION lib
 	RUNTIME DESTINATION bin
@@ -56,44 +61,45 @@ install(DIRECTORY ${mrd_generated_dir}
     FILES_MATCHING PATTERN "*.h"
 )
 
-# add_executable(
-#   ismrmrd_to_mrd
-#   mrd/cpp/mrd-tools/ismrmrd_to_mrd.cc
-#   mrd/cpp/mrd-tools/converters.cc
-#     mrd/cpp/mrd/protocols.cc
-#     mrd/cpp/mrd/types.cc
-#     mrd/cpp/mrd/binary/protocols.cc
-# )
+#### TODO: Everything below will be removed when mrd is published with intermediate types (e.g. MRD v2.1)
 
-# target_include_directories(ismrmrd_to_mrd
-#     PUBLIC "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/mrd/cpp/>"
-# )
+find_package(ISMRMRD CONFIG REQUIRED)
 
-# target_link_libraries(
-#   ismrmrd_to_mrd
-# #   mrd::mrd
-#   ISMRMRD::ISMRMRD
-# )
+add_executable(
+    ismrmrd_to_mrd
+    mrd/cpp/mrd-tools/ismrmrd_to_mrd.cc
+    mrd/cpp/mrd-tools/converters.cc
+    mrd/cpp/mrd/protocols.cc
+    mrd/cpp/mrd/types.cc
+    mrd/cpp/mrd/binary/protocols.cc
+)
 
-# add_executable(
-#   mrd_to_ismrmrd
-#   mrd/cpp/mrd-tools/mrd_to_ismrmrd.cc
-#   mrd/cpp/mrd-tools/converters.cc
-#     mrd/cpp/mrd/protocols.cc
-#     mrd/cpp/mrd/types.cc
-#     mrd/cpp/mrd/binary/protocols.cc
+target_include_directories(ismrmrd_to_mrd
+    PUBLIC "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/mrd/cpp/>"
+)
 
-# )
+target_link_libraries(
+    ismrmrd_to_mrd
+    ISMRMRD::ISMRMRD
+)
 
-# target_include_directories(mrd_to_ismrmrd
-#     PUBLIC "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/mrd/cpp/>"
-# )
+add_executable(
+    mrd_to_ismrmrd
+    mrd/cpp/mrd-tools/mrd_to_ismrmrd.cc
+    mrd/cpp/mrd-tools/converters.cc
+    mrd/cpp/mrd/protocols.cc
+    mrd/cpp/mrd/types.cc
+    mrd/cpp/mrd/binary/protocols.cc
+)
 
-# target_link_libraries(
-#   mrd_to_ismrmrd
-# #   mrd::mrd
-#   ISMRMRD::ISMRMRD
-# )
+target_include_directories(mrd_to_ismrmrd
+    PUBLIC "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/mrd/cpp/>"
+)
+
+target_link_libraries(
+    mrd_to_ismrmrd
+    ISMRMRD::ISMRMRD
+)
 
 
 # find_package(ImageMagick COMPONENTS Magick++ REQUIRED)
@@ -119,9 +125,9 @@ install(DIRECTORY ${mrd_generated_dir}
 #   fmt::fmt
 # )
 
-# install(TARGETS
-#     ismrmrd_to_mrd
-#     mrd_to_ismrmrd
-#     mrd_image_stream_to_png
-#     DESTINATION bin)
+install(TARGETS
+    ismrmrd_to_mrd
+    mrd_to_ismrmrd
+    # mrd_image_stream_to_png
+    DESTINATION bin)
 

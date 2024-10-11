@@ -63,13 +63,13 @@ namespace Gadgetron {
         return GADGET_OK;
     }
 
-    int GenericReconEigenChannelGadget::process(Gadgetron::GadgetContainerMessage< ReconData >* m1)
+    int GenericReconEigenChannelGadget::process(Gadgetron::GadgetContainerMessage< mrd::ReconData >* m1)
     {
         if (perform_timing.value()) { gt_timer_.start("GenericReconEigenChannelGadget::process"); }
 
         process_called_times_++;
 
-        ReconData* recon_data = m1->getObjectPtr();
+        mrd::ReconData* recon_data = m1->getObjectPtr();
         if (recon_data->rbits.size() > num_encoding_spaces_)
         {
             GWARN_STREAM("Incoming recon_bit has more encoding spaces than the protocol : " << recon_data->rbits.size() << " instead of " << num_encoding_spaces_);
@@ -113,7 +113,7 @@ namespace Gadgetron {
                 {
                     for (slc = 0; slc < SLC; slc++)
                     {
-                        if (KLT_[e][slc].size() != S) 
+                        if (KLT_[e][slc].size() != S)
                         {
                             recompute_coeff = true;
                             break;

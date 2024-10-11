@@ -9,10 +9,9 @@ target_include_directories(gadgetron_toolbox_cpusdc
   ${CMAKE_CURRENT_SOURCE_DIR}
   ${CMAKE_CURRENT_SOURCE_DIR}/..
 )
-        
+
 target_link_libraries(gadgetron_toolbox_cpusdc
   gadgetron_toolbox_cpucore
-  gadgetron_toolbox_hostutils
   gadgetron_toolbox_log
   gadgetron_toolbox_operator
   gadgetron_toolbox_nfft
@@ -26,7 +25,7 @@ install(TARGETS gadgetron_toolbox_cpusdc
 	COMPONENT main
 )
 
-install(FILES 
+install(FILES
   DESTINATION ${GADGETRON_INSTALL_INCLUDE_PATH}
   COMPONENT main
 )

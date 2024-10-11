@@ -13,7 +13,7 @@ namespace Gadgetron::Main {
         struct Gadget;
         struct Parallel;
         struct ParallelProcess;
-        using Node = Core::variant<Gadget, Parallel, ParallelProcess>;
+        using Node = std::variant<Gadget, Parallel, ParallelProcess>;
 
         template<class CONFIG>
         static std::string name(CONFIG config) {

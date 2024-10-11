@@ -7,19 +7,18 @@
 #include "Node.h"
 #include "hoNDArray.h"
 
-#include "mri_core_data.h"
 #include <complex>
 #include "hoNDFFT.h"
 
 namespace Gadgetron{
 
-    class FFTGadget : public Core::ChannelGadget<ReconData> {
+    class FFTGadget : public Core::ChannelGadget<mrd::ReconData> {
     public:
         FFTGadget(const Core::Context& context, const Core::GadgetProperties& props);
-        void process(Core::InputChannel<ReconData>& input, Core::OutputChannel& out) override;
+        void process(Core::InputChannel<mrd::ReconData>& input, Core::OutputChannel& out) override;
 
     protected:
-        long long image_counter_;      
+        long long image_counter_;
 
     };
 }

@@ -9,7 +9,6 @@
 #include "hoNDArray_fileio.h"
 #include "hoNDArray_math.h"
 #include "hoNDArray_utils.h"
-#include "mri_core_data.h"
 #include "mri_core_def.h"
 #include "t1fit.h"
 #include <range/v3/algorithm.hpp>
@@ -85,8 +84,8 @@ class T1MocoGadget : public Core::ChannelGadget<IsmrmrdImageArray> {
             // send out T1 map
             auto sd_header = header;
             sd_header.image_series_index = 4;
-            out.push(Core::Image<float>{sd_header, std::move(error_map), sd_meta});
-            out.push(Core::Image<float>{header, std::move(T1), meta});
+            out.push(mrd::Image<float>{sd_header, std::move(error_map), sd_meta});
+            out.push(mrd::Image<float>{header, std::move(T1), meta});
         }
     }
 

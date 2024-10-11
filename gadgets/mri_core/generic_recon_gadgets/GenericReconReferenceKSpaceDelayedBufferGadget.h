@@ -19,8 +19,6 @@ namespace Gadgetron {
     class GenericReconReferenceKSpaceDelayedBufferGadget : public GenericReconKSpaceReadoutBase
     {
     public:
-        GADGET_DECLARE(GenericReconReferenceKSpaceDelayedBufferGadget);
-
         typedef GenericReconKSpaceReadoutBase BaseClass;
 
         GenericReconReferenceKSpaceDelayedBufferGadget();

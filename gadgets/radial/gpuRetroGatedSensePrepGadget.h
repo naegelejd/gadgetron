@@ -15,7 +15,7 @@
 
 /*
   Prep gadget for retrospectively gated Sense based on golden ratio sampling.
-  Thus only radial modes 2-3 are supported.  
+  Thus only radial modes 2-3 are supported.
 */
 
 namespace Gadgetron{
@@ -25,7 +25,6 @@ namespace Gadgetron{
   {
 
   public:
-    GADGET_DECLARE(gpuRetroGatedSensePrepGadget);
     gpuRetroGatedSensePrepGadget();
     virtual ~gpuRetroGatedSensePrepGadget();
 
@@ -58,7 +57,7 @@ namespace Gadgetron{
       }
       return true;
     }
-    
+
     boost::shared_array<bool> reconfigure_;
     virtual void reconfigure(unsigned int set, unsigned int slice);
 
@@ -72,16 +71,16 @@ namespace Gadgetron{
 
     int calculate_density_compensation_for_reconstruction(unsigned int set, unsigned int slice);
 
-    boost::shared_ptr< cuNDArray<floatd2> > 
+    boost::shared_ptr< cuNDArray<floatd2> >
       calculate_trajectory_for_buffer(long profile_offset, unsigned int set, unsigned int slice);
 
     boost::shared_ptr< cuNDArray<float> >
       calculate_density_compensation_for_buffer(unsigned int set, unsigned int slice);
 
-    boost::shared_ptr< cuNDArray<floatd2> > 
+    boost::shared_ptr< cuNDArray<floatd2> >
       calculate_trajectory_for_rhs(long profile_offset, unsigned int set, unsigned int slice);
 
-    boost::shared_ptr< cuNDArray<float> > 
+    boost::shared_ptr< cuNDArray<float> >
       calculate_density_compensation_for_rhs(unsigned int set, unsigned int slice);
 
     int slices_;
@@ -97,7 +96,7 @@ namespace Gadgetron{
 
     // The number of buffer cycles
     long profiles_per_buffer_frame_;
-    long num_buffer_frames_inner_; 
+    long num_buffer_frames_inner_;
     long num_buffer_frames_outer_;
 
     // Internal book-keeping
@@ -128,10 +127,10 @@ namespace Gadgetron{
     boost::shared_array<bool> buffer_update_needed_;
 
     boost::shared_array< hoNDArray<float> > host_weights_recon_;
-    
+
     boost::shared_array< hoNDArray<float_complext> > csm_host_;
     boost::shared_array< hoNDArray<float_complext> > reg_host_;
-    
+
     boost::shared_array< cuSenseBuffer<float,2> > acc_buffer_;
     boost::shared_array< cuSenseBufferCg<float,2> > acc_buffer_cg_;
 

@@ -1,12 +1,10 @@
-list(APPEND PHASE_GADGET RadialPhaseCorrectionGadget.h RadialPhaseCorrectionGadget.cpp)
-install (FILES  RadialPhaseCorrectionGadget.h DESTINATION ${GADGETRON_INSTALL_INCLUDE_PATH} COMPONENT main)
-
-add_library(gadgetron_gpuradial SHARED 
-  gpuRadialPrepGadget.h gpuRadialPrepGadget.cpp 
-  gpuRadialSensePrepGadget.h gpuRadialSensePrepGadget.cpp 
-  gpuRadialSpiritPrepGadget.h gpuRadialSpiritPrepGadget.cpp 
+add_library(gadgetron_gpuradial SHARED
+  gpuRadialPrepGadget.h gpuRadialPrepGadget.cpp
+  gpuRadialSensePrepGadget.h gpuRadialSensePrepGadget.cpp
+  gpuRadialSpiritPrepGadget.h gpuRadialSpiritPrepGadget.cpp
   gpuRetroGatedSensePrepGadget.h gpuRetroGatedSensePrepGadget.cpp
-  ${PHASE_GADGET})
+  RadialPhaseCorrectionGadget.h RadialPhaseCorrectionGadget.cpp
+  )
 
 set_target_properties(gadgetron_gpuradial PROPERTIES VERSION ${GADGETRON_VERSION_STRING} SOVERSION ${GADGETRON_SOVERSION})
 
@@ -19,10 +17,11 @@ target_link_libraries(gadgetron_gpuradial
         gadgetron_toolbox_cpucore_math
         gadgetron_toolbox_gpu)
 
-install (FILES  gpuRadialPrepGadget.h 
-                gpuRadialSensePrepGadget.h 
-                gpuRadialSpiritPrepGadget.h 
-                gpuRetroGatedSensePrepGadget.h 
+install (FILES  gpuRadialPrepGadget.h
+                gpuRadialSensePrepGadget.h
+                gpuRadialSpiritPrepGadget.h
+                gpuRetroGatedSensePrepGadget.h
+                RadialPhaseCorrectionGadget.h
                 DESTINATION ${GADGETRON_INSTALL_INCLUDE_PATH} COMPONENT main)
 
 install(TARGETS gadgetron_gpuradial

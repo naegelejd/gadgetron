@@ -45,8 +45,6 @@ namespace Gadgetron {
     class GenericReconCartesianFFTGadget : public GenericReconGadget
     {
     public:
-        GADGET_DECLARE(GenericReconCartesianFFTGadget);
-
         typedef GenericReconGadget BaseClass;
         typedef Gadgetron::GenericReconCartesianFFTObj< std::complex<float> > ReconObjType;
 

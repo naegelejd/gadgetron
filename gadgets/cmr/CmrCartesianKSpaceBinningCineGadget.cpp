@@ -84,13 +84,13 @@ namespace Gadgetron {
         return GADGET_OK;
     }
 
-    int CmrCartesianKSpaceBinningCineGadget::process(Gadgetron::GadgetContainerMessage< ReconData >* m1)
+    int CmrCartesianKSpaceBinningCineGadget::process(Gadgetron::GadgetContainerMessage< mrd::ReconData >* m1)
     {
         if (perform_timing.value()) { gt_timer_local_.start("CmrCartesianKSpaceBinningCineGadget::process"); }
 
         process_called_times_++;
 
-        ReconData* recon_bit_ = m1->getObjectPtr();
+        mrd::ReconData* recon_bit_ = m1->getObjectPtr();
         if (recon_bit_->rbits.size() > num_encoding_spaces_)
         {
             GWARN_STREAM("Incoming recon_bit has more encoding spaces than the protocol : " << recon_bit_->rbits.size() << " instead of " << num_encoding_spaces_);
@@ -219,7 +219,7 @@ namespace Gadgetron {
         return GADGET_OK;
     }
 
-    void CmrCartesianKSpaceBinningCineGadget::perform_binning(ReconBit& recon_bit, size_t encoding)
+    void CmrCartesianKSpaceBinningCineGadget::perform_binning(mrd::ReconBit& recon_bit, size_t encoding)
     {
         try
         {
@@ -272,9 +272,9 @@ namespace Gadgetron {
 
                 binning_reconer_.binning_obj_.output_N_ = binned_N;
                 binning_reconer_.binning_obj_.accel_factor_E1_ = acceFactorE1_[encoding];
-                binning_reconer_.binning_obj_.random_sampling_ = (calib_mode_[encoding]!=mrd::CalibrationMode::kEmbedded 
-                                                                && calib_mode_[encoding]!=mrd::CalibrationMode::kInterleaved 
-                                                                && calib_mode_[encoding]!=mrd::CalibrationMode::kSeparate 
+                binning_reconer_.binning_obj_.random_sampling_ = (calib_mode_[encoding]!=mrd::CalibrationMode::kEmbedded
+                                                                && calib_mode_[encoding]!=mrd::CalibrationMode::kInterleaved
+                                                                && calib_mode_[encoding]!=mrd::CalibrationMode::kSeparate
                                                                 && calib_mode_[encoding]!=mrd::CalibrationMode::kNoacceleration);
 
                 binning_reconer_.suffix_ = suffix;
@@ -298,12 +298,12 @@ namespace Gadgetron {
                 if (!debug_folder_full_path_.empty()) { gt_exporter_.export_array_complex(binning_reconer_.binning_obj_.complex_image_binning_, debug_folder_full_path_ + "binning_obj_complex_image_binning" + os.str()); }
 
                 // get the binnig results
-                memcpy(this->res_raw_.data.begin()+slc*RO*E1*N*S*SLC, 
-                        binning_reconer_.binning_obj_.complex_image_raw_.begin(), 
+                memcpy(this->res_raw_.data.begin()+slc*RO*E1*N*S*SLC,
+                        binning_reconer_.binning_obj_.complex_image_raw_.begin(),
                         binning_reconer_.binning_obj_.complex_image_raw_.get_number_of_bytes());
 
-                memcpy(this->res_binning_.data.begin()+slc*RO*E1*binned_N*S*SLC, 
-                        binning_reconer_.binning_obj_.complex_image_binning_.begin(), 
+                memcpy(this->res_binning_.data.begin()+slc*RO*E1*binned_N*S*SLC,
+                        binning_reconer_.binning_obj_.complex_image_binning_.begin(),
                         binning_reconer_.binning_obj_.complex_image_binning_.get_number_of_bytes());
 
                 for (s=0; s<S; s++)
@@ -372,7 +372,7 @@ namespace Gadgetron {
         }
     }
 
-    void CmrCartesianKSpaceBinningCineGadget::set_time_stamps(ImageArray& res, hoNDArray< float >& acq_time, hoNDArray< float >& cpt_time)
+    void CmrCartesianKSpaceBinningCineGadget::set_time_stamps(mrd::ImageArray& res, hoNDArray< float >& acq_time, hoNDArray< float >& cpt_time)
     {
         try
         {
@@ -399,7 +399,7 @@ namespace Gadgetron {
         }
     }
 
-    int CmrCartesianKSpaceBinningCineGadget::prep_image_header_send_out(ImageArray& res, size_t n, size_t s, size_t slc, size_t encoding, int series_num, const std::string& data_role)
+    int CmrCartesianKSpaceBinningCineGadget::prep_image_header_send_out(mrd::ImageArray& res, size_t n, size_t s, size_t slc, size_t encoding, int series_num, const std::string& data_role)
     {
         try
         {

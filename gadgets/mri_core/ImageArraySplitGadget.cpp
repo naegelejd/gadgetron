@@ -3,15 +3,14 @@
 #include <xtensor/xview.hpp>
 
 using namespace Gadgetron;
-using namespace Gadgetron::Core;
 
 namespace {
 
-void splitInputData(AnyImage image, Core::OutputChannel& out) {
+void splitInputData(Core::AnyImage image, Core::OutputChannel& out) {
     out.push(image);
 }
 
-void splitInputData(ImageArray imagearr, Core::OutputChannel& out) {
+void splitInputData(mrd::ImageArray imagearr, Core::OutputChannel& out) {
         // 7D, fixed order [X, Y, Z, CHA, N, S, LOC]
     uint16_t X = imagearr.data.get_size(0);
     uint16_t Y = imagearr.data.get_size(1);

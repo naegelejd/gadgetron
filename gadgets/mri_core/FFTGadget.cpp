@@ -6,8 +6,8 @@ namespace Gadgetron{
         image_counter_ = 0;
     }
 
-    Core::Image<std::complex<float>> CreateAndFFTImage(DataBuffered dbuff, uint16_t n, uint16_t s, uint16_t loc, long long image_index){
-        
+    mrd::Image<std::complex<float>> CreateAndFFTImage(mrd::BufferedData dbuff, uint16_t n, uint16_t s, uint16_t loc, long long image_index){
+
         //7D, fixed order [E0, E1, E2, CHA, N, S, LOC]
         uint16_t E0 = dbuff.data.get_size(0);
         uint16_t E1 = dbuff.data.get_size(1);
@@ -25,7 +25,7 @@ namespace Gadgetron{
         img_dims[3] = CHA;
 
         //Set some information into the image header, and use the middle header for some info [E1, E2, N, S, LOC]
-        mrd::AcquisitionHeader & acqhdr = dbuff.headers(dbuff.sampling.sampling_limits.e1.center, 
+        mrd::AcquisitionHeader & acqhdr = dbuff.headers(dbuff.sampling.sampling_limits.e1.center,
                                                              dbuff.sampling.sampling_limits.e2.center,
                                                              n, s, loc);
 
@@ -35,7 +35,7 @@ namespace Gadgetron{
 
         /** TODO: This Gadget does NOT copy all Acquisition header fields to the Image header!
          *  e.g. measurement_uid and physiology_time_stamp are missing.
-         * 
+         *
          *  HOWEVER, the e2e test (epi_2d.yml) using this Gadget expects these fields to be empty.
          */
         imghdr.image_type = mrd::ImageType::kComplex;
@@ -43,7 +43,7 @@ namespace Gadgetron{
         imghdr.field_of_view[0]   = dbuff.sampling.recon_fov.x;
         imghdr.field_of_view[1]   = dbuff.sampling.recon_fov.y;
         imghdr.field_of_view[2]   = dbuff.sampling.recon_fov.z;
-        
+
         imghdr.average = acqhdr.idx.average;
         imghdr.slice = acqhdr.idx.slice;
         imghdr.contrast = acqhdr.idx.contrast;
@@ -66,13 +66,13 @@ namespace Gadgetron{
         return std::move(image);
     }
 
-    void FFTGadget::process(Core::InputChannel<ReconData>& input, Core::OutputChannel& out) {
+    void FFTGadget::process(Core::InputChannel<mrd::ReconData>& input, Core::OutputChannel& out) {
         for (auto reconData : input){
             //Iterate over all the recon bits
             for(auto& rbit : reconData.rbits)
             {
                 //Grab a reference to the buffer containing the imaging data
-                DataBuffered & dbuff = rbit.data;
+                mrd::BufferedData & dbuff = rbit.data;
 
                 uint16_t N = dbuff.data.get_size(4);
                 uint16_t S = dbuff.data.get_size(5);
@@ -80,15 +80,15 @@ namespace Gadgetron{
 
                 //Loop over S and N and LOC
                 for (uint16_t loc=0; loc < LOC; loc++) {
-                    for (uint16_t s=0; s < S; s++) {                
+                    for (uint16_t s=0; s < S; s++) {
                         for (uint16_t n=0; n < N; n++) {
                             ++image_counter_;
                             out.push(CreateAndFFTImage(dbuff,n,s,loc,image_counter_));
                         }
                     }
                 }
-            } 
-        }  
+            }
+        }
     }
     GADGETRON_GADGET_EXPORT(FFTGadget);
 }

@@ -1,6 +1,5 @@
 set(mri_core_header_files
         mri_core_def.h
-        mri_core_data.h
         mri_core_utility.h
         mri_core_kspace_filter.h
         mri_core_grappa.h
@@ -61,9 +60,7 @@ install(FILES
         DESTINATION ${GADGETRON_INSTALL_INCLUDE_PATH} COMPONENT main)
 
 # if there is python, add python binding
-if (Boost_PYTHON3_FOUND AND PYTHONLIBS_FOUND AND NUMPY_FOUND)
-
-
+if (BUILD_PYTHON_SUPPORT)
     add_library(gadgetron_toolbox_mri_core_python MODULE
             mri_core_grappa_python.h
             mri_core_grappa_python.cpp
@@ -84,7 +81,6 @@ if (Boost_PYTHON3_FOUND AND PYTHONLIBS_FOUND AND NUMPY_FOUND)
     install(TARGETS gadgetron_toolbox_mri_core_python
             EXPORT gadgetron-export
             DESTINATION ${GADGETRON_INSTALL_PYTHON_MODULE_PATH} COMPONENT main)
-
 endif ()
 
 set(GADGETRON_BUILD_RPATH "${CMAKE_CURRENT_BINARY_DIR};${GADGETRON_BUILD_RPATH}" PARENT_SCOPE)

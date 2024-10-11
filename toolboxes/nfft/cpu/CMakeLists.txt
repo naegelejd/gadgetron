@@ -20,7 +20,6 @@ target_link_libraries(gadgetron_toolbox_cpunfft
     gadgetron_toolbox_cpufft
     gadgetron_toolbox_cpucore
     gadgetron_toolbox_log
-    gadgetron_toolbox_hostutils
 	gadgetron_toolbox_operator
   )
 
@@ -33,7 +32,7 @@ install(TARGETS gadgetron_toolbox_cpunfft
 		)
 
 
-install(FILES 
+install(FILES
     hoNFFT.h
     ConvolutionMatrix.h
     hoGriddingConvolution.h

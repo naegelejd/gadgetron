@@ -5,9 +5,6 @@
 
 #include "cmr_motion_correction.h"
 
-#include "ismrmrd/ismrmrd.h"
-#include "ismrmrd/meta.h"
-
 #include "boost/tuple/tuple.hpp"
 #include "boost/tuple/tuple_comparison.hpp"
 #include "boost/tuple/tuple_io.hpp"

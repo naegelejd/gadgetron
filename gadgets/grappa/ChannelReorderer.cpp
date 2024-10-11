@@ -9,7 +9,6 @@
 #include "hoNDArray_utils.h"
 
 namespace {
-    using namespace Gadgetron::Core;
 
     template<class T>
     std::vector<T> reorder(std::vector<T> v, const std::vector<uint64_t> &reordering) {
@@ -34,12 +33,12 @@ namespace Gadgetron::Grappa
     ChannelReorderer::ChannelReorderer(
             const Gadgetron::Core::Context &context,
             const std::unordered_map<std::string, std::string> &props
-    ) : PureGadget<AnnotatedAcquisition, Acquisition>(context,props),
+    ) : PureGadget<AnnotatedAcquisition, mrd::Acquisition>(context,props),
             context(context),
             channel_labels(build_channel_label_map()),
             uncombined_indices(parse_uncombined_channels()) {}
 
-    AnnotatedAcquisition ChannelReorderer::process_function(Core::Acquisition acquisition) const {
+    AnnotatedAcquisition ChannelReorderer::process_function(mrd::Acquisition acquisition) const {
 
         auto header = acquisition.head;
         auto trajectory = acquisition.trajectory;

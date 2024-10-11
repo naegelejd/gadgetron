@@ -27,13 +27,13 @@ namespace Gadgetron {
 
     struct IgnoringNoise {};
 
-    class NoiseAdjustGadget : public Core::ChannelGadget<Core::Acquisition> {
+    class NoiseAdjustGadget : public Core::ChannelGadget<mrd::Acquisition> {
     public:
         NoiseAdjustGadget(const Core::Context& context, const Core::GadgetProperties& props);
 
-        void process(Core::InputChannel<Core::Acquisition>& in, Core::OutputChannel& out) override;
+        void process(Core::InputChannel<mrd::Acquisition>& in, Core::OutputChannel& out) override;
 
-        using NoiseHandler = Core::variant<NoiseGatherer, LoadedNoise, Prewhitener, IgnoringNoise>;
+        using NoiseHandler = std::variant<NoiseGatherer, LoadedNoise, Prewhitener, IgnoringNoise>;
 
     protected:
         NODE_PROPERTY(noise_dependency_prefix, std::string, "Prefix of noise dependency file", "GadgetronNoiseCovarianceMatrix");
@@ -54,12 +54,12 @@ namespace Gadgetron {
         NoiseHandler noisehandler = IgnoringNoise{};
 
         template<class NOISEHANDLER>
-        void add_noise(NOISEHANDLER& nh, const Core::Acquisition&) const ;
+        void add_noise(NOISEHANDLER& nh, const mrd::Acquisition&) const ;
 
         template<class NOISEHANDLER>
-        NoiseHandler handle_acquisition(NOISEHANDLER nh, Core::Acquisition&);
+        NoiseHandler handle_acquisition(NOISEHANDLER nh, mrd::Acquisition&);
 
-        Core::optional<mrd::NoiseCovariance> load_noisedata() const;
+        std::optional<mrd::NoiseCovariance> load_noisedata() const;
 
         template<class NOISEHANDLER>
         void save_noisedata(NOISEHANDLER& nh);

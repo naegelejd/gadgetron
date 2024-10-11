@@ -8,9 +8,9 @@ validation:
   checksum: bb41f882f41c088d96c13b62fb0c63f1
   tests:
   - image_series: 0
-tags:
-- fast
 requirements:
   system_memory: 2048
   gpu_support: 1
   gpu_memory: 1024
+tags:
+- fast

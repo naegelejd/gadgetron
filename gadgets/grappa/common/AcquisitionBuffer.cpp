@@ -18,7 +18,6 @@
 
 namespace {
     using namespace Gadgetron;
-    using namespace Gadgetron::Core;
     using namespace Gadgetron::Grappa;
 
     template<class T>
@@ -31,7 +30,7 @@ namespace {
 
 namespace Gadgetron::Grappa {
 
-    AcquisitionBuffer::AcquisitionBuffer(Context ctx) : context(std::move(ctx)) {
+    AcquisitionBuffer::AcquisitionBuffer(Core::Context ctx) : context(std::move(ctx)) {
 
         if (context.header.encoding.size() != 1) {
             throw std::runtime_error(

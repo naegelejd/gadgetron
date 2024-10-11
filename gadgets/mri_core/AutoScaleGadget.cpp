@@ -1,11 +1,10 @@
 #include "AutoScaleGadget.h"
 
 using namespace Gadgetron;
-using namespace Gadgetron::Core;
 
 namespace {
 	template<class T>
-	Image<T> autoscale(Image<T> &image, float max_value, unsigned int histogram_bins) {
+	mrd::Image<T> autoscale(mrd::Image<T> &image, float max_value, unsigned int histogram_bins) {
 		// Only scale magnitude images for now
 		if (image.head.image_type == mrd::ImageType::kMagnitude) {
 			auto& data = image.data;
@@ -36,15 +35,15 @@ namespace {
 	}
 
     template<class T>
-    Image<std::complex<T>> autoscale(Image<std::complex<T>> &image, float max_value, unsigned int histogram_bins) {
+    mrd::Image<std::complex<T>> autoscale(mrd::Image<std::complex<T>> &image, float max_value, unsigned int histogram_bins) {
         GERROR("Autoscaling image is not well defined for complex images.");
 		return image;
     }
 }
 
 namespace Gadgetron {
-	AnyImage AutoScaleGadget::process_function(AnyImage image) const {
-		return visit([&](auto &image) -> AnyImage { return autoscale(image, max_value, histogram_bins); }, image);
+	Core::AnyImage AutoScaleGadget::process_function(Core::AnyImage image) const {
+		return visit([&](auto &image) -> Core::AnyImage { return autoscale(image, max_value, histogram_bins); }, image);
 	}
 	GADGETRON_GADGET_EXPORT(AutoScaleGadget);
 }

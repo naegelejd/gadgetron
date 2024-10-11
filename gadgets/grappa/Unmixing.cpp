@@ -10,14 +10,13 @@
 
 namespace {
     using namespace Gadgetron;
-    using namespace Gadgetron::Core;
     using namespace Gadgetron::Grappa;
 
     class WeightsProvider {
     public:
         WeightsProvider(
-                const Context &context, InputChannel<Weights> &source
-        ) : weights(number_of_slices(context), none), source(source) {}
+                const Core::Context &context, Core::InputChannel<Weights> &source
+        ) : weights(number_of_slices(context), std::nullopt), source(source) {}
 
 
         const Weights &operator[](size_t slice) {
@@ -38,17 +37,17 @@ namespace {
             while(!weights[slice]) add(source.pop());
         }
 
-        void add(optional<Weights> w) {
+        void add(std::optional<Weights> w) {
             weights[w->meta.slice] = std::move(w);
         }
 
-        static size_t number_of_slices(const Context &context) {
+        static size_t number_of_slices(const Core::Context &context) {
             auto e_limits = context.header.encoding[0].encoding_limits;
             return e_limits.slice ? e_limits.slice->maximum + 1u : 1u;
         }
 
-        InputChannel<Weights> &source;
-        std::vector<optional<Weights>> weights;
+        Core::InputChannel<Weights> &source;
+        std::vector<std::optional<Weights>> weights;
     };
 }
 
@@ -56,18 +55,18 @@ namespace Gadgetron::Grappa {
     GADGETRON_MERGE_EXPORT(Unmixing);
 
     Unmixing::Unmixing(
-            const Context &context,
+            const Core::Context &context,
             const std::unordered_map<std::string, std::string> &props
     ) : Merge(props), context(context),
         image_dimensions(create_output_image_dimensions(context)),
         image_fov(create_output_image_fov(context)) {}
 
     void Unmixing::process(
-            std::map<std::string, GenericInputChannel> input,
-            OutputChannel output
+            std::map<std::string, Core::GenericInputChannel> input,
+            Core::OutputChannel output
     ) {
-        InputChannel<Image> images(input.at("images"), output);
-        InputChannel<Weights> weights(input.at("weights"), output);
+        Core::InputChannel<Image> images(input.at("images"), output);
+        Core::InputChannel<Weights> weights(input.at("weights"), output);
 
         WeightsProvider weights_provider(context, weights);
 

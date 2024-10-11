@@ -9,21 +9,20 @@
 #define GPUBUFFERSENSEPREPGADGET_H_
 
 #include "Gadget.h"
-#include "mri_core_data.h"
 #include "cuNDArray.h"
 #include "vector_td.h"
 #include "complext.h"
 
 namespace Gadgetron {
 
-class gpuBufferSensePrepGadget: public Gadgetron::Gadget1<ReconData> {
+class gpuBufferSensePrepGadget: public Gadgetron::Gadget1<mrd::ReconData> {
 public:
 	gpuBufferSensePrepGadget();
 	virtual ~gpuBufferSensePrepGadget();
 
 	virtual int process_config(const mrd::Header& header);
 
-	virtual int process(GadgetContainerMessage<ReconData>* data);
+	virtual int process(GadgetContainerMessage<mrd::ReconData>* data);
 protected:
 	GADGET_PROPERTY(profiles_per_frame,int,"Number of profiles per frame", 0);
 	GADGET_PROPERTY(kernel_width,float,"Kernel width for NFFT", 5.5);

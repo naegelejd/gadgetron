@@ -4,8 +4,8 @@
 
 namespace Gadgetron{
 
-Gadgetron::Core::Image<std::complex<float>> Gadgetron::AugmentImageMetadataGadget::process_function(
-    Gadgetron::Core::Image<std::complex<float>> input_image) const
+mrd::Image<std::complex<float>> AugmentImageMetadataGadget::process_function(
+    mrd::Image<std::complex<float>> input_image) const
 {
     if (input_image.meta["ImageRowDir"].size() != 3) {
         input_image.meta["ImageRowDir"].push_back(input_image.head.col_dir[0]);
@@ -19,7 +19,7 @@ Gadgetron::Core::Image<std::complex<float>> Gadgetron::AugmentImageMetadataGadge
         input_image.meta["ImageColumnDir"].push_back(input_image.head.line_dir[1]);
         input_image.meta["ImageColumnDir"].push_back(input_image.head.line_dir[2]);
     }
-    
+
     return input_image;
 }
 

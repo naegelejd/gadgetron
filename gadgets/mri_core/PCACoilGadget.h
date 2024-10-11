@@ -9,13 +9,13 @@
 
 namespace Gadgetron {
 
-  class PCACoilGadget : public Core::ChannelGadget<Core::Acquisition>
+  class PCACoilGadget : public Core::ChannelGadget<mrd::Acquisition>
   {
   public:
     PCACoilGadget(const Core::Context& context, const Core::GadgetProperties& props);
     ~PCACoilGadget() override;
 
-    void process(Core::InputChannel<Core::Acquisition>& input, Core::OutputChannel& output) override;
+    void process(Core::InputChannel<mrd::Acquisition>& input, Core::OutputChannel& output) override;
 
   protected:
     NODE_PROPERTY(uncombined_channels_by_name, std::string, "List of comma separated channels by name", "");
@@ -25,7 +25,7 @@ namespace Gadgetron {
     void do_pca(mrd::Acquisition& acq);
 
     std::vector<unsigned int> uncombined_channels_;
-    
+
     //Map containing buffers, one for each location
     std::map< int, std::vector< mrd::Acquisition > > buffer_;
 

@@ -7,7 +7,6 @@
 
 #include "PCACoilGadget.h"
 #include "hoNDArray_elemwise.h"
-#include "ismrmrd/xml.h"
 #include "hoNDArray_fileio.h"
 #include "hoNDKLT.h"
 #include "hoNDArray_linalg.h"
@@ -25,7 +24,7 @@ namespace Gadgetron {
     }
 
     PCACoilGadget::PCACoilGadget(const Core::Context& context, const Core::GadgetProperties& props)
-        : Core::ChannelGadget<Core::Acquisition>(context, props)
+        : Core::ChannelGadget<mrd::Acquisition>(context, props)
     {
         std::vector<std::string> uncomb;
         if (uncombined_channels_by_name.size()) {
@@ -45,16 +44,16 @@ namespace Gadgetron {
         }
 
         /** NOTE:
-         * 
+         *
          * This PCACoilGadget used to have a GADGET_PROPERTY "present_uncombined_channels" that was
          * updated here to `uncombined_channels_.size()`, then later referenced by the NoiseAdjustGadget
          * **only** in the `interventional_mri/grappa_device.xml` chain, which is untested.
-         * 
+         *
          * However, ChannelGadgets don't seem to support a non-const GADGET_PROPERTY. They only support
          * NODE_PROPERTY, which declares a const member variable.
-         * 
+         *
          * Since the grappa_device chains is not tested anywhere, I think this is a "dead" feature.
-         * 
+         *
          */
         // present_uncombined_channels.value((int)uncombined_channels_.size());
         // GDEBUG("Number of uncombined channels (present_uncombined_channels) set to %d\n", uncombined_channels_.size());
@@ -79,7 +78,7 @@ namespace Gadgetron {
     }
 
 
-    void PCACoilGadget::process(Core::InputChannel<Core::Acquisition>& input, Core::OutputChannel& output)
+    void PCACoilGadget::process(Core::InputChannel<mrd::Acquisition>& input, Core::OutputChannel& output)
     {
         for (auto acq : input) {
             bool is_noise = acq.head.flags.HasFlags(mrd::AcquisitionFlags::kIsNoiseMeasurement);

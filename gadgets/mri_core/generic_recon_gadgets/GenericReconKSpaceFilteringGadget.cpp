@@ -69,7 +69,7 @@ namespace Gadgetron {
         return GADGET_OK;
     }
 
-    int GenericReconKSpaceFilteringGadget::process(Gadgetron::GadgetContainerMessage< ImageArray >* m1)
+    int GenericReconKSpaceFilteringGadget::process(Gadgetron::GadgetContainerMessage< mrd::ImageArray >* m1)
     {
         if (perform_timing.value()) { gt_timer_.start("GenericReconKSpaceFilteringGadget::process"); }
 
@@ -77,7 +77,7 @@ namespace Gadgetron {
 
         process_called_times_++;
 
-        ImageArray* recon_res_ = m1->getObjectPtr();
+        mrd::ImageArray* recon_res_ = m1->getObjectPtr();
 
         // print out recon info
         if (verbose.value())

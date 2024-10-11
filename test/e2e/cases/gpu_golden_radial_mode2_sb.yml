@@ -8,9 +8,9 @@ validation:
   checksum: 53bd8b62dbec515fce8eab739b4a376b
   tests:
   - image_series: 0
-tags:
-- slow
 requirements:
   system_memory: 2048
   gpu_support: 1
   gpu_memory: 2048
+tags:
+- slow

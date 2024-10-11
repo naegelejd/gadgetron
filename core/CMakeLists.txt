@@ -4,9 +4,7 @@ add_subdirectory(parallel)
 add_library(gadgetron_core SHARED
         Channel.cpp
         Gadget.cpp
-        LegacyACE.cpp
         Message.cpp
-        Response.cpp
         Process.cpp
         io/from_string.cpp)
 
@@ -44,10 +42,7 @@ install(FILES
         MPMCChannel.h
         Gadget.h
         Context.h
-        Gadget.h
         Types.h
-        Types.hpp
-        TypeTraits.h
         Node.h
         PureGadget.h
         LegacyACE.h
@@ -58,7 +53,6 @@ install(FILES
         DESTINATION ${GADGETRON_INSTALL_INCLUDE_PATH} COMPONENT main)
 
 install(FILES
-        io/adapt_struct.h
         io/from_string.h
         io/primitives.h
         io/primitives.hpp

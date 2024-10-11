@@ -3,13 +3,12 @@
 #include "hoNDArray_math.h"
 
 using namespace Gadgetron;
-using namespace Gadgetron::Core;
 
 namespace {
     template<class T>
-    Image<T> invert_image(const Image<T> &image)
+    mrd::Image<T> invert_image(const mrd::Image<T> &image)
     {
-        Image<T> out;
+        mrd::Image<T> out;
         out.head = image.head;
         out.meta = image.meta;
         out.data = image.data;
@@ -21,7 +20,7 @@ namespace {
     }
 
     template<class T>
-    Image<std::complex<T>> invert_image(const Image<std::complex<T>> &image) {
+    mrd::Image<std::complex<T>> invert_image(const mrd::Image<std::complex<T>> &image) {
         throw std::runtime_error("Invert image is not well defined for complex images.");
     }
 }
@@ -29,9 +28,9 @@ namespace {
 namespace Gadgetron::Examples {
 
 
-    AnyImage ImageInverter::process_function(AnyImage image) const {
+    Core::AnyImage ImageInverter::process_function(Core::AnyImage image) const {
         GINFO_STREAM("Inverting image.")
-        return visit([](const auto &image) -> AnyImage { return invert_image(image); }, image);
+        return visit([](const auto &image) -> Core::AnyImage { return invert_image(image); }, image);
     }
 
     GADGETRON_GADGET_EXPORT(ImageInverter);

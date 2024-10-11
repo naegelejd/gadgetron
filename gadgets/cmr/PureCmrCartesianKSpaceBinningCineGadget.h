@@ -6,15 +6,14 @@
 
 #include "PureGadget.h"
 #include "cmr_kspace_binning.h"
-#include "mri_core_data.h"
 #include "ImageArraySendMixin.h"
 
 namespace Gadgetron {
-    class PureCmrCartesianKSpaceBinningCineGadget : public Core::PureGadget<ImageArray, ReconData>, public ImageArraySendMixin<PureCmrCartesianKSpaceBinningCineGadget> {
+    class PureCmrCartesianKSpaceBinningCineGadget : public Core::PureGadget<mrd::ImageArray, mrd::ReconData>, public ImageArraySendMixin<PureCmrCartesianKSpaceBinningCineGadget> {
     public:
         PureCmrCartesianKSpaceBinningCineGadget(const Core::Context& context, const Core::GadgetProperties& props);
 
-        ImageArray process_function(ReconData args) const override;
+        mrd::ImageArray process_function(mrd::ReconData args) const override;
 
         NODE_PROPERTY(verbose,bool,"Verbose",false);
         /// parameters for workflow
@@ -95,7 +94,7 @@ namespace Gadgetron {
         CmrKSpaceBinning<float> create_binner() const;
 
         struct BinningResult {
-            ImageArray image;
+            mrd::ImageArray image;
             hoNDArray<float> acquisition_time;
             hoNDArray<float> capture_time;
         };
@@ -110,8 +109,8 @@ namespace Gadgetron {
         // calibration mode
         std::vector<mrd::CalibrationMode> calib_mode_;
 
-        BinningResult perform_binning(ReconBit reconBit, size_t encoding) const;
-        void set_image_header(const ReconBit& recon_bit, ImageArray& res, size_t enc) const;
+        BinningResult perform_binning(mrd::ReconBit reconBit, size_t encoding) const;
+        void set_image_header(const mrd::ReconBit& recon_bit, mrd::ImageArray& res, size_t enc) const;
     };
 
 }

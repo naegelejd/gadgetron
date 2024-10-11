@@ -178,7 +178,7 @@ namespace Gadgetron {
     }
 
     NoiseAdjustGadget::NoiseAdjustGadget(const Core::Context& context, const Core::GadgetProperties& props)
-        : Core::ChannelGadget<Core::Acquisition>(context, props)
+        : Core::ChannelGadget<mrd::Acquisition>(context, props)
         , current_mrd_header(context.header)
         , receiver_noise_bandwidth{ bandwidth_from_header(context.header) }
         , measurement_id{ measurement_id_from_header(context.header) }
@@ -205,7 +205,7 @@ namespace Gadgetron {
             noise_covariance_out = context.parameters.at("noisecovarianceout");
             GDEBUG_STREAM("Output noise covariance matrix is provided as a parameter: " << noise_covariance_out);
         }
-        
+
         noisehandler = load_or_gather();
     }
 
@@ -257,15 +257,15 @@ namespace Gadgetron {
         return NoiseGatherer{};
     }
 
-    static bool is_noise(const Core::Acquisition& acq) {
+    static bool is_noise(const mrd::Acquisition& acq) {
         return acq.head.flags.HasFlags(mrd::AcquisitionFlags::kIsNoiseMeasurement);
     }
 
     template <class NOISEHANDLER>
-    void NoiseAdjustGadget::add_noise(NOISEHANDLER& nh, const Gadgetron::Core::Acquisition&) const {
+    void NoiseAdjustGadget::add_noise(NOISEHANDLER& nh, const mrd::Acquisition&) const {
     }
 
-    template <> void NoiseAdjustGadget::add_noise(NoiseGatherer& ng, const Gadgetron::Core::Acquisition& acq) const {
+    template <> void NoiseAdjustGadget::add_noise(NoiseGatherer& ng, const mrd::Acquisition& acq) const {
         if (ng.tmp_covariance.empty()) {
             auto channels = acq.Coils();
             ng.tmp_covariance = hoNDArray<std::complex<float>>(channels, channels);
@@ -283,8 +283,8 @@ namespace Gadgetron {
         ng.total_number_of_samples += acq.Samples();
     }
 
-    template <> void NoiseAdjustGadget::add_noise(NoiseHandler& nh, const Gadgetron::Core::Acquisition& acq) const {
-        Core::visit([&](auto& var) { this->add_noise(var, acq); }, nh);
+    template <> void NoiseAdjustGadget::add_noise(NoiseHandler& nh, const mrd::Acquisition& acq) const {
+        std::visit([&](auto& var) { this->add_noise(var, acq); }, nh);
     }
     template <class NOISEHANDLER> void NoiseAdjustGadget::save_noisedata(NOISEHANDLER& nh) {}
 
@@ -326,18 +326,18 @@ namespace Gadgetron {
     }
 
     template <> void NoiseAdjustGadget::save_noisedata(NoiseHandler& nh) {
-        Core::visit([&](auto& var) { this->save_noisedata(var); }, nh);
+        std::visit([&](auto& var) { this->save_noisedata(var); }, nh);
     }
 
 
     template <class NH>
-    NoiseAdjustGadget::NoiseHandler NoiseAdjustGadget::handle_acquisition(NH nh, Core::Acquisition& acq) {
+    NoiseAdjustGadget::NoiseHandler NoiseAdjustGadget::handle_acquisition(NH nh, mrd::Acquisition& acq) {
         return std::move(nh);
     };
 
     template <>
     NoiseAdjustGadget::NoiseHandler NoiseAdjustGadget::handle_acquisition(
-        Prewhitener pw, Core::Acquisition& acq) {
+        Prewhitener pw, mrd::Acquisition& acq) {
 
         if (acq.Coils() == pw.prewhitening_matrix.get_size(0)) {
             auto dataM = as_arma_matrix(acq.data);
@@ -351,7 +351,7 @@ namespace Gadgetron {
 
     template <>
     NoiseAdjustGadget::NoiseHandler NoiseAdjustGadget::handle_acquisition(
-        NoiseGatherer ng, Core::Acquisition& acq) {
+        NoiseGatherer ng, mrd::Acquisition& acq) {
         if (ng.total_number_of_samples == 0) {
             return std::move(ng);
         }
@@ -368,7 +368,7 @@ namespace Gadgetron {
 
     template <>
     NoiseAdjustGadget::NoiseHandler NoiseAdjustGadget::handle_acquisition(
-        LoadedNoise ln, Core::Acquisition& acq)  {
+        LoadedNoise ln, mrd::Acquisition& acq)  {
         auto masked_covariance   = mask_channels(std::move(ln.covariance), scale_only_channels);
         auto prewhitening_matrix = computeNoisePrewhitener(masked_covariance);
         prewhitening_matrix
@@ -378,11 +378,11 @@ namespace Gadgetron {
 
     template <>
     NoiseAdjustGadget::NoiseHandler NoiseAdjustGadget::handle_acquisition(
-        NoiseHandler nh, Core::Acquisition& acq) {
-        return Core::visit([&](auto var) { return this->handle_acquisition<decltype(var)>(std::move(var), acq); }, std::move(nh));
+        NoiseHandler nh, mrd::Acquisition& acq) {
+        return std::visit([&](auto var) { return this->handle_acquisition<decltype(var)>(std::move(var), acq); }, std::move(nh));
     }
 
-    void NoiseAdjustGadget::process(Core::InputChannel<Core::Acquisition>& input, Core::OutputChannel& output) {
+    void NoiseAdjustGadget::process(Core::InputChannel<mrd::Acquisition>& input, Core::OutputChannel& output) {
 
         scale_only_channels = current_mrd_header.acquisition_system_information
                                   ? find_scale_only_channels(scale_only_channels_by_name,
@@ -402,14 +402,14 @@ namespace Gadgetron {
     }
 
     /** Returns NoiseCovariance if loaded from file/stream, otherwise None */
-    Core::optional<mrd::NoiseCovariance> NoiseAdjustGadget::load_noisedata() const {
+    std::optional<mrd::NoiseCovariance> NoiseAdjustGadget::load_noisedata() const {
         if (!noise_covariance_in.empty()) {
             std::ifstream file(noise_covariance_in, std::ios::binary);
             if (!file) {
                 GERROR("Could not open noise covariance file %s\n", noise_covariance_in.c_str());
                 GWARN("Falling back to noise gathering\n");
                 // throw std::runtime_error("Could not open noise covariance file");
-                return Core::none;
+                return std::nullopt;
             }
             mrd::binary::MrdNoiseCovarianceReader reader(file);
             mrd::NoiseCovariance noise_covariance;
@@ -419,7 +419,7 @@ namespace Gadgetron {
             return noise_covariance;
         }
 
-        return Core::none;
+        return std::nullopt;
     }
 
     GADGETRON_GADGET_EXPORT(NoiseAdjustGadget)

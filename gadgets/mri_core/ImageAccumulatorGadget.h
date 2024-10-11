@@ -6,7 +6,6 @@
 #define GADGETRON_IMAGEACCUMULATORGADGET_H
 
 
-#include <mri_core_data.h>
 #include "Gadget.h"
 #include "hoNDArray.h"
 
@@ -15,9 +14,6 @@ class ImageAccumulatorGadget :  public Gadget1<IsmrmrdImageArray> {
 
 
     public:
-      GADGET_DECLARE(ImageAccumulatorGadget)
-
-
       ImageAccumulatorGadget();
 
 

@@ -11,11 +11,11 @@
 namespace Gadgetron::Grappa {
 
     /** TODO: This Gadget is not used anywhere anymore... */
-    class ChannelReorderer : public Core::PureGadget<AnnotatedAcquisition, Core::Acquisition> {
+    class ChannelReorderer : public Core::PureGadget<AnnotatedAcquisition, mrd::Acquisition> {
     public:
         ChannelReorderer(const Core::Context &, const std::unordered_map<std::string, std::string> &);
 
-        AnnotatedAcquisition process_function(Core::Acquisition acquisition) const override;
+        AnnotatedAcquisition process_function(mrd::Acquisition acquisition) const override;
 
         NODE_PROPERTY(
                 uncombined_channels, std::string,

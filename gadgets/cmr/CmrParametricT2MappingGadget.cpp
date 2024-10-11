@@ -67,7 +67,7 @@ namespace Gadgetron {
         return GADGET_OK;
     }
 
-    int CmrParametricT2MappingGadget::perform_mapping(ImageArray& data, ImageArray& map, ImageArray& para, ImageArray& map_sd, ImageArray& para_sd)
+    int CmrParametricT2MappingGadget::perform_mapping(mrd::ImageArray& data, mrd::ImageArray& map, mrd::ImageArray& para, mrd::ImageArray& map_sd, mrd::ImageArray& para_sd)
     {
         try
         {

@@ -20,8 +20,8 @@ Gadgetron::ComplexToFloatGadget::ComplexToFloatGadget(
                    { mrd::ImageType::kImag,      [](const auto& image) { return imag(image); } }};
 };
 
-Gadgetron::Core::Image<float> Gadgetron::ComplexToFloatGadget::process_function(
-    Gadgetron::Core::Image<std::complex<float>> input_image) const
+mrd::Image<float> Gadgetron::ComplexToFloatGadget::process_function(
+    mrd::Image<std::complex<float>> input_image) const
 {
     mrd::Image<float> out;
     out.head = input_image.head;

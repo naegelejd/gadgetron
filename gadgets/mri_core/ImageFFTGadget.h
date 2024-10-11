@@ -17,9 +17,6 @@ namespace Gadgetron
     class ImageFFTGadget :public Gadget3<ISMRMRD::ImageHeader, hoNDArray< std::complex<float> >, ISMRMRD::MetaContainer >
     {
     public:
-
-        GADGET_DECLARE(ImageFFTGadget);
-
         typedef std::complex<float> ValueType;
         typedef hoNDArray< ValueType > ArrayType;
 

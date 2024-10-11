@@ -6,7 +6,7 @@
 
 namespace Gadgetron {
 
-class FlagTriggerGadget : public Core::ChannelGadget<Core::Acquisition> {
+class FlagTriggerGadget : public Core::ChannelGadget<mrd::Acquisition> {
   public:
     enum class TriggerFlags : uint64_t {
         first_in_encode_step1 = 0,
@@ -58,15 +58,15 @@ class FlagTriggerGadget : public Core::ChannelGadget<Core::Acquisition> {
     FlagTriggerGadget(const Core::Context& context, const Core::GadgetProperties& props);
     ~FlagTriggerGadget() override = default;
 
-    void process(Core::InputChannel<Core::Acquisition>& input,
+    void process(Core::InputChannel<mrd::Acquisition>& input,
                  Core::OutputChannel& output) override;
 
     NODE_PROPERTY(trigger_flags, std::string, "Trigger flags (separated by comma)", "");
 
-    static std::function<bool(const Core::Acquisition& acq)> create_trigger_filter(const std::string& trigger_string);
+    static std::function<bool(const mrd::Acquisition& acq)> create_trigger_filter(const std::string& trigger_string);
 
   private:
-    std::function<bool(const Core::Acquisition&)> predicate;
+    std::function<bool(const mrd::Acquisition&)> predicate;
 };
 
 

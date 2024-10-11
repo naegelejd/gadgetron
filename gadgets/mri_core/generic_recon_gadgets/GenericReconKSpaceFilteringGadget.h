@@ -21,8 +21,6 @@ namespace Gadgetron {
     class GenericReconKSpaceFilteringGadget : public GenericReconImageBase
     {
     public:
-        GADGET_DECLARE(GenericReconKSpaceFilteringGadget);
-
         typedef GenericReconImageBase BaseClass;
 
         GenericReconKSpaceFilteringGadget();
@@ -90,7 +88,7 @@ namespace Gadgetron {
 
         // default interface function
         virtual int process_config(const mrd::Header& header);
-        virtual int process(Gadgetron::GadgetContainerMessage< ImageArray >* m1);
+        virtual int process(Gadgetron::GadgetContainerMessage< mrd::ImageArray >* m1);
 
 
         // find kspace sampled range
