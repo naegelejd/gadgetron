@@ -8,12 +8,13 @@
 #include <stdexcept>
 #include <string>
 
+#include "mrd/types.h"
+
 #include "Channel.h"
 #include "Context.h"
 #include "GadgetContainerMessage.h"
 #include "Node.h"
 #include "log.h"
-#include "mrd/types.h"
 
 #define GADGET_FAIL -1
 #define GADGET_OK    0

@@ -1,7 +1,8 @@
 #pragma once
 
 #include "hoNDArray.h"
-#include "Types.h"
+
+#include "mrd/types.h"
 
 namespace Gadgetron::Grappa {
 

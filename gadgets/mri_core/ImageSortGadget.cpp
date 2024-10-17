@@ -1,6 +1,5 @@
 #include "ImageSortGadget.h"
 #include "Node.h"
-#include "Types.h"
 #include "log.h"
 
 namespace Gadgetron {
@@ -8,7 +7,7 @@ namespace Gadgetron {
     ImageSortGadget::ImageSortGadget(const Core::Context &context, const Core::GadgetProperties &properties)
         : ChannelGadget(context, properties) {}
 
-    void ImageSortGadget::process(Core::InputChannel<Core::AnyImage> &input, Core::OutputChannel &output) {
+    void ImageSortGadget::process(Core::InputChannel<mrd::AnyImage> &input, Core::OutputChannel &output) {
 
         // Lambda, gets index from correct field in ImageHeader based on parameterized sorting dimension
         auto getImageIndex = [&](const auto& i){

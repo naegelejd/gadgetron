@@ -6,7 +6,6 @@
 #pragma once
 
 #include "PureGadget.h"
-#include <Types.h>
 
 namespace Gadgetron
 {

@@ -18,7 +18,7 @@ namespace Gadgetron::Core::Parallel {
 
     using AcquisitionFanout = Core::Parallel::Fanout<mrd::Acquisition>;
     using WaveformFanout = Core::Parallel::Fanout<mrd::WaveformUint32>;
-    using ImageFanout = Core::Parallel::Fanout<AnyImage>;
+    using ImageFanout = Core::Parallel::Fanout<mrd::AnyImage>;
 }
 
 #include "Fanout.hpp"

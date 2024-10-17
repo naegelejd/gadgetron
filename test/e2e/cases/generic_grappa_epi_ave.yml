@@ -1,11 +1,11 @@
 reconstruction:
   data: epi_ave/meas_MID01349_FID12150_amri_ep2d_bold_96x72x5_R2_16avg_gadgetron/meas_MID01349_FID12150_amri_ep2d_bold_96x72x5_R2_16avg_gadgetron_meas1.mrd
-  checksum: 59d26b86a73d856250f42f6636d0d838
+  checksum: 4f4184c334d7df994069c2db3a9ea4f9
   run:
   - args: --config Generic_Cartesian_Grappa_EPI_AVE.xml
 validation:
   reference: epi_ave/meas_MID01349_FID12150_amri_ep2d_bold_96x72x5_R2_16avg_gadgetron/ref_20161020_Generic_Cartesian_Grappa_EPI_AVE.xml.mrd
-  checksum: ae1e2ebf21249016726bcc86bf7ea5b2
+  checksum: a9576248f3e4be53e112b89a2ffd4cce
   tests:
   - image_series: 1
 requirements:

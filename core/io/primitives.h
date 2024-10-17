@@ -7,7 +7,6 @@
 
 #include "hoNDArray.h"
 #include "hoNDImage.h"
-#include "Types.h"
 #include <boost/hana/adapt_struct.hpp>
 
 namespace Gadgetron::Core::IO {

@@ -1,11 +1,11 @@
 reconstruction:
   data: cmr/RTCine/CH4/rtcine_R4_CH2.mrd
-  checksum: 976f1e9173d6d2c96c204459e79a3c0f
+  checksum: b8d5997d87742835c4230b4f4d15a24c
   run:
   - args: --config CMR_RTCine_LAX_AI.xml
 validation:
   reference: cmr/RTCine/CH4/ref_20220124_173736_CMR_RTCine_LAX_AI.xml.mrd
-  checksum: 015c1cf8a3e5618287a9080e60f8c29d
+  checksum: 09ee58f474906b7d29b5fff9847108d5
   tests:
   - image_series: 1
     value_comparison_threshold: 0.01

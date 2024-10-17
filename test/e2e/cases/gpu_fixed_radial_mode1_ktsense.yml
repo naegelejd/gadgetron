@@ -1,11 +1,11 @@
 reconstruction:
   data: radial_phantom/meas_MID00133_FID20080_CV_Radial_Fixed_Angle_128_x8_32phs_meas1.mrd
-  checksum: 81761719c6c68fb99bf67813f9ba7578
+  checksum: 538656c237094852a315c4d7678ead53
   run:
   - args: --config fixed_radial_mode1_gpu_ktsense.xml
 validation:
   reference: radial_phantom/fixed_radial_mode1_20210923_klk_kt.mrd
-  checksum: a183041be82fda44a299fb51120c250c
+  checksum: dfa378e1f7a1cd35eeb9944f23b4f049
   tests:
   - image_series: 0
 requirements:

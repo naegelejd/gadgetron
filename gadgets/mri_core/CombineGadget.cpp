@@ -51,8 +51,8 @@ namespace {
 } // namespace
 
 namespace Gadgetron {
-    Core::AnyImage CombineGadget::process_function(Core::AnyImage image) const {
-        return visit([&](auto& image) -> Core::AnyImage { return combine(image); }, image);
+    mrd::AnyImage CombineGadget::process_function(mrd::AnyImage image) const {
+        return visit([&](auto& image) -> mrd::AnyImage { return combine(image); }, image);
     }
     GADGETRON_GADGET_EXPORT(CombineGadget);
 } // namespace Gadgetron

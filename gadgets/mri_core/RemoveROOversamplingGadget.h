@@ -7,7 +7,6 @@
 
 #include "Gadget.h"
 #include "Node.h"
-#include "Types.h"
 #include "hoNDArray.h"
 #include "hoNDFFT.h"
 #ifdef USE_OMP // TODO: Should this be removed? Its from the old version

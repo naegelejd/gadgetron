@@ -8,12 +8,11 @@
 #include "Gadget.h"
 #include "hoNDArray.h"
 #include "Node.h"
-#include "Types.h"
 #include "hoNDArray_math.h"
 
 namespace Gadgetron{
 
-  using ImageOrImageArray = std::variant<Core::AnyImage, mrd::ImageArray>;
+  using ImageOrImageArray = std::variant<mrd::AnyImage, mrd::ImageArray>;
 
   class ImageArraySplitGadget : public Core::ChannelGadget<ImageOrImageArray>
     {

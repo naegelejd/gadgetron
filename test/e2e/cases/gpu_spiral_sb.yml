@@ -1,11 +1,11 @@
 reconstruction:
   data: spiral/meas_MID1132_MiniIRT_spiral_16int_tr500_acc1_10reps_FID13142_meas1.mrd
-  checksum: a6869927f73aaf1704b2dea29a9ea79e
+  checksum: 381bcf3e90920bc396a354583f5939d1
   run:
   - args: --config spiral_flow_gpusense_sb.xml
 validation:
   reference: spiral/simple_spiral_out_sb_v2_spiral_flow_gpusense_sb.xml.mrd
-  checksum: d2dcced1b4e868f6b5b0c7ddd693ead2
+  checksum: f935478afb14dd4d7950e2b5a74a85fa
   tests:
   - image_series: 0
 requirements:

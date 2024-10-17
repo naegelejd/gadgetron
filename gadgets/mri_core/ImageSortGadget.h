@@ -8,20 +8,19 @@
 #include "Gadget.h"
 #include "hoNDArray.h"
 #include "Node.h"
-#include "Types.h"
 
 namespace Gadgetron{
 
   struct ImageEntry
   {
-    Core::AnyImage image_;
+    mrd::AnyImage image_;
     int index_;
   };
 
-  class ImageSortGadget : public Core::ChannelGadget<Core::AnyImage> {
+  class ImageSortGadget : public Core::ChannelGadget<mrd::AnyImage> {
     public:
       ImageSortGadget(const Core::Context &, const Core::GadgetProperties &);
-      void process(Core::InputChannel<Core::AnyImage> &, Core::OutputChannel &) override;
+      void process(Core::InputChannel<mrd::AnyImage> &, Core::OutputChannel &) override;
     protected:
       // { "average", "slice", "contrast", "phase", "repetition", "set" }
       NODE_PROPERTY(sorting_dimension, std::string, "Dimension that data will be sorted by", "slice");

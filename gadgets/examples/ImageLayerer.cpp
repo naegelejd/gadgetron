@@ -47,12 +47,12 @@ namespace Gadgetron::Examples {
 
     void ImageLayerer::process(std::map<std::string, Core::GenericInputChannel> input, Core::OutputChannel output) {
 
-        auto unchanged = Core::InputChannel<Core::AnyImage>(input.at("unchanged"), output);
-        auto inverted = Core::InputChannel<Core::AnyImage>(input.at("inverted"), output);
+        auto unchanged = Core::InputChannel<mrd::AnyImage>(input.at("unchanged"), output);
+        auto inverted = Core::InputChannel<mrd::AnyImage>(input.at("inverted"), output);
 
         for (auto image : unchanged) {
             auto merged = std::visit(
-                    [](const auto &a, const auto &b) -> Core::AnyImage { return merge(a, b); },
+                    [](const auto &a, const auto &b) -> mrd::AnyImage { return merge(a, b); },
                     image,
                     inverted.pop()
             );

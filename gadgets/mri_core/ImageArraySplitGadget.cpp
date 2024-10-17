@@ -1,12 +1,11 @@
 #include "ImageArraySplitGadget.h"
 
-#include <xtensor/xview.hpp>
 
 using namespace Gadgetron;
 
 namespace {
 
-void splitInputData(Core::AnyImage image, Core::OutputChannel& out) {
+void splitInputData(mrd::AnyImage image, Core::OutputChannel& out) {
     out.push(image);
 }
 

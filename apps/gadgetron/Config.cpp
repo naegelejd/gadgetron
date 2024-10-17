@@ -13,7 +13,6 @@
 #include "log.h"
 
 #include "Config.h"
-#include "Types.h"
 
 using namespace Gadgetron::Main;
 

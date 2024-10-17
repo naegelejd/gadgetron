@@ -2,7 +2,6 @@
 #include <gtest/gtest.h>
 #include "Message.h"
 #include "Channel.h"
-#include "Types.h"
 
 TEST(TypeTests, multitype) {
     using namespace Gadgetron::Core;

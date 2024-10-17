@@ -8,7 +8,6 @@
 #include "Gadget.h"
 #include "hoNDArray.h"
 #include "Node.h"
-#include "Types.h"
 
 namespace Gadgetron{
   class AccumulatorGadget : public Core::ChannelGadget<mrd::Acquisition>

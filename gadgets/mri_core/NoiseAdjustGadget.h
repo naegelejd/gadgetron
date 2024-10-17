@@ -2,7 +2,6 @@
 
 #include "GadgetronTimer.h"
 #include "Node.h"
-#include "Types.h"
 #include "hoNDArray.h"
 
 #include <complex>

@@ -4,9 +4,10 @@
 #include <vector>
 #include <typeindex>
 #include <numeric>
+#include <optional>
+#include <variant>
 
 #include "GadgetContainerMessage.h"
-#include "Types.h"
 
 namespace Gadgetron {
 

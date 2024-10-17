@@ -9,7 +9,6 @@
 
 #include "Node.h"
 #include "hoNDArray.h"
-#include "Types.h"
 
 namespace Gadgetron{
   class AsymmetricEchoAdjustROGadget : public Core::ChannelGadget<mrd::Acquisition>

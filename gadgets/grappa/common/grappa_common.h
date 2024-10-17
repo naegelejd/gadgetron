@@ -1,7 +1,6 @@
 #pragma once
 
 #include "AnnotatedAcquisition.h"
-#include "Types.h"
 
 namespace Gadgetron::Grappa {
 

@@ -1,9 +1,9 @@
 #pragma once
 
-#include "Types.h"
 #include <condition_variable>
 #include <list>
 #include <mutex>
+#include <optional>
 
 namespace Gadgetron::Core {
 

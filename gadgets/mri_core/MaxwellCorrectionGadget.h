@@ -7,7 +7,6 @@
 
 #include "Gadget.h"
 #include "Node.h"
-#include "Types.h"
 #include "hoNDArray.h"
 #include <numeric>
 #ifdef USE_OMP

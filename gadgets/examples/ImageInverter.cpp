@@ -27,10 +27,9 @@ namespace {
 
 namespace Gadgetron::Examples {
 
-
-    Core::AnyImage ImageInverter::process_function(Core::AnyImage image) const {
+    mrd::AnyImage ImageInverter::process_function(mrd::AnyImage image) const {
         GINFO_STREAM("Inverting image.")
-        return visit([](const auto &image) -> Core::AnyImage { return invert_image(image); }, image);
+        return visit([](const auto &image) -> mrd::AnyImage { return invert_image(image); }, image);
     }
 
     GADGETRON_GADGET_EXPORT(ImageInverter);

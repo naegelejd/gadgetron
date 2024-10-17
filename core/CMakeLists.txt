@@ -42,7 +42,6 @@ install(FILES
         MPMCChannel.h
         Gadget.h
         Context.h
-        Types.h
         Node.h
         PureGadget.h
         PropertyMixin.h

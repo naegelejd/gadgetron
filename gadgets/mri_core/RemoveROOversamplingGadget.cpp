@@ -1,7 +1,7 @@
 #include "RemoveROOversamplingGadget.h"
 
 #include <mri_core_utility.h>
-#include <xtensor/xadapt.hpp>
+
 namespace Gadgetron {
 
 RemoveROOversamplingGadget::RemoveROOversamplingGadget(const Core::Context& context,

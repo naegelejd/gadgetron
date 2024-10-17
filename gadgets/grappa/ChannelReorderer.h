@@ -6,7 +6,6 @@
 #include "common/AnnotatedAcquisition.h"
 
 #include "PureGadget.h"
-#include "Types.h"
 
 namespace Gadgetron::Grappa {
 

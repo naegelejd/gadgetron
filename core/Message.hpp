@@ -4,7 +4,6 @@
 #include <boost/core/demangle.hpp>
 #include <iostream>
 
-#include "Types.h"
 
 namespace Gadgetron::Core {
 

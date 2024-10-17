@@ -1,11 +1,11 @@
 reconstruction:
   data: gre_3d/meas_MID248_gre_FID30644_meas1.mrd
-  checksum: 263a7079e2a2826c7dc882eedf22a1c3
+  checksum: f22a890a3d63a5e3ae432fc372176fe1
   run:
   - args: --config default_optimized.xml
 validation:
   reference: gre_3d/simple_gre_out_3d_20210910_klk_default_optimized.xml.mrd
-  checksum: fb4f19e0a033d99e1de2e30760083f50
+  checksum: a79e7b8169c5266d5a2cf6c5413db6ad
   tests:
   - image_series: 0
     value_comparison_threshold: 1.0e-05

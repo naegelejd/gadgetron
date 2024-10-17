@@ -1,7 +1,5 @@
 #include "CoilReductionGadget.h"
 
-#include <xtensor/xview.hpp>
-
 namespace Gadgetron {
 
 CoilReductionGadget::CoilReductionGadget(const Core::Context& context, const Core::GadgetProperties& props)

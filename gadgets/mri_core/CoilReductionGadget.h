@@ -6,7 +6,6 @@
 #pragma once
 
 #include "Node.h"
-#include "Types.h"
 #include "hoNDArray.h"
 #include <boost/algorithm/string.hpp>
 #include <boost/algorithm/string/split.hpp>

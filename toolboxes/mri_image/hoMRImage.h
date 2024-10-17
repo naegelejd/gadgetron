@@ -11,6 +11,7 @@
 
 #include "hoNDImage.h"
 #include "io/primitives.h"
+#include "mrd/types.h"
 
 namespace Gadgetron
 {

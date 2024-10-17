@@ -164,10 +164,10 @@ public:
                     mrd_writer.WriteData(force_unpack<mrd::ImageUint16>(std::move(message)));
                 } else if (convertible_to<mrd::ImageInt16>(message) ) {
                     mrd_writer.WriteData(force_unpack<mrd::ImageInt16>(std::move(message)));
-                } else if (convertible_to<mrd::ImageUint>(message) ) {
-                    mrd_writer.WriteData(force_unpack<mrd::ImageUint>(std::move(message)));
-                } else if (convertible_to<mrd::ImageInt>(message) ) {
-                    mrd_writer.WriteData(force_unpack<mrd::ImageInt>(std::move(message)));
+                } else if (convertible_to<mrd::ImageUint32>(message) ) {
+                    mrd_writer.WriteData(force_unpack<mrd::ImageUint32>(std::move(message)));
+                } else if (convertible_to<mrd::ImageInt32>(message) ) {
+                    mrd_writer.WriteData(force_unpack<mrd::ImageInt32>(std::move(message)));
                 } else if (convertible_to<mrd::ImageFloat>(message) ) {
                     mrd_writer.WriteData(force_unpack<mrd::ImageFloat>(std::move(message)));
                 } else if (convertible_to<mrd::ImageDouble>(message) ) {

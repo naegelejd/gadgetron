@@ -7,7 +7,6 @@
 
 #include "MPMCChannel.h"
 #include "Message.h"
-#include "Types.h"
 
 #include "ChannelIterator.h"
 

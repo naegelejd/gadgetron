@@ -1,11 +1,11 @@
 reconstruction:
   data: cmr/CineBinning/meas_MID838_PK_rt_test_2slice_FID22519/meas_MID838_PK_rt_test_2slice_FID22519_meas2.mrd
-  checksum: a559f4bdcd01f532f94c5665907cf5a0
+  checksum: 564b223a612d24dce191d261a469d349
   run:
   - args: --config CMR_2DT_RTCine_KspaceBinning.xml
 validation:
   reference: cmr/CineBinning/meas_MID838_PK_rt_test_2slice_FID22519/cmr_cine_binning_2slice_ref_20220817_CMR_2DT_RTCine_KspaceBinning.xml.mrd
-  checksum: 11e905b0073ebecdec6aa90fccc4ee3c
+  checksum: bd774e368b5d6865276ca0b2ab03f022
   tests:
   - image_series: 2
 requirements:

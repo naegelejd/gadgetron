@@ -6,8 +6,8 @@
 #pragma once
 #include "hoNDArray.h"
 
-#include <Types.h>
 #include "PureGadget.h"
+
 namespace Gadgetron
 {
 class AugmentImageMetadataGadget: public Core::PureGadget<mrd::Image<std::complex<float>>,mrd::Image<std::complex<float>>>

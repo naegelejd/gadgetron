@@ -42,8 +42,8 @@ namespace {
 }
 
 namespace Gadgetron {
-	Core::AnyImage AutoScaleGadget::process_function(Core::AnyImage image) const {
-		return visit([&](auto &image) -> Core::AnyImage { return autoscale(image, max_value, histogram_bins); }, image);
+	mrd::AnyImage AutoScaleGadget::process_function(mrd::AnyImage image) const {
+		return visit([&](auto &image) -> mrd::AnyImage { return autoscale(image, max_value, histogram_bins); }, image);
 	}
 	GADGETRON_GADGET_EXPORT(AutoScaleGadget);
 }
