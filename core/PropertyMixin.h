@@ -20,8 +20,10 @@ namespace Gadgetron::Core {
             return IO::from_string<T>(properties.at(name));
         }
 
-    private:
-        const GadgetProperties properties;
+    /** TODO: These are no longer private or const, so they can be initialized *after* the Node has been constructed */
+    // private:
+    //     const GadgetProperties properties;
+        GadgetProperties properties;
     };
 
     template<>
@@ -31,4 +33,6 @@ namespace Gadgetron::Core {
     }
 }
 
-#define NODE_PROPERTY(NAME,TYPE, DESCRIPTION, DEFAULT) const TYPE NAME = this->get_property<TYPE>(#NAME,DEFAULT,DESCRIPTION)
+/** TODO: These are no longer const, so they can be initialized *after* the Node has been constructed */
+// #define NODE_PROPERTY(NAME,TYPE, DESCRIPTION, DEFAULT) const TYPE NAME = this->get_property<TYPE>(#NAME,DEFAULT,DESCRIPTION)
+#define NODE_PROPERTY(NAME,TYPE, DESCRIPTION, DEFAULT) TYPE NAME = this->get_property<TYPE>(#NAME,DEFAULT,DESCRIPTION)
